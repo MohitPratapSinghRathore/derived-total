@@ -229,10 +229,20 @@ move, yet are computed independently.
 Two consequences are testable. First, fidelity should degrade with $t$ even when
 $t$ is far inside the context window, because the re-derivation circuit must
 compose more update steps within a fixed layer budget --- \emph{depth of
-composition}, not distance of retrieval, is the binding constraint. Second,
-fidelity should peak at intermediate layers and \emph{fall} toward the output
-layers as representations specialise for next-token prediction; the state is a
-means, not the target.
+composition}, not distance of retrieval, is the binding constraint. This is borne
+out (\S\ref{sec:results}).
+
+Second, we predicted that fidelity would peak at intermediate layers and
+\emph{fall} toward the output as representations specialise for next-token
+prediction, the state being a means rather than the target. \textbf{This
+prediction is false.} State decodability rises monotonically through the layer
+stack and is maximal at the final block (\S\ref{sec:results}). The natural
+reading is that for this task the state \emph{is} close to the target: the next
+legal move is a direct function of the position, so a representation that makes
+the position linearly available is also a good representation for the
+language-modelling head. We record the failed prediction rather than deleting
+it, since it bears on where a state carrier should be inserted --- our $k$-spaced
+insertion was chosen before this was known.
 
 \begin{assumption}[Sufficiency of the realised trajectory]
 Correct next-move selection at depth $t$ requires $s_t$ and a bounded lookahead,
@@ -337,38 +347,8 @@ values extracted from the chain --- so that the decomposition of
 \subsection{Results}
 \label{sec:results}
 
-\begin{table}[t]
-\centering
-\caption{Planning horizon and error decomposition. \textsc{[Pending run --- all
-cells are placeholders. No values are reported until the protocol of
-\S\ref{sec:eval} has been executed.]}}
-\begin{tabular}{lccccc}
-\toprule
-Model & Params & $H_{0.05}$ (ply) & $E_{\mathrm{state}}$@40 & $E_{\mathrm{plan}}$@40 & Puzzle acc.\ (10-ply) \\
-\midrule
-Attention-only (12L/512) & --- & --- & --- & --- & --- \\
-Attention-only (24L/512) & --- & --- & --- & --- & --- \\
-Attention-only (12L/768) & --- & --- & --- & --- & --- \\
-ALSB ($\lambda{=}0$)     & --- & --- & --- & --- & --- \\
-ALSB ($\lambda{>}0$)     & --- & --- & --- & --- & --- \\
-ALSB, $z$ ablated        & --- & --- & --- & --- & --- \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables}
 
-\begin{table}[t]
-\centering
-\caption{Transfer to mathematical reasoning, stratified by solution length.
-\textsc{[Pending run --- placeholders.]}}
-\begin{tabular}{lcccc}
-\toprule
-Model & GSM8K ($\le$4 steps) & GSM8K ($>$4) & MATH & Competition-style \\
-\midrule
-Baseline LM & --- & --- & --- & --- \\
-ALSB LM     & --- & --- & --- & --- \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \section{Limitations}
 

@@ -65,7 +65,8 @@ class ALSB(nn.Module):
 
 class ChessLM(nn.Module):
     def __init__(self, vocab, d=256, n_layer=8, n_head=8, max_len=161,
-                 alsb=False, d_s=64, k=4, ffn_mult=4.0, n_state_cls=13):
+                 alsb=False, d_s=64, k=4, ffn_mult=4.0, n_state_cls=13,
+                 n_state_slots=64):
         super().__init__()
         self.tok = nn.Embedding(vocab, d)
         self.pos = nn.Embedding(max_len, d)
@@ -77,8 +78,10 @@ class ChessLM(nn.Module):
             self.alsb_mods = nn.ModuleDict(
                 {str(i): ALSB(d, d_s) for i in sorted(self.alsb_at)})
             last = max(self.alsb_at)
-            # auxiliary state decoder reads the LAST ALSB channel: 64 squares x 13 classes
-            self.state_head = nn.Linear(d_s, 64 * n_state_cls)
+            # auxiliary state decoder reads the LAST ALSB channel:
+            # n_state_slots x n_state_cls  (chess: 64 squares x 13 pieces;
+            # synthetic: 8 variables x 100 values)
+            self.state_head = nn.Linear(d_s, n_state_slots * n_state_cls)
             self.last_alsb = last
         self.ln_f = nn.LayerNorm(d)
         self.head = nn.Linear(d, vocab, bias=False)
