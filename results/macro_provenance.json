@@ -147,6 +147,46 @@
   "value": "0",
   "source": "results/attn_8L256_s0.json"
  },
+ "patchAlphaAttn": {
+  "value": "0.50",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchNAttn": {
+  "value": "700",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchFlipAttn": {
+  "value": "1.000",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchMassBeforeAttn": {
+  "value": "0.071",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchMassAfterAttn": {
+  "value": "0.005",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchDecAttn": {
+  "value": "0.996",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchRandAfterAttn": {
+  "value": "0.065",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchRandDecAttn": {
+  "value": "0.484",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchCutAttn": {
+  "value": "0.934",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchRandCutAttn": {
+  "value": "0.077",
+  "source": "results/attn_8L256_s0_patch.json"
+ },
  "locIllAttn": {
   "value": "0.806",
   "source": "results/attn_8L256_s0_coupling.json"
@@ -206,5 +246,81 @@
  "belIllHiAttn": {
   "value": "0.364",
   "source": "results/attn_8L256_s0_belief.json"
+ },
+ "synParamsAttn": {
+  "value": "6,378,240",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synAccDeepAttn": {
+  "value": "0.122",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synAccDeepAttnSD": {
+  "value": "0.000",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synAccDeepAttnN": {
+  "value": "1",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synAccShallowAttn": {
+  "value": "0.114",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synAccShallowAttnSD": {
+  "value": "0.000",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synAccShallowAttnN": {
+  "value": "1",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synStateDeepAttn": {
+  "value": "0.964",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synStateDeepAttnSD": {
+  "value": "0.000",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synStateDeepAttnN": {
+  "value": "1",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synPlanDeepAttn": {
+  "value": "0.837",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synPlanDeepAttnSD": {
+  "value": "0.000",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synPlanDeepAttnN": {
+  "value": "1",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synStateShallowAttn": {
+  "value": "0.966",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synStateShallowAttnSD": {
+  "value": "0.000",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synStateShallowAttnN": {
+  "value": "1",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synPlanShallowAttn": {
+  "value": "0.813",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synPlanShallowAttnSD": {
+  "value": "0.000",
+  "source": "results/synth_attn_s*.json"
+ },
+ "synPlanShallowAttnN": {
+  "value": "1",
+  "source": "results/synth_attn_s*.json"
  }
 }

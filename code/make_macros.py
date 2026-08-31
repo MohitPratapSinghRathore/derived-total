@@ -126,15 +126,25 @@ for cond, tag in [("attn_8L256", "Attn"), ("attnpm_8L256", "AttnPM"),
         put(f"cp{kk}{tag}", d["eplan"][k]["mean_cp_loss"], src, "{:.0f}")
         put(f"blunder{kk}{tag}", d["eplan"][k]["blunder_rate"], src)
 
-# patching
-for cond, tag in [("attn_8L256", "Attn"), ("alsb_l1_8L256", "AlsbOne")]:
+# patching (causal intervention)
+for cond, tag in [("attn_8L256", "Attn"), ("alsb_l1_8L256", "AlsbOne"),
+                  ("attn_12L512", "Rung4")]:
     d = load(f"{cond}_s0_patch")
     if not d:
         continue
     src = f"results/{cond}_s0_patch.json"
-    put(f"patchFrac{tag}", d["frac_mass_decreased"], src)
-    put(f"patchDrop{tag}", d["mean_mass_drop"], src, "{:.4f}")
+    put(f"patchAlpha{tag}", d["alpha"], src, "{:.2f}")
     put(f"patchN{tag}", d["n"], src, "{:.0f}")
+    put(f"patchFlip{tag}", d["manipulation_check_flip_rate"], src)
+    se, rd = d["state_edit_all"], d["norm_matched_random_edit"]
+    put(f"patchMassBefore{tag}", se["mass_before"], src)
+    put(f"patchMassAfter{tag}", se["mass_after"], src)
+    put(f"patchDec{tag}", se["frac_decreased"], src)
+    put(f"patchRandAfter{tag}", rd["mass_after"], src)
+    put(f"patchRandDec{tag}", rd["frac_decreased"], src)
+    if se["mass_before"] > 0:
+        put(f"patchCut{tag}", 1 - se["mass_after"] / se["mass_before"], src)
+        put(f"patchRandCut{tag}", 1 - rd["mass_after"] / se["mass_before"], src)
 
 # ------------------------------------------------- coupling and belief analyses
 for cond, tag in [("attn_8L256", "Attn"), ("attnpm_8L256", "AttnPM"),
