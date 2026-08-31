@@ -20,13 +20,13 @@ Exact per-token oracle: the NVAR variable values after every token.
 import numpy as np
 
 NVAR = 4
-MOD = 20
+MOD = 10
 MAX_STEPS = 32
 MIN_GAP, MAX_GAP = 3, 5      # program steps between successive queries
 OPS = ["+", "-"]             # additive updates keep the task learnable while
                              # still requiring exact long-horizon tracking
 
-TOK = {"<pad>": 0, "<bos>": 1, "<query>": 2}
+TOK = {"<pad>": 0, "<bos>": 1, "<query>": 2, "<queryread>": 3}
 for i in range(NVAR):
     TOK[f"v{i}"] = len(TOK)
 for o in range(len(OPS)):
@@ -42,7 +42,7 @@ SEQ = 1 + 4 * MAX_STEPS + 4 * MAX_QUERIES
 
 
 def gen(n, seed=0):
-    """tokens, lens, state, and per-query (answer position, depth, va, vb)."""
+    """tokens, lens, state, per-query (answer pos, depth, va, vb), query kind."""
     rng = np.random.default_rng(seed)
     toks = np.zeros((n, SEQ), dtype=np.int16)
     state = np.zeros((n, SEQ, NVAR), dtype=np.uint8)
@@ -50,6 +50,7 @@ def gen(n, seed=0):
     qpos = np.full((n, MAX_QUERIES), -1, dtype=np.int32)
     qdepth = np.full((n, MAX_QUERIES), -1, dtype=np.int32)
     qvars = np.full((n, MAX_QUERIES, 2), -1, dtype=np.int8)
+    qkind = np.zeros((n, MAX_QUERIES), dtype=np.int8)   # 0 read, 1 sum
 
     for i in range(n):
         val = rng.integers(0, MOD, NVAR).astype(np.int64)
@@ -73,11 +74,24 @@ def gen(n, seed=0):
                 p += 4
                 steps += 1
             va, vb = int(rng.integers(0, NVAR)), int(rng.integers(0, NVAR))
-            ans = int((val[va] + val[vb]) % MOD)
-            toks[i, p] = TOK["<query>"]
-            toks[i, p + 1] = TOK[f"v{va}"]
-            toks[i, p + 2] = TOK[f"v{vb}"]
-            toks[i, p + 3] = TOK[f"val{ans}"]
+            # two query kinds. READ asks for a stored value and isolates state
+            # tracking; SUM asks for a computation over two stored values and so
+            # keeps a planning step that can fail with the state intact.
+            if rng.random() < 0.5:
+                kind = 0                      # READ
+                ans = int(val[va] % MOD)
+                toks[i, p] = TOK["<queryread>"]
+                toks[i, p + 1] = TOK[f"v{va}"]
+                toks[i, p + 2] = TOK[f"v{va}"]
+                toks[i, p + 3] = TOK[f"val{ans}"]
+            else:
+                kind = 1                      # SUM
+                ans = int((val[va] + val[vb]) % MOD)
+                toks[i, p] = TOK["<query>"]
+                toks[i, p + 1] = TOK[f"v{va}"]
+                toks[i, p + 2] = TOK[f"v{vb}"]
+                toks[i, p + 3] = TOK[f"val{ans}"]
+            qkind[i, qi] = kind
             state[i, p:p + 4] = val
             qpos[i, qi] = p + 3
             qdepth[i, qi] = steps
@@ -85,11 +99,11 @@ def gen(n, seed=0):
             qi += 1
             p += 4
         lens[i] = p
-    return toks, lens, state, qpos, qdepth, qvars
+    return toks, lens, state, qpos, qdepth, qvars, qkind
 
 
 if __name__ == "__main__":
-    t, l, s, qp, qd, qv = gen(2, seed=0)
+    t, l, s, qp, qd, qv, qk = gen(2, seed=0)
     inv = {v: k for k, v in TOK.items()}
     print("vocab", VOCAB, "seq", SEQ, "max queries", MAX_QUERIES,
           "chance answer", 1 / MOD)

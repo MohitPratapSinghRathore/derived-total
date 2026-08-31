@@ -101,9 +101,11 @@ def fit_probe(m, data, n_layer, d=256, epochs=2, bs=64):
 
 @torch.no_grad()
 def measure(m, probes, data, n_layer, bs=64):
-    toks, lens, state, qpos, qdepth, qvars = data
+    toks, lens, state, qpos, qdepth, qvars, qkind = data
     nb = len(BUCKETS)
     ans_hit = np.zeros(nb); ans_n = np.zeros(nb)
+    read_hit = np.zeros(nb); read_n = np.zeros(nb)
+    sum_hit = np.zeros(nb); sum_n = np.zeros(nb)
     st_hit = np.zeros((n_layer, nb)); st_n = np.zeros(nb)
     plan_bad = np.zeros(nb); plan_n = np.zeros(nb)
     est_bad = np.zeros(nb)
@@ -131,6 +133,10 @@ def measure(m, probes, data, n_layer, bs=64):
                 ans_n[b] += 1
                 ok_ans = int(pred[r, pos - 1] == toks[gi, pos])
                 ans_hit[b] += ok_ans
+                if int(qkind[gi, qi]) == 0:
+                    read_n[b] += 1; read_hit[b] += ok_ans
+                else:
+                    sum_n[b] += 1; sum_hit[b] += ok_ans
                 st_n[b] += 1
                 for li in range(n_layer):
                     st_hit[li, b] += float((pl[li][r, qtok] == s[r, qtok]).all())
@@ -143,6 +149,8 @@ def measure(m, probes, data, n_layer, bs=64):
                     plan_n[b] += 1
                     plan_bad[b] += (1 - ok_ans)
     return dict(ans_acc=(ans_hit / np.maximum(ans_n, 1)),
+                read_acc=(read_hit / np.maximum(read_n, 1)),
+                sum_acc=(sum_hit / np.maximum(sum_n, 1)),
                 state_acc=(st_hit / np.maximum(st_n, 1)),
                 estate=(est_bad / np.maximum(st_n, 1)),
                 eplan=(plan_bad / np.maximum(plan_n, 1)),
@@ -152,7 +160,7 @@ def measure(m, probes, data, n_layer, bs=64):
 @torch.no_grad()
 def measure_eplan_at(m, probe, layer, data, bs=64):
     """E_state / E_plan using the probe at the chosen layer."""
-    toks, lens, state, qpos, qdepth, qvars = data
+    toks, lens, state, qpos, qdepth, qvars, qkind = data
     nb = len(BUCKETS)
     plan_bad = np.zeros(nb); plan_n = np.zeros(nb)
     est_bad = np.zeros(nb); est_n = np.zeros(nb)
@@ -223,10 +231,13 @@ def main():
             rec = dict(cond=cond, seed=seed, params=param_count(m),
                        buckets=BUCKETS, best_layer=best, train_log=log,
                        ans_acc=res["ans_acc"].tolist(),
+                       read_acc=res["read_acc"].tolist(),
+                       sum_acc=res["sum_acc"].tolist(),
                        state_acc=res["state_acc"].tolist(),
                        n=res["n"].tolist(), **ep)
             json.dump(rec, open(fp, "w"), indent=1)
-            print(f"  {tag}: ans {np.round(res['ans_acc'],3)} "
+            print(f"  {tag}: read {np.round(res['read_acc'],3)} "
+                  f"sum {np.round(res['sum_acc'],3)} "
                   f"E_state {np.round(ep['estate'],3)} E_plan {np.round(ep['eplan'],3)}",
                   flush=True)
     print("SYNTH COMPLETE", flush=True)
