@@ -1,9 +1,10 @@
-*.aux
-*.log
-*.bbl
-*.blg
-*.out
-*.pdf
+# data and model artifacts
 data/
 runs/
 results/*.pt
+*.log
+
+# manuscript stays local until acceptance (playbook section 9)
+/paper/
+/build/
+/tools/

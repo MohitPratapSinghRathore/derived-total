@@ -1,0 +1,26 @@
+{
+ "ntrainlm": {
+  "value": "96,000",
+  "source": "data/proc"
+ },
+ "ntrainprobe": {
+  "value": "12,000",
+  "source": "data/proc"
+ },
+ "neval": {
+  "value": "12,000",
+  "source": "data/proc"
+ },
+ "meanPly": {
+  "value": "78.2",
+  "source": "data/proc"
+ },
+ "nGames": {
+  "value": "120,000",
+  "source": "data/proc"
+ },
+ "nVocab": {
+  "value": "1,926",
+  "source": "data/proc"
+ }
+}
