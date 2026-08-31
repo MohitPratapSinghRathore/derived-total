@@ -1,0 +1,400 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{natbib}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{assumption}{Assumption}
+
+\title{\bf State-Space Bottlenecks in Autoregressive Transformers:\\
+Quantifying Planning Horizons and Latent Hallucination\\
+in Search-Free Reasoning}
+
+\author{%
+Mohit Pratap Singh Rathore\\
+\texttt{gunveerkalsi@gmail.com}
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Autoregressive Transformers degrade as reasoning chains lengthen: accuracy decays
+non-uniformly with context depth, and models emit confident continuations that are
+inconsistent with the state implied by their own prefix. This failure is usually
+patched at inference time --- Monte Carlo Tree Search, process reward models,
+self-consistency --- rather than diagnosed at the representational level, because
+open-ended natural-language reasoning offers no ground-truth state against which
+an intermediate representation can be scored. We argue that the obstacle is
+methodological, not conceptual, and remove it by studying reasoning in a domain
+with a cheap, exact, externally computable state oracle: chess played from
+notation alone, with no search tree at inference.
+We make three contributions. (i) A \emph{diagnostic protocol} that separates two
+confounded quantities --- \emph{state-tracking error} (the model has lost the
+position) and \emph{planning error} (the model holds the position but selects a
+tactically losing continuation) --- via linear probes on residual-stream
+activations read against an exact board oracle at every token. (ii) An
+\emph{empirical characterisation} of the planning horizon $H_\varepsilon$, the
+context depth at which probe-recoverable state accuracy crosses a threshold
+$\varepsilon$, together with the observation we formalise as the \emph{state-space
+bottleneck}: attention-only models pay $O(L)$ memory to re-derive a state of
+constant description length, and horizon scales with width and depth far more
+weakly than either. (iii) An architectural remedy, the \emph{Adaptive Latent
+State Bottleneck} (ALSB), a gated recurrent side-channel of fixed width $d_s$
+interleaved with attention blocks and trained with an auxiliary
+state-reconstruction objective; it compresses the realised trajectory rather than
+the branching tree, giving $O(1)$ per-token state memory. We pre-register the full
+evaluation, including transfer to long-horizon mathematical reasoning (GSM8K,
+MATH, competition-style multi-step problems), under a protocol in which the
+diagnostic and the architecture are evaluated on disjoint splits.
+\end{abstract}
+
+\noindent\textbf{Keywords:} long-horizon reasoning, state tracking, Transformer
+memory, mechanistic probing, recurrent bottleneck, chess
+
+\section{Introduction}
+
+A Transformer that reasons across many steps must, implicitly, maintain a state.
+Nothing in the architecture stores one. Each token's representation is recomputed
+from the entire prefix through attention, so any latent variable the task requires
+--- a board position, the value of a symbolic assignment, which sub-goal remains
+open --- exists only insofar as the model re-derives it, at every layer, at every
+position, from scratch. Empirically this re-derivation is reliable at short range
+and unreliable at long range. Practitioners call the symptom \emph{context rot};
+it appears as degraded multi-step planning, as arithmetic that silently drifts,
+and as fluent continuations that contradict facts established earlier in the same
+generation.
+
+The dominant responses are external. Monte Carlo Tree Search grafts an explicit
+search procedure onto the policy. Process reward models supervise intermediate
+steps with a learned verifier. Self-consistency marginalises over sampled chains.
+Each demonstrably improves end-task accuracy, and each leaves the underlying
+question untouched: \emph{what, precisely, fails inside the network as the chain
+lengthens?} Answering that requires reading intermediate representations against
+a known-correct intermediate state --- and on open-ended text there is no such
+ground truth. The intermediate ``state'' of a natural-language argument is not
+well defined, which is exactly why long-horizon reasoning evaluation is noisy and
+why architectural claims in this area are hard to falsify.
+
+\paragraph{Our position.} Use a domain where the state is exact, cheap, and
+external. Chess, presented purely as notation (PGN move sequences and FEN
+positions) and modelled by a standard autoregressive Transformer with \emph{no}
+tree search at inference, has properties that natural language lacks:
+
+\begin{itemize}
+\item The ground-truth state after any prefix is computable in microseconds by a
+rules engine, giving a per-token supervision signal for probing.
+\item Legality is decidable, so \emph{state-tracking failure} has an unambiguous
+observable: an illegal move is proof that the position was lost, not that
+judgement was poor.
+\item Move quality is separately measurable by an external engine, so
+\emph{planning failure} can be scored conditional on the state being intact.
+\item Horizon is a controllable independent variable: ply index is a natural,
+uniformly scaled depth axis, unlike ``number of reasoning steps'' in text.
+\item The domain is adversarial and combinatorial, so surface heuristics do not
+substitute for computation --- the standard objection to synthetic long-context
+benchmarks.
+\end{itemize}
+
+We are not proposing chess as an end task. We propose it as an
+\emph{instrument}: a setting in which the failure mode can be measured with a
+signal-to-noise ratio unavailable in text, an architectural fix can be designed
+against that measurement, and the fix can then be tested where it actually
+matters --- long-context mathematical reasoning.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item \textbf{Decomposition of long-horizon error.} We define state-tracking
+error and planning error as separately identifiable quantities and give an
+estimator for each (\S\ref{sec:diag}). Prior long-context evaluations report their
+sum.
+\item \textbf{The planning horizon $H_\varepsilon$.} We define horizon as the
+depth at which linearly decodable state accuracy falls below $1-\varepsilon$, and
+characterise its dependence on depth, width, context length, and training
+distribution (\S\ref{sec:eval}).
+\item \textbf{The state-space bottleneck.} We formalise the mismatch between the
+$O(L)$ memory an attention stack spends and the $O(1)$ description length of the
+state it is tracking, and argue this predicts \emph{where} in the layer stack
+state degrades (\S\ref{sec:bottleneck}).
+\item \textbf{ALSB.} A fixed-width gated recurrent side-channel with an auxiliary
+state-reconstruction loss, adding $O(d\,d_s)$ parameters per insertion point and
+$O(1)$ per-token state memory (\S\ref{sec:alsb}).
+\item \textbf{Cross-domain transfer protocol.} A pre-registered test of whether an
+architecture selected on chess-derived diagnostics improves long-horizon
+mathematical reasoning (\S\ref{sec:transfer}).
+\end{enumerate}
+
+\section{Related Work}
+
+\paragraph{Inference-time search over language models.}
+Tree-of-Thoughts-style deliberation, MCTS-augmented decoding, and process
+supervision all improve multi-step accuracy by expending inference compute on
+candidate continuations and scoring them. They treat the base policy as fixed and
+unexamined. Our concern is the base policy: a search wrapper that must correct
+state-tracking errors is compensating for a representational defect, and the
+compensation cost grows with the defect.
+
+\paragraph{Long-context degradation.}
+Position-dependent retrieval failure (``lost in the middle''), effective-context
+measurements, and needle-style probes establish that usable context is shorter
+than nominal context. These measure \emph{retrieval} of material present in the
+prefix. Long-horizon reasoning failure is different in kind: the required
+quantity was never written down, only implied, and must be maintained through
+composition. A model can retrieve every token of a 60-ply game and still not know
+where the pieces are.
+
+\paragraph{State tracking and probing.}
+Linear probes recovering board state from game-transcript models established that
+Transformers trained on notation do form internal world models, and that
+intervening on those representations changes behaviour causally. We take that
+result as our starting point rather than our contribution: given that the state is
+there, we ask how its fidelity decays with depth, and whether an architectural
+prior can arrest the decay.
+
+\paragraph{Recurrence and state-space models.}
+State-space models and linear-attention variants offer constant per-token state,
+and hybrid attention--recurrence stacks are now standard practice. Reported gains
+are typically throughput and context length. We make a narrower, testable claim: a
+\emph{small} recurrent channel, explicitly supervised to carry task state,
+improves long-horizon \emph{correctness} at near-zero parameter cost --- a
+different claim from ``recurrence is efficient''.
+
+\paragraph{Search-free chess models.}
+Chess policies reaching strong play by distilling engine evaluations demonstrate
+that the task is learnable without a tree. Their objective is strength. Ours is
+measurement: we deliberately use models weak enough to fail, so that failure is
+observable.
+
+\section{Problem Formalisation}
+\label{sec:formal}
+
+Let a task be a sequence of tokens $x_{1:L}$ generated left to right. Let
+$s_t = \Phi(x_{1:t}) \in \mathcal{S}$ be the exact task state after prefix
+$x_{1:t}$, computed by an external oracle $\Phi$ (for chess, a rules engine; the
+state is the piece placement, side to move, castling rights, and en-passant
+target). Crucially $|\mathcal{S}|$ is large but the \emph{description length} of
+any $s_t$ is constant in $t$: a chess position is a few hundred bits regardless of
+how many plies produced it.
+
+Let $h_t^{(\ell)} \in \mathbb{R}^d$ be the residual-stream activation at position
+$t$, layer $\ell$, and let $g_\theta^{(\ell)}: \mathbb{R}^d \to \mathcal{S}$ be a
+decoder trained to recover $s_t$ from $h_t^{(\ell)}$ (in practice, per-square
+multiclass linear heads).
+
+\begin{definition}[State fidelity]
+$F^{(\ell)}(t) = \mathbb{E}\big[\mathbf{1}\{g_\theta^{(\ell)}(h_t^{(\ell)}) = s_t\}\big]$,
+the probability that the exact state is linearly decodable at depth $t$, layer
+$\ell$.
+\end{definition}
+
+\begin{definition}[Planning horizon]
+$H_\varepsilon^{(\ell)} = \min\{t : F^{(\ell)}(t) < 1-\varepsilon\}$, the
+shallowest depth at which fidelity crosses the tolerance. We report $H_{0.05}$ at
+the layer maximising fidelity, and the full curve $F(t)$ rather than the scalar
+alone.
+\end{definition}
+
+\begin{definition}[Error decomposition]
+For a generated continuation at depth $t$, define
+\emph{state-tracking error} $E_{\mathrm{state}}(t) = \Pr[\hat{s}_t \neq s_t]$
+(estimated by illegal-move rate and by probe disagreement) and
+\emph{planning error} $E_{\mathrm{plan}}(t) = \Pr[\text{move is a blunder} \mid \hat{s}_t = s_t]$
+(centipawn loss above a fixed threshold, conditioned on intact state).
+Total observed error is
+$E_{\mathrm{state}} + (1-E_{\mathrm{state}})\,E_{\mathrm{plan}}$; existing
+benchmarks report only the sum.
+\end{definition}
+
+This decomposition is the methodological core of the paper. An intervention that
+reduces the sum is uninformative; an intervention that reduces
+$E_{\mathrm{state}}$ specifically, and thereby raises $H_\varepsilon$, is evidence
+about memory rather than about policy quality.
+
+\section{The State-Space Bottleneck}
+\label{sec:bottleneck}
+
+\begin{proposition}[Cost mismatch]
+For an attention-only decoder, computing $h_t^{(\ell)}$ requires attending over
+$t$ prior positions, so per-token state maintenance costs $O(t)$ reads and $O(t)$
+key--value memory, while $\mathrm{desc}(s_t) = O(1)$. The architecture therefore
+has no mechanism that \emph{amortises} state: $s_t$ and $s_{t+1}$ differ by one
+move, yet are computed independently.
+\end{proposition}
+
+Two consequences are testable. First, fidelity should degrade with $t$ even when
+$t$ is far inside the context window, because the re-derivation circuit must
+compose more update steps within a fixed layer budget --- \emph{depth of
+composition}, not distance of retrieval, is the binding constraint. Second,
+fidelity should peak at intermediate layers and \emph{fall} toward the output
+layers as representations specialise for next-token prediction; the state is a
+means, not the target.
+
+\begin{assumption}[Sufficiency of the realised trajectory]
+Correct next-move selection at depth $t$ requires $s_t$ and a bounded lookahead,
+not the full branching history. Hence a fixed-width carrier of the \emph{realised}
+state suffices, and no representation of the search tree is needed --- the reason
+a constant-width recurrent channel is not obviously underpowered.
+\end{assumption}
+
+\section{Diagnostic Protocol}
+\label{sec:diag}
+
+\paragraph{Models.} Decoder-only Transformers trained from scratch on PGN, at
+matched token budgets across a grid: depth $\{8,12,16,24\}$ $\times$ width
+$\{256,512,768\}$, plus one long-context variant. Training on notation only ---
+no engine evaluations, no search, no rendered board in the input.
+
+\paragraph{Oracle.} A rules engine computes $s_t$ for every prefix of every
+evaluation game, yielding exact per-token labels.
+
+\paragraph{Probes.} Per-square linear heads on frozen $h_t^{(\ell)}$, fit on a
+split disjoint from all evaluation games, reported alongside control tasks
+(shuffled labels, randomised-weight models) so that decodability is not confused
+with probe capacity.
+
+\paragraph{Behavioural measures.} Illegal-move rate against ply; centipawn loss
+against ply conditioned on legality; tactical-puzzle accuracy stratified by
+required combination length ($2,4,6,8,10$ ply), which gives a lookahead axis
+independent of game length.
+
+\paragraph{Causal check.} Activation patching of probe-identified state
+directions: if edited state directions change the emitted move in the direction
+the edit implies, the probe is reading a representation the model uses rather
+than a correlate.
+
+\section{Adaptive Latent State Bottleneck}
+\label{sec:alsb}
+
+ALSB inserts, after every $k$-th attention block, a recurrent channel carrying
+$z_t \in \mathbb{R}^{d_s}$ with $d_s \ll d$:
+\[
+u_t = W_{\mathrm{in}} h_t^{(\ell)}, \qquad
+\alpha_t = \sigma\!\big(W_g[h_t^{(\ell)}; z_{t-1}]\big), \qquad
+z_t = (1-\alpha_t)\odot A z_{t-1} + \alpha_t \odot \phi(u_t),
+\]
+\[
+h_t^{(\ell)} \leftarrow h_t^{(\ell)} + W_{\mathrm{out}} z_t .
+\]
+$A$ is diagonal (or diagonal-plus-low-rank), making the recurrence
+parallel-scannable in training and $O(1)$-memory at inference. The gate
+$\alpha_t$ is the ``adaptive'' element: writes are cheap when a move perturbs the
+state locally and expensive when it does not, so capacity is spent on state change
+rather than uniformly on every token. The auxiliary loss
+\[
+\mathcal{L} = \mathcal{L}_{\mathrm{LM}} + \lambda\,\mathcal{L}_{\mathrm{state}},
+\qquad
+\mathcal{L}_{\mathrm{state}} = \mathrm{CE}\big(\mathrm{dec}(z_t),\, s_t\big),
+\]
+supervises $z_t$ to \emph{be} the state during training; the oracle is not
+required at inference. We treat $\lambda \to 0$ (architecture only), $\lambda>0$
+(supervised channel), and $\lambda>0$ with $z$ ablated at test time as three
+distinct conditions, because conflating architecture with auxiliary supervision is
+the most common confound in this literature.
+
+Parameter cost is $2 d d_s + O(d_s^2)$ per insertion point; at $d{=}512$,
+$d_s{=}64$, $k{=}4$ this is under $2\%$ of model parameters, so any gain cannot be
+attributed to capacity. We additionally report a parameter-matched attention-only
+control.
+
+\section{Evaluation Plan and Pre-Registered Predictions}
+\label{sec:eval}
+
+\subsection{Hypotheses}
+\begin{description}
+\item[H1] $F(t)$ declines monotonically in $t$ for attention-only models, with
+$H_{0.05}$ well inside the context window.
+\item[H2] $H_{0.05}$ scales sub-linearly with depth and width; scaling is not a
+substitute for an architectural state carrier at fixed compute.
+\item[H3] ALSB raises $H_{0.05}$ and reduces $E_{\mathrm{state}}$ at matched
+parameters and matched tokens.
+\item[H4] The reduction is concentrated in $E_{\mathrm{state}}$, not
+$E_{\mathrm{plan}}$: the intervention targets memory, and should not substantially
+improve tactical judgement given an intact position.
+\item[H5] Transfer: a decoder LM pre-trained with ALSB improves on long-horizon
+mathematical reasoning relative to a matched baseline, with gains increasing in
+required step count.
+\end{description}
+
+H4 is the falsifiable one. If ALSB improves everything uniformly, the mechanism
+claimed here is wrong even if the end numbers look good, and we will report it as
+such.
+
+\subsection{Cross-domain transfer}
+\label{sec:transfer}
+Identical pre-training corpus and budget for baseline and ALSB; evaluation on
+GSM8K, MATH, and multi-step competition-style problems, reported \emph{stratified
+by ground-truth solution length}, since H5 predicts an interaction between
+architecture and horizon rather than a main effect. We additionally report a
+state-tracking analogue for arithmetic --- correctness of intermediate variable
+values extracted from the chain --- so that the decomposition of
+\S\ref{sec:formal} carries over.
+
+\subsection{Results}
+\label{sec:results}
+
+\begin{table}[t]
+\centering
+\caption{Planning horizon and error decomposition. \textsc{[Pending run --- all
+cells are placeholders. No values are reported until the protocol of
+\S\ref{sec:eval} has been executed.]}}
+\begin{tabular}{lccccc}
+\toprule
+Model & Params & $H_{0.05}$ (ply) & $E_{\mathrm{state}}$@40 & $E_{\mathrm{plan}}$@40 & Puzzle acc.\ (10-ply) \\
+\midrule
+Attention-only (12L/512) & --- & --- & --- & --- & --- \\
+Attention-only (24L/512) & --- & --- & --- & --- & --- \\
+Attention-only (12L/768) & --- & --- & --- & --- & --- \\
+ALSB ($\lambda{=}0$)     & --- & --- & --- & --- & --- \\
+ALSB ($\lambda{>}0$)     & --- & --- & --- & --- & --- \\
+ALSB, $z$ ablated        & --- & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Transfer to mathematical reasoning, stratified by solution length.
+\textsc{[Pending run --- placeholders.]}}
+\begin{tabular}{lcccc}
+\toprule
+Model & GSM8K ($\le$4 steps) & GSM8K ($>$4) & MATH & Competition-style \\
+\midrule
+Baseline LM & --- & --- & --- & --- \\
+ALSB LM     & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Limitations}
+
+Chess state is finite, exactly specified, and Markovian given the position;
+natural-language reasoning state is none of these, so H5 is a genuine empirical
+gamble rather than a corollary. A fixed-width $z$ is a hard capacity ceiling ---
+tasks whose state grows with $t$, such as open-ended fact accumulation, should not
+benefit, and we predict that explicitly. Auxiliary state supervision requires an
+oracle at training time, available in chess and in synthetic mathematics but not
+in general corpora; the $\lambda{=}0$ condition exists to measure how much of the
+effect survives without it. Finally, probe decodability is evidence of presence,
+not of use; the patching experiment mitigates but does not eliminate this.
+
+\section{Conclusion}
+
+Long-horizon reasoning failure in Transformers is currently measured as an
+undifferentiated accuracy drop and treated with inference-time search. We argue it
+should first be measured as a decomposition --- state lost versus plan chosen
+badly --- and that this measurement requires a domain with an exact state oracle.
+Chess from notation supplies one. Under that instrument we define the planning
+horizon, attribute its limit to a mismatch between the $O(L)$ memory attention
+spends and the $O(1)$ state it maintains, and propose a small supervised recurrent
+bottleneck as the corresponding architectural prior. The claim we most want tested
+is not that the fix works, but that the decomposition is the right one.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}
