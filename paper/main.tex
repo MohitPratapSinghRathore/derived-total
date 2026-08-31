@@ -353,6 +353,15 @@ available is also a good representation for the output head. We keep the failed
 prediction because it constrains where a state carrier should be inserted, and
 our spacing was chosen before we knew.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\linewidth]{layers.png}
+\caption{State decodability by layer and depth. Contrary to our prediction, the
+position is most linearly available at the final block rather than in the middle
+of the stack.}
+\label{fig:layers}
+\end{figure}
+
 \section{Diagnostic Protocol}
 \label{sec:diag}
 
@@ -387,6 +396,17 @@ probability mass on legal continuations, both read against the oracle.
 
 \input{tables}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{decay.png}
+\caption{Internal state and external behaviour decay together. (a) Occupied-square
+state accuracy at the most decodable layer, against a majority predictor, a
+label-permutation control, and a randomised-weight model of identical
+architecture. (b) The illegal top-1 move rate and the probability mass the model
+places on legal continuations.}
+\label{fig:decay}
+\end{figure}
+
 Occupied-square decodability falls from \result{occFirst} in the opening to
 \result{occLast} in the deepest bucket, while the illegal top-1 rate rises from
 \result{illFirst} to \result{illLast} and the probability mass on legal moves
@@ -409,6 +429,16 @@ plays an illegal move ranges from \result{corrGlobalMinAttn} to
 reports as evidence of a world model, carries almost no information about whether
 the next action will be valid.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{coupling.png}
+\caption{(a) Within a fixed depth, the correlation between the number of
+misremembered squares and playing an illegal move is close to zero. (b) The same
+representation, scored only on the squares the move actually uses, separates
+illegal from legal moves sharply.}
+\label{fig:coupling}
+\end{figure}
+
 We think this deserves emphasis because it is a negative result about a standard
 practice. Reporting that a probe recovers a world model at some accuracy says
 little about whether that model is load-bearing.
@@ -428,6 +458,18 @@ the model believes it is in. We reconstruct that believed position from the prob
 and re-score the model's own move in it, clearing castling rights so nothing is
 licensed by an assumption we did not decode, and testing pseudo-legality because
 a decoded board may lack a king.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{belief.png}
+\caption{The errors are coherent. (a) Against depth, restricted to buckets with
+at least thirty illegal cases. (b) Pooled: an illegal move is far more likely to
+be legal in the model's own believed board than under another position's belief
+at equal depth, or than an arbitrary illegal move is under the model's own
+belief. The dashed line is the ceiling this test can detect, set by how often
+genuinely legal moves are recovered as legal.}
+\label{fig:belief}
+\end{figure}
 
 Of the illegal moves the model plays, \result{belIllAttn} are legal in its own
 believed position, with a bootstrap interval of [\result{belIllLoAttn},
@@ -449,6 +491,15 @@ memory failure rather than a reasoning failure.
 
 \subsection{Scale}
 \label{sec:scale}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{scale.png}
+\caption{(a) The horizon against model size. (b) Belief consistency and its
+matched control against model size. The question is whether the mechanism is a
+property of small models or survives scale.}
+\label{fig:scale}
+\end{figure}
 
 \subsection{An intervention, evaluated by the diagnostic}
 \label{sec:alsb}
@@ -514,6 +565,16 @@ roughly one, the random control also starts destroying the output distribution,
 so any effect there is damage rather than belief. We report the intervention at
 \result{patchAlphaAttn}, inside the window where the manipulation succeeds and
 the control does not.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.66\linewidth]{patch_calibration.png}
+\caption{Choosing the edit strength. Too small and the belief does not flip; too
+large and a norm-matched random direction also destroys the output distribution,
+so any effect there is damage rather than belief. We report inside the shaded
+window.}
+\label{fig:patchcal}
+\end{figure}
 
 At that strength, editing the state direction removes \result{patchCutAttn} of
 the probability mass on moves from the affected square, decreasing it in

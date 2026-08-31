@@ -1,7 +1,7 @@
-"""Stage 7: emit LaTeX tables straight from results/*.json.
+"""Emit LaTeX tables directly from results/*.json.
 
-Nothing in the paper's tables is typed by hand; this file is the only path from
-measurement to manuscript, so a number in the PDF can always be traced to a run.
+This is the only path from measurement to manuscript. No table cell is typed by
+hand, and an absent value prints n/a rather than a guess.
 """
 import os, json, glob
 import numpy as np
@@ -9,183 +9,201 @@ import numpy as np
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
 OUT = os.path.join(os.path.dirname(__file__), "..", "paper", "tables.tex")
 
-CHESS = [("attn_8L256", "Attention-only, 8L/256"),
-         ("attnpm_8L256", "Attention-only, param-matched"),
-         ("alsb_l0_8L256", "ALSB ($\\lambda{=}0$)"),
-         ("alsb_l1_8L256", "ALSB ($\\lambda{=}1$)"),
-         ("attn_12L256", "Attention-only, 12L/256"),
-         ("attn_8L384", "Attention-only, 8L/384")]
-SYNTH = [("attn", "Attention-only"),
-         ("attnpm", "Attention-only, param-matched"),
-         ("alsb_l0", "ALSB ($\\lambda{=}0$)"),
-         ("alsb_l1", "ALSB ($\\lambda{=}1$)")]
+CORE = [("attn_8L256", "Attention-only"),
+        ("attnpm_8L256", "Attention-only, parameter-matched"),
+        ("alsb_l0_8L256", "Recurrent channel ($\\lambda{=}0$)"),
+        ("alsb_l1_8L256", "Recurrent channel ($\\lambda{=}1$)")]
+LADDER = [("attn_6L192", "6L/192"), ("attn_8L256", "8L/256"),
+          ("attn_12L256", "12L/256"), ("attn_8L384", "8L/384"),
+          ("attn_12L384", "12L/384"), ("attn_12L512", "12L/512")]
 
 
-def seeds(pattern, extra=""):
-    out = []
-    for f in sorted(glob.glob(os.path.join(RES, pattern))):
-        b = os.path.basename(f)
-        if any(t in b for t in ("_probes", "_eplan", "_patch", "summary")):
-            continue
-        if not extra and "zablate" in b:
-            continue
-        out.append(json.load(open(f)))
-    return out
+def load(n):
+    p = os.path.join(RES, f"{n}.json")
+    return json.load(open(p)) if os.path.exists(p) else None
 
 
-def pm(vals, fmt="{:.3f}"):
-    v = np.array(vals, dtype=float)
-    if len(v) == 0:
-        return "---"
-    if len(v) == 1:
-        return fmt.format(v[0])
-    return (fmt + "\\,$\\pm$\\," + fmt).format(v.mean(), v.std(ddof=1))
+def seeds(cond):
+    return [r for r in (load(f"{cond}_s{s}") for s in (0, 1, 2)) if r]
 
 
-def chess_table():
-    L = ["\\begin{table}[t]", "\\centering", "\\small",
-         "\\caption{Chess arm. Occupied-square state accuracy (occ), illegal top-1 move",
-         "rate, and behavioural horizon $H_{\\mathrm{ill}}$ (first ply bucket where the",
-         "illegal rate exceeds the threshold). Mean\\,$\\pm$\\,s.d.\\ over seeds.}",
-         "\\label{tab:chess}",
-         "\\begin{tabular}{lrccccc}", "\\toprule",
-         "Model & Params & seeds & occ@40--50 & illegal@40--50 & $H_{\\mathrm{ill}}(.05)$ & $H_{\\mathrm{ill}}(.10)$ \\\\",
-         "\\midrule"]
-    for cond, label in CHESS:
-        rs = seeds(f"{cond}_s*.json")
-        if not rs:
-            continue
-        bi = 4
-        occ = [np.array(r["fidelity_occ"])[r["best_layer"]][bi] for r in rs]
-        ill = [r["illegal"][bi] for r in rs]
-        h5 = [r["H_ill_05"] for r in rs]
-        h10 = [r["H_ill_10"] for r in rs]
-        L.append(f"{label} & {rs[0]['params']:,} & {len(rs)} & {pm(occ)} & {pm(ill)} & "
-                 f"{pm(h5, '{:.0f}')} & {pm(h10, '{:.0f}')} \\\\".replace(",", "{,}"))
-    # z-ablation
-    rs = seeds("alsb_l1_8L256_s*_zablate.json", extra="z")
-    rs = [r for r in rs if r.get("ablate_z")]
-    if rs:
-        bi = 4
-        occ = [np.array(r["fidelity_occ"])[r["best_layer"]][bi] for r in rs]
-        ill = [r["illegal"][bi] for r in rs]
-        h5 = [r["H_ill_05"] for r in rs]
-        h10 = [r["H_ill_10"] for r in rs]
-        L.append("\\midrule")
-        L.append(f"ALSB ($\\lambda{{=}}1$), $z$ ablated at test & --- & {len(rs)} & {pm(occ)} & "
-                 f"{pm(ill)} & {pm(h5,'{:.0f}')} & {pm(h10,'{:.0f}')} \\\\")
-    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
-    return L
+def pm(v, fmt="{:.3f}"):
+    v = [x for x in v if x is not None]
+    if not v:
+        return "n/a"
+    a = np.array(v, float)
+    if len(a) == 1:
+        return fmt.format(a[0])
+    return (fmt + "\\,$\\pm$\\," + fmt).format(a.mean(), a.std(ddof=1))
 
 
 def controls_table():
-    rs = seeds("attn_8L256_s0.json")
-    if not rs or "control_random_occ" not in rs[0]:
+    r = load("attn_8L256_s0")
+    if not r or "control_random_occ" not in r:
         return []
-    r = rs[0]; bl = r["best_layer"]; b = r["buckets"]
+    bl = r["best_layer"]
     occ = np.array(r["fidelity_occ"])[bl]
     cs = np.array(r["control_shuffled_occ"])[bl]
     cr = np.array(r["control_random_occ"])[bl]
     mj = np.array(r["majority_occ"])
-    ill = np.array(r["illegal"])
-    L = ["\\begin{table}[t]", "\\centering", "\\small",
-         "\\caption{Chess arm, baseline model: state decodability against every trivial",
-         "explanation. Occupied-square accuracy at the best layer, versus a per-(square,",
-         "ply) majority predictor, a cross-game label control, and a randomised-weight",
-         "model of identical architecture. The gap is what the trained model knows.}",
-         "\\label{tab:controls}",
-         "\\begin{tabular}{lccccc}", "\\toprule",
-         "Ply & model & majority & cross-game & random-weight & illegal rate \\\\",
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{State decodability against every trivial explanation, for the",
+         "baseline model. Occupied-square accuracy at the most decodable layer,",
+         "beside a per-square per-depth majority predictor, a label-permutation",
+         "control, and a randomised-weight model of identical architecture. The gap",
+         "is what training put there.}",
+         "\\label{tab:controls}", "\\begin{tabular}{lccccc}", "\\toprule",
+         "Ply & model & majority & label perm. & random weights & illegal rate \\\\",
          "\\midrule"]
-    for i, (lo, hi) in enumerate(b):
-        L.append(f"{lo}--{hi} & {occ[i]:.3f} & {mj[i]:.3f} & {cs[i]:.3f} & {cr[i]:.3f} "
-                 f"& {ill[i]:.4f} \\\\")
+    for i, (lo, hi) in enumerate(r["buckets"]):
+        L.append(f"{lo}--{hi} & {occ[i]:.3f} & {mj[i]:.3f} & {cs[i]:.3f} & "
+                 f"{cr[i]:.3f} & {r['illegal'][i]:.4f} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L
 
 
+def mechanism_table():
+    """The paper's central table: does state loss explain behaviour, per model."""
+    rows = []
+    for cond, label in [(c, l) for c, l in CORE] + \
+                       [("attn_6L192", "6L/192"), ("attn_12L384", "12L/384"),
+                        ("attn_12L512", "12L/512")]:
+        c = load(f"{cond}_s0_coupling")
+        b = load(f"{cond}_s0_belief")
+        r = load(f"{cond}_s0")
+        if not (c and b and r):
+            continue
+        Lc = c["locality"]
+        it = Lc["illegal_touched_wrong"] + Lc["illegal_touched_ok"]
+        lt = Lc["legal_touched_wrong"] + Lc["legal_touched_ok"]
+        cors = [x for x in c["within_bucket_corr_wrongsquares_illegal"] if x is not None]
+        o = b["overall"]
+        rows.append((label, r["params"],
+                     f"{min(cors):.2f} to {max(cors):.2f}" if cors else "n/a",
+                     Lc["illegal_touched_wrong"] / max(it, 1),
+                     Lc["legal_touched_wrong"] / max(lt, 1),
+                     o["illegal_legal_in_belief"],
+                     o.get("mismatched_belief_legal"),
+                     o["randomillegal_legal_in_belief"],
+                     o["legal_legal_in_belief"]))
+    if not rows:
+        return []
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Does state loss explain behaviour? Aggregate error is the",
+         "within-depth correlation between misremembered squares and playing an",
+         "illegal move. Action-relevant error is the probability the probe is wrong",
+         "on the squares the move uses. Belief consistency is the share of illegal",
+         "moves that are legal in the model's own decoded board, beside the same",
+         "move under another position's belief, an arbitrary illegal move, and the",
+         "decoding ceiling given by genuinely legal moves.}",
+         "\\label{tab:mechanism}",
+         "\\begin{tabular}{lrccccccc}", "\\toprule",
+         "& & aggregate & \\multicolumn{2}{c}{action-relevant}"
+         " & \\multicolumn{4}{c}{belief consistency} \\\\",
+         "\\cmidrule(lr){4-5}\\cmidrule(lr){6-9}",
+         "Model & Params & corr. & illegal & legal & own & mismatch & random & ceiling \\\\",
+         "\\midrule"]
+    for (lab, prm, cor, li, ll, bi, bm, br, bc) in rows:
+        bm_s = "n/a" if bm is None else f"{bm:.3f}"
+        L.append(f"{lab} & {prm:,} & {cor} & {li:.3f} & {ll:.3f} & "
+                 f"\\textbf{{{bi:.3f}}} & {bm_s} & {br:.3f} & {bc:.3f} \\\\"
+                 .replace(",", "{,}"))
+    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
+    return L
+
+
+def horizon_table():
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Horizon and state fidelity by condition. $H_{\\mathrm{ill}}$ is the",
+         "first ply bucket where the illegal-move rate crosses the threshold.",
+         "Mean\\,$\\pm$\\,s.d.\\ over seeds where more than one was run.}",
+         "\\label{tab:horizon}", "\\begin{tabular}{lrcccc}", "\\toprule",
+         "Model & Params & seeds & occ.\\ acc.\\ @40--50 & illegal @40--50 "
+         "& $H_{\\mathrm{ill}}(.05)$ \\\\", "\\midrule"]
+    any_ = False
+    for cond, label in CORE:
+        rs = seeds(cond)
+        if not rs:
+            continue
+        any_ = True
+        L.append(f"{label} & {rs[0]['params']:,} & {len(rs)} & "
+                 f"{pm([np.array(r['fidelity_occ'])[r['best_layer']][4] for r in rs])} & "
+                 f"{pm([r['illegal'][4] for r in rs])} & "
+                 f"{pm([r['H_ill_05'] for r in rs], '{:.0f}')} \\\\".replace(",", "{,}"))
+    zs = [load(f"alsb_l1_8L256_s{s}_zablate") for s in (0, 1, 2)]
+    zs = [z for z in zs if z]
+    if zs:
+        L.append("\\midrule")
+        L.append(f"\\quad read-out ablated at test & n/a & {len(zs)} & "
+                 f"{pm([np.array(z['fidelity_occ'])[z['best_layer']][4] for z in zs])} & "
+                 f"{pm([z['illegal'][4] for z in zs])} & "
+                 f"{pm([z['H_ill_05'] for z in zs], '{:.0f}')} \\\\")
+    L += ["\\midrule"]
+    for cond, label in LADDER:
+        r = load(f"{cond}_s0")
+        if not r:
+            continue
+        any_ = True
+        L.append(f"\\quad {label} & {r['params']:,} & 1 & "
+                 f"{np.array(r['fidelity_occ'])[r['best_layer']][4]:.3f} & "
+                 f"{r['illegal'][4]:.3f} & {r['H_ill_05']:.0f} \\\\".replace(",", "{,}"))
+    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
+    return L if any_ else []
+
+
 def eplan_table():
     rows = []
-    for cond, label in CHESS[:4]:
-        f = os.path.join(RES, f"{cond}_s0_eplan.json")
-        if not os.path.exists(f):
-            continue
-        d = json.load(open(f))["eplan"]
-        rows.append((label, d))
+    for cond, label in CORE:
+        d = load(f"{cond}_s0_eplan")
+        if d:
+            rows.append((label, d["eplan"]))
     if not rows:
         return []
     keys = list(rows[0][1].keys())
-    L = ["\\begin{table}[t]", "\\centering", "\\small",
-         "\\caption{Chess arm, $E_{\\mathrm{plan}}$: engine centipawn loss CONDITIONED on the",
-         "top-1 move being legal and the probe recovering the exact position. This is the",
-         "H4 test -- the intervention should move $E_{\\mathrm{state}}$, not this.}",
-         "\\label{tab:eplan}",
-         "\\begin{tabular}{l" + "c" * len(keys) + "}", "\\toprule",
-         "Model & " + " & ".join(k.replace("-", "--") for k in keys) + " \\\\",
-         "\\midrule"]
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Planning error: mean engine centipawn loss, scored only where the",
+         "move is legal and the probe independently recovers the exact position.",
+         "This isolates judgement from memory.}",
+         "\\label{tab:eplan}", "\\begin{tabular}{l" + "c" * len(keys) + "}", "\\toprule",
+         "Model & " + " & ".join(k.replace("-", "--") for k in keys) + " \\\\", "\\midrule"]
     for label, d in rows:
-        cells = []
-        for k in keys:
-            v = d[k]["mean_cp_loss"]
-            cells.append("---" if v is None else f"{v:.0f}")
+        cells = ["n/a" if d[k]["mean_cp_loss"] is None else f"{d[k]['mean_cp_loss']:.0f}"
+                 for k in keys]
         L.append(f"{label} & " + " & ".join(cells) + " \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L
 
 
-def synth_table():
-    L = ["\\begin{table}[t]", "\\centering", "\\small",
-         "\\caption{Domain 2 (variable-state tracking). $E_{\\mathrm{state}}$ is the rate at",
-         "which the two queried variables are not decodable at the query; $E_{\\mathrm{plan}}$",
-         "is the answer-error rate GIVEN both are decodable. Deepest bucket (32--40 steps).",
-         "Mean\\,$\\pm$\\,s.d.\\ over seeds.}",
-         "\\label{tab:synth}",
-         "\\begin{tabular}{lrcccc}", "\\toprule",
-         "Model & Params & seeds & answer acc. & $E_{\\mathrm{state}}$ & $E_{\\mathrm{plan}}$ \\\\",
-         "\\midrule"]
-    any_ = False
-    for cond, label in SYNTH:
-        rs = seeds(f"synth_{cond}_s*.json")
-        if not rs:
-            continue
-        any_ = True
-        bi = -1
-        acc = [r["ans_acc"][bi] for r in rs]
-        es = [r["estate"][bi] for r in rs]
-        ep = [r["eplan"][bi] for r in rs]
-        L.append(f"{label} & {rs[0]['params']:,} & {len(rs)} & {pm(acc)} & {pm(es)} & "
-                 f"{pm(ep)} \\\\".replace(",", "{,}"))
-    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
-    return L if any_ else []
-
-
 def patch_table():
     rows = []
-    for cond, label in CHESS[:4]:
-        f = os.path.join(RES, f"{cond}_s0_patch.json")
-        if os.path.exists(f):
-            rows.append((label, json.load(open(f))))
+    for cond, label in CORE:
+        d = load(f"{cond}_s0_patch")
+        if d and "state_edit_all" in d:
+            rows.append((label, d))
     if not rows:
         return []
-    L = ["\\begin{table}[t]", "\\centering", "\\small",
-         "\\caption{Causal patching. Editing probe-identified state directions toward",
-         "``square empty'' should reduce the probability mass on moves originating from",
-         "that square. A representation that is merely correlated would not respond.}",
-         "\\label{tab:patch}",
-         "\\begin{tabular}{lccc}", "\\toprule",
-         "Model & $n$ & frac.\\ mass decreased & mean mass drop \\\\", "\\midrule"]
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Causal intervention at the calibrated edit strength. Editing the",
+         "state direction removes probability mass from moves out of the affected",
+         "square; a norm-matched random direction does not. The manipulation check",
+         "reports how often the edit actually changed the decoded belief.}",
+         "\\label{tab:patch}", "\\begin{tabular}{lccccc}", "\\toprule",
+         "Model & $n$ & belief flipped & mass before & mass after "
+         "& random edit after \\\\", "\\midrule"]
     for label, d in rows:
-        L.append(f"{label} & {d['n']} & {d['frac_mass_decreased']:.3f} & "
-                 f"{d['mean_mass_drop']:.4f} \\\\")
+        se, rd = d["state_edit_all"], d["norm_matched_random_edit"]
+        L.append(f"{label} & {d['n']} & {d['manipulation_check_flip_rate']:.3f} & "
+                 f"{se['mass_before']:.3f} & \\textbf{{{se['mass_after']:.3f}}} & "
+                 f"{rd['mass_after']:.3f} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L
 
 
 def main():
-    L = ["% AUTO-GENERATED by code/make_tables.py -- do not edit by hand", ""]
-    for f in (controls_table, chess_table, eplan_table, patch_table, synth_table):
+    L = ["% AUTO-GENERATED by code/make_tables.py. Do not edit by hand.", ""]
+    for f in (controls_table, mechanism_table, horizon_table, patch_table, eplan_table):
         L += f()
-    open(OUT, "w").write("\n".join(L))
+    open(OUT, "w", encoding="utf-8").write("\n".join(L))
     print(f"wrote {OUT} ({len(L)} lines)")
 
 
