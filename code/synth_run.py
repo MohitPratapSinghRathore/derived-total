@@ -45,15 +45,15 @@ def train(cond, seed, tr, steps, bs, dev="cuda", d=256, n_layer=8, k=4, d_s=64,
     t0 = time.time()
     for st in range(1, steps + 1):
         idx = rng.integers(0, N, bs)
-        x = torch.from_numpy(toks[idx]).to(dev)
-        pad = torch.from_numpy(np.arange(SEQ)[None] >= lens[idx][:, None]).to(dev)
+        x = torch.from_numpy(toks[idx].astype(np.int64)).to(dev)
+        pad = torch.from_numpy(np.arange(SEQ)[None] >= lens[idx][:, None].astype(np.int64)).to(dev)
         m.train()
         with torch.amp.autocast("cuda", dtype=torch.float16):
             logits, _, sl = m(x[:, :-1])
             tgt = x[:, 1:].clone(); tgt[pad[:, 1:]] = -100
             loss = F.cross_entropy(logits.reshape(-1, VOCAB), tgt.reshape(-1), ignore_index=-100)
             if lam > 0:
-                s = torch.from_numpy(state[idx]).to(dev)[:, :-1]
+                s = torch.from_numpy(state[idx].astype(np.int64)).to(dev)[:, :-1]
                 mm = ~pad[:, :-1]
                 slg = sl.reshape(bs, SEQ - 1, NVAR, MOD)
                 loss = loss + lam * F.cross_entropy(slg[mm].reshape(-1, MOD),
@@ -78,9 +78,9 @@ def fit_probe(m, pr, epochs=2, bs=64, dev="cuda", d=256, n_layer=8):
         order = np.random.permutation(N)
         for i in range(0, N, bs):
             idx = order[i:i + bs]
-            x = torch.from_numpy(toks[idx]).to(dev)
-            s = torch.from_numpy(state[idx]).to(dev)
-            v = torch.from_numpy(np.arange(SEQ)[None] < lens[idx][:, None]).to(dev)
+            x = torch.from_numpy(toks[idx].astype(np.int64)).to(dev)
+            s = torch.from_numpy(state[idx].astype(np.int64)).to(dev)
+            v = torch.from_numpy(np.arange(SEQ)[None] < lens[idx][:, None].astype(np.int64)).to(dev)
             with torch.no_grad(), torch.amp.autocast("cuda", dtype=torch.float16):
                 _, hs, _ = m(x, return_hidden=True)
             loss = 0
@@ -101,16 +101,16 @@ def measure(m, probes, ev, dev="cuda", bs=64, n_layer=8):
     plan_bad = np.zeros(nb); plan_n = np.zeros(nb)
     for i in range(0, N, bs):
         idx = np.arange(i, min(i + bs, N))
-        x = torch.from_numpy(toks[idx]).to(dev)
-        s = torch.from_numpy(state[idx]).to(dev)
+        x = torch.from_numpy(toks[idx].astype(np.int64)).to(dev)
+        s = torch.from_numpy(state[idx].astype(np.int64)).to(dev)
         with torch.amp.autocast("cuda", dtype=torch.float16):
             logits, hs, _ = m(x, return_hidden=True)
         logits = logits.float()
-        ap = anspos[idx]
+        ap = anspos[idx].astype(np.int64)
         nsteps = (ap - 4) // 4
         # end-task: token predicted at position ap-1 should be the answer token
         pred_ans = logits[np.arange(len(idx)), ap - 1].argmax(-1).cpu().numpy()
-        true_ans = toks[idx, ap]
+        true_ans = toks[idx, ap].astype(np.int64)
         # probe state at the query position (ap-3 = <query> token)
         qpos = ap - 3
         preds = []
@@ -142,12 +142,12 @@ def measure_eplan(m, probe, layer, ev, dev="cuda", bs=64):
     e_state_bad = np.zeros(nb); e_state_n = np.zeros(nb)
     for i in range(0, len(toks), bs):
         idx = np.arange(i, min(i + bs, len(toks)))
-        x = torch.from_numpy(toks[idx]).to(dev)
-        s = torch.from_numpy(state[idx]).to(dev)
+        x = torch.from_numpy(toks[idx].astype(np.int64)).to(dev)
+        s = torch.from_numpy(state[idx].astype(np.int64)).to(dev)
         with torch.amp.autocast("cuda", dtype=torch.float16):
             logits, hs, _ = m(x, return_hidden=True)
         logits = logits.float()
-        ap = anspos[idx]; qpos = ap - 3
+        ap = anspos[idx].astype(np.int64); qpos = ap - 3
         nsteps = (ap - 4) // 4
         pred_ans = logits[np.arange(len(idx)), ap - 1].argmax(-1).cpu().numpy()
         pl = probe(hs[layer].float()).reshape(len(idx), SEQ, NVAR, MOD).argmax(-1)
@@ -176,11 +176,13 @@ def main():
     ap.add_argument("--steps", type=int, default=8000)
     ap.add_argument("--bs", type=int, default=32)
     ap.add_argument("--n_train", type=int, default=200000)
+    ap.add_argument("--n_probe", type=int, default=6000)
+    ap.add_argument("--n_eval", type=int, default=6000)
     args = ap.parse_args()
     os.makedirs(RES, exist_ok=True)
 
     print("generating data", flush=True)
-    tr, pr, ev = make_data(args.n_train, 20000, 20000)
+    tr, pr, ev = make_data(args.n_train, args.n_probe, args.n_eval)
     out = {}
     for cond in args.conds.split(","):
         for seed in [int(s) for s in args.seeds.split(",")]:

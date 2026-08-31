@@ -23,9 +23,9 @@ another long-horizon state-tracking domain?
 import os, json
 import numpy as np
 
-NVAR = 8
-MOD = 100
-MAX_STEPS = 40
+NVAR = 4
+MOD = 20
+MAX_STEPS = 32
 OPS = ["+", "-"]          # multiplication mod 100 makes values jump discontinuously
                           # and pins small models at the floor; additive updates
                           # keep the task learnable while still requiring exact
@@ -49,10 +49,10 @@ SEQ = 1 + 4 * MAX_STEPS + 4          # bos + steps + query va vb ans
 def gen(n, seed=0, min_steps=5):
     """Returns tokens (n,SEQ), lens, state (n,SEQ,NVAR), anspos, answers."""
     rng = np.random.default_rng(seed)
-    toks = np.zeros((n, SEQ), dtype=np.int64)
-    state = np.zeros((n, SEQ, NVAR), dtype=np.int64)
-    lens = np.zeros(n, dtype=np.int64)
-    anspos = np.zeros(n, dtype=np.int64)
+    toks = np.zeros((n, SEQ), dtype=np.int16)
+    state = np.zeros((n, SEQ, NVAR), dtype=np.uint8)
+    lens = np.zeros(n, dtype=np.int32)
+    anspos = np.zeros(n, dtype=np.int32)
     for i in range(n):
         nsteps = int(rng.integers(min_steps, MAX_STEPS + 1))
         val = np.zeros(NVAR, dtype=np.int64)
