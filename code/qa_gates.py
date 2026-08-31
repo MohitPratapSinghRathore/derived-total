@@ -62,6 +62,10 @@ def main():
     prose = re.sub(r"\\begin\{table\}.*?\\end\{table\}", "", src, flags=re.S)
     prose = re.sub(r"\\input\{[^}]*\}", "", prose)
     prose = re.sub(r"\$[^$]*\$", "", prose)          # maths is not a result claim
+    # layout lengths are not result claims either
+    prose = re.sub(r"\\includegraphics\[[^]]*\]", "", prose)
+    prose = re.sub(r"\\(?:v|h)space\{[^}]*\}", "", prose)
+    prose = re.sub(r"\[width=[^]]*\]", "", prose)
     bare = re.findall(r"(?<![\w.])\d+\.\d+(?![\w])", prose)
     gate(len(bare) == 0, "no hardcoded decimal figures in prose",
          f"found {bare[:5]}" if bare else "")
