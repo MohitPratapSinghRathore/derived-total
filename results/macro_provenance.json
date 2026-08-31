@@ -22,5 +22,189 @@
  "nVocab": {
   "value": "1,926",
   "source": "data/proc"
+ },
+ "paramsAttn": {
+  "value": "7,345,920",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "occ40Attn": {
+  "value": "0.559",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "occ40AttnSD": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "occ40AttnN": {
+  "value": "1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "ill40Attn": {
+  "value": "0.177",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "ill40AttnSD": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "ill40AttnN": {
+  "value": "1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hill05Attn": {
+  "value": "30",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hill05AttnSD": {
+  "value": "0",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hill05AttnN": {
+  "value": "1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hill10Attn": {
+  "value": "40",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hill10AttnSD": {
+  "value": "0",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hill10AttnN": {
+  "value": "1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "valAttn": {
+  "value": "3.029",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "valAttnSD": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "valAttnN": {
+  "value": "1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "bestLayerAttn": {
+  "value": "7.0",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "bestLayerAttnSD": {
+  "value": "0.0",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "bestLayerAttnN": {
+  "value": "1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "occFirst": {
+  "value": "0.974",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "occLast": {
+  "value": "0.063",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "illFirst": {
+  "value": "0.0004",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "illLast": {
+  "value": "0.319",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "massFirst": {
+  "value": "0.993",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "massLast": {
+  "value": "0.455",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "nLayers": {
+  "value": "8",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "bestLayerBase": {
+  "value": "7",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "ctlMaj40": {
+  "value": "0.261",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "layerProfFirst": {
+  "value": "0.322",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "layerProfLast": {
+  "value": "0.543",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "exactPly": {
+  "value": "0",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "locIllAttn": {
+  "value": "0.806",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "locLegAttn": {
+  "value": "0.384",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "corrGlobalMinAttn": {
+  "value": "0.025",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "corrGlobalMaxAttn": {
+  "value": "0.080",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "ageFirstAttn": {
+  "value": "0.117",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "agePeakAttn": {
+  "value": "0.387",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "ageLastAttn": {
+  "value": "0.166",
+  "source": "results/attn_8L256_s0_coupling.json"
+ },
+ "belIllAttn": {
+  "value": "0.356",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belLegAttn": {
+  "value": "0.657",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belRandAttn": {
+  "value": "0.008",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belMisAttn": {
+  "value": "0.050",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belRatioAttn": {
+  "value": "44",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belRatioMisAttn": {
+  "value": "7.0",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belIllLoAttn": {
+  "value": "0.348",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "belIllHiAttn": {
+  "value": "0.364",
+  "source": "results/attn_8L256_s0_belief.json"
  }
 }

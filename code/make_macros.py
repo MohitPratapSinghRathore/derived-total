@@ -136,6 +136,48 @@ for cond, tag in [("attn_8L256", "Attn"), ("alsb_l1_8L256", "AlsbOne")]:
     put(f"patchDrop{tag}", d["mean_mass_drop"], src, "{:.4f}")
     put(f"patchN{tag}", d["n"], src, "{:.0f}")
 
+# ------------------------------------------------- coupling and belief analyses
+for cond, tag in [("attn_8L256", "Attn"), ("attnpm_8L256", "AttnPM"),
+                  ("alsb_l0_8L256", "AlsbZero"), ("alsb_l1_8L256", "AlsbOne"),
+                  ("attn_6L192", "Rung1"), ("attn_12L384", "Rung3"),
+                  ("attn_12L512", "Rung4")]:
+    d = load(f"{cond}_s0_coupling")
+    if d:
+        src = f"results/{cond}_s0_coupling.json"
+        L = d["locality"]
+        it = L["illegal_touched_wrong"] + L["illegal_touched_ok"]
+        lt = L["legal_touched_wrong"] + L["legal_touched_ok"]
+        put(f"locIll{tag}", L["illegal_touched_wrong"] / max(it, 1), src)
+        put(f"locLeg{tag}", L["legal_touched_wrong"] / max(lt, 1), src)
+        cs = [c for c in d["within_bucket_corr_wrongsquares_illegal"] if c is not None]
+        if cs:
+            put(f"corrGlobalMin{tag}", min(cs), src, "{:.3f}")
+            put(f"corrGlobalMax{tag}", max(cs), src, "{:.3f}")
+        ages = d["error_by_age"]
+        put(f"ageFirst{tag}", ages[0], src)
+        put(f"agePeak{tag}", max(ages), src)
+        put(f"ageLast{tag}", ages[-1], src)
+
+    d = load(f"{cond}_s0_belief")
+    if d:
+        src = f"results/{cond}_s0_belief.json"
+        o = d["overall"]
+        put(f"belIll{tag}", o["illegal_legal_in_belief"], src)
+        put(f"belLeg{tag}", o["legal_legal_in_belief"], src)
+        put(f"belRand{tag}", o["randomillegal_legal_in_belief"], src)
+        put(f"belMis{tag}", o.get("mismatched_belief_legal"), src)
+        if o.get("illegal_legal_in_belief") and o.get("randomillegal_legal_in_belief"):
+            put(f"belRatio{tag}",
+                o["illegal_legal_in_belief"] / max(o["randomillegal_legal_in_belief"], 1e-9),
+                src, "{:.0f}")
+        if o.get("mismatched_belief_legal"):
+            put(f"belRatioMis{tag}",
+                o["illegal_legal_in_belief"] / max(o["mismatched_belief_legal"], 1e-9),
+                src, "{:.1f}")
+        if "illegal_ci95" in o:
+            put(f"belIllLo{tag}", o["illegal_ci95"][0], src)
+            put(f"belIllHi{tag}", o["illegal_ci95"][1], src)
+
 # ------------------------------------------------------------------ domain 2
 for cond, tag in [("attn", "Attn"), ("attnpm", "AttnPM"),
                   ("alsb_l0", "AlsbZero"), ("alsb_l1", "AlsbOne")]:
