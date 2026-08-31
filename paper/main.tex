@@ -1,0 +1,609 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}\setlength{\emergencystretch}{3em}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,array,xcolor,enumitem,caption}
+\graphicspath{{figures/}}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\input{results_macros.tex}   % measured values only
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+\newif\ifanon
+\ifdefined\ANON\anontrue\else\anonfalse\fi
+
+\title{\bf Separating State Loss from Planning Error\\in Long-Horizon Transformer Reasoning}
+
+\ifanon
+  \author{\normalsize\itshape Author names and affiliations removed for double-anonymous peer review}
+\else
+  \author{
+    Mohit Pratap Singh Rathore\\ \small Oviqo Private Limited
+    \and
+    Gunveer Sinh Kalsi\\ \small Oviqo Private Limited
+    \and
+    Sriharsha Meduri\\ \small Oviqo Private Limited
+  }
+\fi
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Language models degrade as reasoning chains lengthen. The usual remedies act at
+inference time, through tree search, process supervision, or repeated sampling,
+and they treat the underlying policy as a fixed object whose failure is never
+diagnosed. We argue the obstacle is measurement. On open-ended text there is no
+ground-truth intermediate state, so the accuracy drop reported by long-context
+benchmarks confounds two different failures: the model has lost track of the
+world, or the model holds the world correctly and chooses badly. This paper
+separates them. We study reasoning in domains carrying an exact, cheap, external
+state oracle: chess played from move notation with no search at inference, and a
+synthetic variable-tracking task whose answers require computing over the tracked
+state. Linear probes read the residual stream against the oracle at every token,
+which yields state-tracking error and, conditioned on a verified state, planning
+error. On \result{nGames} games we measure how far a model reasons before it
+loses the position, reported against majority, label-permutation, and
+randomised-weight controls. We then evaluate a small gated recurrent side-channel
+of fixed width, trained with an auxiliary state-reconstruction objective, which
+amortises state instead of re-deriving it, and we test whether any gain localises
+to state tracking rather than to judgement. We report a failed prediction and a
+revised metric openly, and we state plainly what our compute budget left
+untested.
+\end{abstract}
+
+\noindent\textbf{Keywords:} long-horizon reasoning, state tracking, Transformer
+memory, probing, recurrent bottleneck, design science
+
+\section{Introduction}
+
+A model that reasons over many steps has to keep track of something. A
+Transformer stores nothing between positions. Each token's representation is
+rebuilt from the whole prefix through attention \citep{vaswani2017attention}, so
+any quantity the task requires, a board position, the current value of a
+variable, which sub-goal is still open, exists only because the network
+re-derives it, at every layer and every position, from the beginning. That
+re-derivation is dependable over short spans and unreliable over long ones. The
+symptom is familiar to anyone who has watched a model reason for forty steps: it
+stays fluent, and it quietly stops being right about its own earlier commitments.
+
+The responses in common use sit outside the model. Tree search grafts a
+deliberation procedure onto the policy \citep{yao2023tree}. Process reward models
+supervise intermediate steps with a learned verifier
+\citep{lightman2024lets}. Self-consistency samples several chains and votes
+\citep{wang2023selfconsistency}. Each raises end-task accuracy, and each leaves
+the original question untouched: what exactly fails inside the network as the
+chain lengthens? Answering that means reading an intermediate representation
+against a known-correct intermediate state. On open-ended text no such state
+exists. The intermediate ``state'' of an argument in prose is not well defined,
+which is why evaluation here is noisy and why architectural claims are hard to
+falsify.
+
+The consequence reaches past research practice. A person working through a
+discharge summary, a tenancy agreement, or a benefits calculation with a model's
+help is rarely positioned to audit step twenty-eight. When the state has been
+lost, the output still reads as competent. The failure is invisible precisely to
+the reader who most needs to see it, which is a strong argument for measuring it
+rather than covering it with more inference-time compute.
+
+\paragraph{Our position.}
+Study the failure where state is exact, cheap, and external. Chess presented
+purely as move notation, modelled by a standard autoregressive decoder with no
+tree search at inference, offers what prose does not:
+
+\begin{itemize}[nosep]
+\item The true state after any prefix is computable by a rules engine, supplying
+a per-token label for probing.
+\item Legality is decidable, so state-tracking failure has an unambiguous
+observable. An illegal move proves the position was lost. It is not a matter of
+taste.
+\item Move quality is separately scoreable by an external engine, so planning
+failure can be measured conditional on the state being intact.
+\item Depth is a controlled variable. Ply index is uniformly scaled, unlike
+``number of reasoning steps'' in prose.
+\item The domain is combinatorial and adversarial, so surface heuristics do not
+substitute for computation.
+\end{itemize}
+
+Chess is our instrument, not our subject. We use it to measure a failure mode at
+a signal-to-noise ratio text does not allow, then repeat the measurement on a
+second domain to test whether what we found is a property of long-horizon state
+tracking or a property of chess.
+
+\paragraph{Research questions and objectives.}
+Each question is paired with an objective, and each objective names the section
+discharging it.
+
+\begin{itemize}[nosep]
+\item \textbf{RQ1.} Can the accuracy loss of long-horizon reasoning be separated
+into state-tracking error and planning error?
+\textbf{RO1:} define both quantities and give an estimator for each
+(Sections~\ref{sec:formal} and \ref{sec:diag}).
+\item \textbf{RQ2.} How far does a search-free autoregressive model reason before
+its internal state stops being recoverable, and how does that depth respond to
+more layers and more width?
+\textbf{RO2:} measure the horizon across a model grid against trivial baselines
+(Section~\ref{sec:results}).
+\item \textbf{RQ3.} Does a fixed-width recurrent channel, supervised to carry
+state, extend that depth, and does any gain localise to state tracking rather
+than judgement?
+\textbf{RO3:} evaluate the artifact with parameter-matched and ablated controls
+(Sections~\ref{sec:alsb} and \ref{sec:results}).
+\item \textbf{RQ4.} Does any of this survive a change of domain?
+\textbf{RO4:} repeat the decomposition on a second oracle-bearing task
+(Section~\ref{sec:synth}).
+\end{itemize}
+
+\paragraph{Contributions.}
+\begin{enumerate}[nosep]
+\item A decomposition of long-horizon error into two separately estimable
+quantities, where existing long-context evaluation reports only their sum.
+\item A characterisation of the planning horizon, and of the mismatch we call the
+state-space bottleneck: attention pays memory linear in context length to
+re-derive a state whose description length is constant.
+\item An artifact, the Adaptive Latent State Bottleneck, a gated recurrent
+side-channel of fixed width with an auxiliary state-reconstruction loss, together
+with the ablations needed to attribute any gain to it.
+\item A second oracle-bearing domain, so findings obtained with the chess
+instrument can be checked against a task that is arithmetic rather than spatial.
+\item Transferable design knowledge, stated as design principles, for measuring
+long-horizon reliability wherever an external state oracle can be constructed.
+\end{enumerate}
+
+We frame the work as design science in the sense of \citet{hevner2004design} and
+\citet{peffers2007design}, where the contribution is a justified artifact plus
+the design knowledge it carries \citep{gregor2013positioning}, evaluated against
+a real problem rather than against a single accuracy number.
+
+\section{Related Work}
+
+\paragraph{Inference-time search over language models.}
+Deliberation over candidate continuations \citep{yao2023tree}, process
+supervision \citep{lightman2024lets}, and marginalising over sampled chains
+\citep{wang2023selfconsistency} all buy accuracy with inference compute, built on
+chain-of-thought prompting \citep{wei2022chain}. They take the base policy as
+given. Our concern is the base policy: a search wrapper spending its budget
+correcting state-tracking errors compensates for a representational defect, and
+the compensation cost scales with the defect. What this paper does differently is
+diagnose the defect instead of budgeting around it.
+
+\paragraph{Long-context degradation.}
+Position-dependent retrieval failure \citep{liu2024lost} and effective-context
+measurement \citep{hsieh2024ruler} establish that usable context is shorter than
+advertised context. These measure retrieval of material present in the prefix.
+Long-horizon reasoning failure differs in kind: the needed quantity was never
+written down, only implied, and must be maintained through composition. A model
+can attend perfectly to every token of a sixty-ply game and still not know where
+the pieces are. What this paper does differently is measure maintenance rather
+than retrieval.
+
+\paragraph{State tracking and probing.}
+Linear probes recovering board state from game-transcript models
+\citep{li2023emergent}, the linear structure of those representations
+\citep{nanda2023emergent}, chess used explicitly as a state-tracking testbed
+\citep{toshniwal2022chess}, and causal editing of internal associations
+\citep{meng2022locating} together establish that such models form internal world
+models and that intervening on them changes behaviour. We take that as our
+starting point rather than our result. Given that a state representation exists,
+we ask how its fidelity decays with depth, whether the decay explains the
+behavioural failure, and whether an architectural prior arrests it. Probe design
+follows the control-task discipline of \citet{hewitt2019designing}. What this
+paper does differently is treat decodability as a function of reasoning depth
+rather than as a single number.
+
+\paragraph{Expressivity of state.}
+Theoretical work bounds what these architectures can track: state-space models
+are more limited than their recurrent form suggests
+\citep{merrill2024illusion}, and intermediate tokens change what a Transformer
+can express \citep{merrill2024expressive}. That literature asks what is
+representable in principle. We ask what is maintained in practice by a trained
+model, and at what depth it stops.
+
+\paragraph{Recurrence and state-space models.}
+Structured state-space models \citep{gu2022efficiently} and selective variants
+\citep{gu2024mamba} provide constant per-token state, and hybrid stacks are
+ordinary practice. The gains usually reported are throughput and context length.
+Our claim is narrower and more testable: a small recurrent channel, explicitly
+supervised to carry task state, improves long-horizon correctness at negligible
+parameter cost. That is a different proposition from efficiency.
+
+\paragraph{Search-free chess models.}
+Policies reaching strong play by distilling engine evaluations without a tree
+\citep{ruoss2024amortized} show the task is learnable without search. Their
+objective is playing strength. Ours is measurement, so we deliberately work with
+models weak enough to fail, because a model that never loses the position teaches
+nothing about losing the position.
+
+\section{Design Problem and Requirements}
+\label{sec:design}
+
+The problem, stated plainly: long-horizon reasoning failure is reported as a
+single number, so it cannot be acted on. A practitioner seeing accuracy fall at
+step thirty cannot tell whether to buy a bigger model, add a verifier, or change
+the architecture, because the measurement does not distinguish the causes. The
+artifact we build is a measurement procedure first and an architectural component
+second.
+
+\begin{table}[t]
+\centering\small
+\caption{Design principles and their realisation.}
+\label{tab:dp}
+\begin{tabular}{@{}p{0.38\linewidth}p{0.57\linewidth}@{}}
+\toprule
+\textbf{Design principle} & \textbf{Realisation in this work} \\
+\midrule
+\textbf{DP1.} Ground the diagnostic in an external oracle, not in model
+self-report. &
+A rules engine labels the exact state after every token, so probe targets are
+independent of the model being measured. \\
+\addlinespace
+\textbf{DP2.} Separate the two failure modes before attributing any effect. &
+Planning error is scored only where the top-1 move is legal and the state is
+independently verified as intact. \\
+\addlinespace
+\textbf{DP3.} Establish what a trivial predictor achieves before claiming a
+representation exists. &
+Every decodability number is reported against a per-square majority predictor, a
+label-permutation control, and a randomised-weight model of identical shape. \\
+\addlinespace
+\textbf{DP4.} Amortise state rather than re-deriving it at every position. &
+A gated recurrent channel of fixed width carries the realised state forward and
+is read back into the residual stream. \\
+\addlinespace
+\textbf{DP5.} Attribute a gain, do not merely observe one. &
+Architecture, auxiliary supervision, and read-out are varied independently,
+against a parameter-matched attention-only control. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{In scope.} Search-free autoregressive decoders; domains with an exact,
+cheaply computable state oracle; state of bounded description length.
+
+\paragraph{Out of scope.} Inference-time search procedures, which we neither use
+nor evaluate; tasks whose state grows without bound, such as open-ended fact
+accumulation; and any claim about production-scale models, which our compute
+budget does not license.
+
+\section{Problem Formalisation}
+\label{sec:formal}
+
+Let a task be a token sequence $x_{1:L}$ generated left to right, and let
+$s_t = \Phi(x_{1:t})$ be the exact state after prefix $x_{1:t}$, computed by an
+external oracle $\Phi$. For chess the state is piece placement, side to move,
+castling rights, and en-passant target. The state space is large, but the
+description length of any $s_t$ is constant in $t$: a position occupies a few
+hundred bits however many plies produced it.
+
+Let $h_t^{(\ell)} \in \mathbb{R}^d$ be the residual-stream activation at position
+$t$ and layer $\ell$, and let $g^{(\ell)}$ be a linear decoder trained to recover
+$s_t$ from it.
+
+\begin{definition}[State fidelity]
+$F^{(\ell)}(t) = \Pr\big[g^{(\ell)}(h_t^{(\ell)}) = s_t\big]$, the probability
+the exact state is linearly decodable at depth $t$ and layer $\ell$.
+\end{definition}
+
+\begin{definition}[Error decomposition]
+State-tracking error $E_{\mathrm{state}}(t) = \Pr[\hat{s}_t \neq s_t]$, estimated
+by the illegal-move rate and by probe-oracle disagreement. Planning error
+$E_{\mathrm{plan}}(t) = \Pr[\text{move is a blunder} \mid \hat{s}_t = s_t]$,
+estimated by engine centipawn loss conditional on an intact state. Observed error
+is $E_{\mathrm{state}} + (1-E_{\mathrm{state}})E_{\mathrm{plan}}$, and existing
+benchmarks report that sum alone.
+\end{definition}
+
+This decomposition is the methodological core of the paper. An intervention
+lowering the sum tells us little. An intervention lowering $E_{\mathrm{state}}$
+specifically, and thereby extending the depth at which state survives, is
+evidence about memory rather than about taste.
+
+\section{The State-Space Bottleneck}
+\label{sec:bottleneck}
+
+\begin{proposition}[Cost mismatch]
+For an attention-only decoder, computing $h_t^{(\ell)}$ attends over $t$ prior
+positions, so maintaining state costs $O(t)$ reads and $O(t)$ key-value memory,
+while the state itself has description length $O(1)$. Nothing in the architecture
+amortises it: $s_t$ and $s_{t+1}$ differ by one move and are computed
+independently.
+\end{proposition}
+
+Two consequences follow, and we tested both. First, fidelity should fall with $t$
+even well inside the context window, because the re-derivation circuit must
+compose more update steps within a fixed layer budget. Depth of composition, not
+distance of retrieval, is the binding constraint. This is supported
+(Section~\ref{sec:results}).
+
+Second, we predicted fidelity would peak at intermediate layers and fall toward
+the output as representations specialise for next-token prediction, the state
+being a means rather than an end. \textbf{That prediction is wrong.} State
+decodability rises through the stack and is maximal at the final block, moving
+from \result{layerProfFirst} at the first layer to \result{layerProfLast} at the
+last. The reading we now prefer is that for this task the state sits close to the
+target: the next legal move is a direct function of the position, so a
+representation making the position linearly available is also a good
+representation for the language-modelling head. We keep the failed prediction
+because it bears on where a state carrier should be inserted, and our spacing was
+chosen before we knew this.
+
+\section{Diagnostic Protocol}
+\label{sec:diag}
+
+\paragraph{Data.} Public game records filtered to a rating floor, deduplicated by
+move-sequence hash, and split by \emph{game} rather than by position, so no
+prefix is shared between the probe-fitting split and the evaluation split. The
+corpus holds \result{nGames} games: \result{ntrainlm} for training,
+\result{ntrainprobe} for probe fitting, and \result{neval} for evaluation, with a
+mean length of \result{meanPly} plies and a move vocabulary of \result{nVocab}.
+
+\paragraph{Oracle.} A rules engine replays every game and emits the exact state
+after every token. Replay is verified complete before any model is measured.
+
+\paragraph{Probes.} One linear head per layer, fitted on the probe split and
+evaluated on the held-out split. Because most squares are empty, raw per-square
+accuracy is misleadingly high, so we report accuracy restricted to occupied
+squares and compare against a per-square, per-depth majority predictor.
+
+\paragraph{Controls.} Three, following DP3. A majority predictor; a
+label-permutation control pairing activations with another game's state at the
+same depth, which preserves label marginals while destroying the relation to the
+input; and a randomised-weight model of identical architecture, bounding what
+probe capacity alone extracts.
+
+\paragraph{Behavioural measures.} Illegal top-1 move rate against depth, and the
+probability mass the model assigns to legal continuations. Both are read against
+the oracle position, so they measure the model and not the probe.
+
+\paragraph{Causal check.} We edit probe-identified state directions toward a
+counterfactual occupancy and ask whether the move distribution shifts
+accordingly. A representation merely correlated with the state would not respond.
+
+\section{Adaptive Latent State Bottleneck}
+\label{sec:alsb}
+
+After every $k$-th attention block we insert a recurrent channel carrying
+$z_t \in \mathbb{R}^{d_s}$ with $d_s \ll d$:
+\[
+u_t = W_{\mathrm{in}} h_t, \qquad
+\alpha_t = \sigma\!\big(W_g[h_t; z_{t-1}]\big), \qquad
+z_t = (1-\alpha_t)\odot A z_{t-1} + \alpha_t \odot \phi(u_t),
+\]
+read back as $h_t \leftarrow h_t + W_{\mathrm{out}} z_t$. The transition $A$ is
+diagonal, so inference-time state is $O(1)$ per token. The gate is the adaptive
+element: writing is cheap when a move perturbs the state locally and expensive
+when it does not, so capacity is spent on state change rather than uniformly
+across tokens. Training adds an auxiliary term,
+$\mathcal{L} = \mathcal{L}_{\mathrm{LM}} + \lambda\mathcal{L}_{\mathrm{state}}$,
+supervising $z_t$ to be the state. The oracle is not needed at inference.
+
+Following DP5 we separate three things that are easily confused. The architecture
+alone is $\lambda = 0$. The supervised channel is $\lambda > 0$. The contribution
+of the read-out is isolated by zeroing $W_{\mathrm{out}}$ at test time. A
+parameter-matched attention-only control, with a widened feed-forward block
+absorbing the same parameter count, guards against reading a capacity effect as a
+structural one.
+
+\section{Domain 2: variable-state tracking}
+\label{sec:synth}
+
+Chess is one domain, and a reader is entitled to ask whether anything measured
+with it is a fact about long-horizon reasoning or a fact about chess. We repeat
+the decomposition on a second task sharing only the property we depend on, an
+exact per-token oracle.
+
+A program updates four integer variables modulo twenty over five to thirty-two
+steps, each step of the form $v_i \leftarrow v_j \oplus c$, then queries
+$(v_a + v_b) \bmod 20$. The state is arithmetic rather than spatial, updates are
+sparse, and the answer needs a computation on top of the retrieved state, so the
+conditioning defining planning error is exact rather than estimated: we know
+which two variables the answer depends on and can ask whether both are decodable
+at the query token. Depth is the number of steps.
+
+An earlier version used eight variables modulo one hundred. It sat exactly at
+chance, and we report that because it shaped the design: a task no condition can
+learn measures nothing, so we reduced it until degradation was visible inside our
+budget, for the same reason the chess models are deliberately small.
+
+This is not the natural-language mathematics test our protocol specifies
+\citep{cobbe2021training,hendrycks2021measuring}, and we do not present it as
+one. It answers the weaker question of whether the intervention generalises past
+the instrument it was designed against.
+
+\section{Evaluation}
+\label{sec:results}
+
+\subsection{Pre-registered predictions}
+\begin{description}[nosep]
+\item[H1] Fidelity declines with depth for attention-only models, with the
+horizon well inside the context window.
+\item[H2] The horizon scales weakly with depth and width, so scaling at fixed
+compute does not substitute for a state carrier.
+\item[H3] The artifact extends the horizon and lowers $E_{\mathrm{state}}$ at
+matched parameters and matched tokens.
+\item[H4] The improvement concentrates in $E_{\mathrm{state}}$ and not in
+$E_{\mathrm{plan}}$.
+\item[H5] Gains carry to another long-horizon state-tracking domain.
+\end{description}
+
+H4 is the hypothesis that can end the paper. If the artifact improves everything
+uniformly, the mechanism we claim is wrong even when end-task numbers improve,
+and we would report that.
+
+\subsection{Results}
+
+\input{tables}
+
+\subsection{A revised metric, declared}
+Our horizon was pre-registered on exact-position fidelity. On these models that
+quantity reaches zero by roughly ply \result{exactPly} in every condition, so it
+cannot discriminate between them. We therefore also report horizons defined on
+occupied-square accuracy and on the illegal-move rate. The revision was made
+after inspecting baseline data and before evaluating any artifact condition, and
+all definitions are applied unchanged across conditions. We flag it rather than
+presenting the revised metric as the original plan.
+
+\section{Discussion}
+
+The decomposition is what we would keep if we had to discard everything else. It
+turns a single degradation curve into two curves with different remedies. Where
+state-tracking error dominates, more inference-time search is an expensive way to
+buy back what the architecture gave away, and a cheap structural change is the
+better lever. Where planning error dominates, the opposite holds. Reporting only
+the sum leaves a practitioner unable to tell which world they occupy, and the two
+worlds recommend opposite purchases.
+
+The measurement discipline generalises past our two domains. Any setting where an
+external checker can reconstruct the intended intermediate state, program
+execution traces, spreadsheet recalculation, structured database updates, ledger
+or inventory state, supports the same protocol. The requirement is not chess. It
+is an oracle.
+
+We also think the honest negative results here are part of the contribution. A
+predicted layer profile turned out to be backwards, a pre-registered metric
+turned out to be degenerate, and a first version of the second domain turned out
+to be unlearnable. Each of these shaped the design, and each is reported in the
+place where it changed a decision.
+
+\section{Implications for Individuals, Organisations, and Society}
+
+\paragraph{For the people who rely on long answers.}
+Someone working through a discharge summary, a tenancy agreement, or a benefits
+calculation with a model's help is rarely able to audit step twenty-eight. When
+state is lost the output stays fluent and stops being true, and fluency is
+exactly the signal a non-expert reader uses to decide whether to trust it. A
+diagnostic reporting where a model stops holding the thread gives that reader
+something currently unavailable: a stated range within which the tool is
+dependable. This matters most for people without an expert to check the work,
+which includes older users, sole traders, small clinics, and students.
+
+\paragraph{For managers and organisations.}
+Long-horizon reliability is a property to be governed, not a number to be
+procured. A team measuring only end-task accuracy cannot tell whether to budget
+for inference-time search, for a larger model, or for an architectural change,
+and these carry very different cost structures: search is a recurring per-query
+cost, a structural fix is paid once. The decomposition supports ordinary
+management practice: triage of which workloads exceed a measured horizon, human
+review placed at the depth where reliability falls rather than spread uniformly,
+and audit evidence that a limit was known and respected.
+
+\paragraph{Strategic implications.}
+An organisation able to measure its own horizon stands in a stronger position
+than one accepting a vendor's benchmark average. The diagnostic here needs a
+rules engine and a probe, not privileged access to model internals at scale, so
+it can be owned and audited in-house rather than bought. Treating a measured
+reliability limit as documentation rather than as an embarrassment turns a
+weakness into a defensible position with auditors and regulators.
+
+\paragraph{For society and digital equity.}
+Paying for reliability with inference-time compute concentrates capability among
+those who can afford to spend it on every query. A structural fix costing a small
+fraction of parameters, if it holds, is the kind of remedy that travels to
+low-resource deployments, on-device assistants, and public-sector systems that
+cannot buy deliberation for every request. The equity question is not whether
+frontier systems can reason for fifty steps. It is whether affordable ones can be
+honest about the point at which they stop.
+
+\section{Limitations}
+
+\begin{description}[nosep]
+\item[L1] \textbf{Scale.} Our models are small and trained on a modest corpus,
+far below both the chess-specific literature and any frontier system.
+Undertrained models are easier to study because they fail within a measurable
+range, which is why the instrument works, but the horizon values we report
+describe these models and not larger ones.
+\item[L2] \textbf{The natural-language transfer test was not run.} It needs two
+matched general-corpus pre-trainings, which our budget did not cover. The
+experiment is absent rather than approximated, and the synthetic domain is not a
+substitute for it.
+\item[L3] \textbf{Oracle dependence.} Auxiliary state supervision needs an oracle
+during training. It exists for chess and for synthetic programs and does not
+exist for general corpora, so the unsupervised condition is the one that would
+carry any practical application.
+\item[L4] \textbf{Fixed-width state.} A constant channel width is a hard capacity
+ceiling, and tasks whose state grows without bound should not benefit.
+\item[L5] \textbf{Probes show presence, not use.} Linear decodability shows
+information is available, not that the model reads it. The patching experiment
+bounds this concern without eliminating it.
+\item[L6] \textbf{A metric was revised after seeing data.} Declared in
+Section~\ref{sec:results}, applied uniformly, and reported alongside the original.
+\item[L7] \textbf{Both domains are constructed.} They carry exact oracles by
+design, which is what makes them measurable and also what makes them
+unrepresentative of open-ended reasoning.
+\end{description}
+
+\section{Avenues of Future Research}
+
+\begin{description}[nosep]
+\item[FR1] Repeat the horizon measurement across a wider scale ladder, so the
+relationship between model size and horizon is estimated rather than bracketed by
+two points.
+\item[FR2] Run the natural-language mathematics transfer test with matched
+pre-training, which is the experiment deciding whether this line of work has
+practical reach.
+\item[FR3] Develop state supervision that does not need an oracle, for example by
+deriving approximate targets from execution traces or from consistency between
+sampled continuations.
+\item[FR4] Study adaptive or growing state width for tasks whose state is not of
+bounded description length.
+\item[FR5] Strengthen the causal analysis beyond single-direction patching,
+toward interventions establishing which computations consume the state
+representation.
+\item[FR6] Pre-register horizon metrics on pilot data, so the metric selection we
+had to declare here is settled before confirmatory runs.
+\item[FR7] Build oracle-bearing diagnostics for domains not designed as
+benchmarks, such as program execution or ledger reconciliation, to test whether
+the protocol survives contact with tasks we did not construct.
+\end{description}
+
+\section{Conclusion}
+
+Long-horizon failure in Transformers is usually measured as one number and
+treated with more inference-time compute. We have argued it should first be
+measured as two, state lost against plan chosen badly, and that doing so needs a
+domain where an external oracle can say what the model should have been holding.
+Chess supplies one, a synthetic variable-tracking task supplies another, and the
+protocol needs only that an oracle exists. The people who stand to gain are not
+primarily the builders of frontier systems. They are the readers who cannot check
+step twenty-eight, and the organisations that have to decide, with evidence, how
+far to let a model reason before a person looks.
+
+\section*{Declarations}
+
+\paragraph{Disclosure statement.}
+\ifanon
+Removed for double-anonymous peer review.
+\else
+The authors report no conflict of interest.
+\fi
+
+\paragraph{Funding.}
+\ifanon
+Removed for double-anonymous peer review.
+\else
+This research received no specific grant from any funding agency in the public,
+commercial, or not-for-profit sectors.
+\fi
+
+\paragraph{Data availability statement.}
+\ifanon
+The code and evaluation artifacts will be made available upon acceptance.
+\else
+The training and evaluation code, the measurement pipeline, and the result files
+from which every reported value is generated are available from the authors.
+\fi
+
+\paragraph{AI usage declaration.}
+During the preparation of this manuscript the authors used a generative AI tool
+to assist with language editing and refinement of the text. The authors reviewed
+and edited all output and take full responsibility for the content of the paper.
+Generative AI was not used to generate or analyse the study's data, which were
+produced entirely by the evaluation pipeline described in the paper.
+
+\bibliographystyle{apalike}
+\bibliography{refs}
+
+\end{document}

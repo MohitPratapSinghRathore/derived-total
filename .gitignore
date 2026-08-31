@@ -1,10 +1,12 @@
-# data and model artifacts
+# Large regenerable artifacts only. Everything else is tracked.
+#   data/  : ~1.5 GB of PGN dumps, oracle label arrays, and the Stockfish binary
+#             (rebuild: code/prep_data.py then code/make_states.py)
+#   runs/  : model checkpoints (rebuild: code/run_grid.py)
+#   tools/ : downloaded tectonic binary
 data/
 runs/
-results/*.pt
-*.log
-
-# manuscript stays local until acceptance (playbook section 9)
-/paper/
-/build/
-/tools/
+tools/
+*.aux
+*.bbl
+*.blg
+*.out
