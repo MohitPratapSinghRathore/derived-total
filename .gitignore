@@ -4,3 +4,6 @@
 *.blg
 *.out
 *.pdf
+data/
+runs/
+results/*.pt
