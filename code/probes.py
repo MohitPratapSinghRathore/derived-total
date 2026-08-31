@@ -55,9 +55,12 @@ def fit_probes(model, a, toks, lens, occ, epochs=3, bs=48, control=False, seed=0
     opt = torch.optim.AdamW([p for pr in probes for p in pr.parameters()], lr=1e-3)
     N, L = toks.shape
     rng = np.random.default_rng(seed)
-    # control task: fixed random relabelling of the 13 classes, per square
-    if control:
-        perm = np.stack([rng.permutation(NCLS) for _ in range(64)])  # (64,13)
+    # Control task (Hewitt-Liang spirit): keep the label marginals but destroy the
+    # relation between activation and label, by pairing each activation with a
+    # DIFFERENT game's state at the same ply.  A probe that still succeeds is
+    # exploiting probe capacity / label priors, not model content.
+    # (An earlier version permuted the 13 class labels per square; that is a
+    # bijection and therefore trivially learnable -- not a control at all.)
     order = np.arange(N)
     for ep in range(epochs):
         rng.shuffle(order)
@@ -65,9 +68,10 @@ def fit_probes(model, a, toks, lens, occ, epochs=3, bs=48, control=False, seed=0
         for i in range(0, N, bs):
             idx = np.sort(order[i:i + bs])
             x = torch.from_numpy(toks[idx]).to(dev)
-            s = np.asarray(occ[idx]).astype(np.int64)
+            s_idx = idx
             if control:
-                s = perm[np.arange(64)[None, None, :], s]
+                s_idx = np.sort(rng.permutation(N)[:len(idx)])
+            s = np.asarray(occ[s_idx]).astype(np.int64)
             s = torch.from_numpy(s).to(dev)
             valid = torch.from_numpy(np.arange(L)[None] < lens[idx][:, None]).to(dev)
             _, hs = hiddens(model, x)
@@ -85,7 +89,8 @@ def fit_probes(model, a, toks, lens, occ, epochs=3, bs=48, control=False, seed=0
 
 
 @torch.no_grad()
-def evaluate(model, a, probes, toks, lens, occ, bs=48, buckets=None):
+def evaluate(model, a, probes, toks, lens, occ, bs=48, buckets=None,
+             control=False, seed=0):
     """F^(l)(t) exact-position accuracy + per-square acc + teacher-forced illegal rate."""
     dev = "cuda"
     nl = a["layers"]
@@ -95,6 +100,8 @@ def evaluate(model, a, probes, toks, lens, occ, bs=48, buckets=None):
                    (50, 60), (60, 80), (80, 120), (120, 161)]
     nb = len(buckets)
     exact = np.zeros((nl, nb)); sqacc = np.zeros((nl, nb)); cnt = np.zeros(nb)
+    occacc = np.zeros((nl, nb)); occcnt = np.zeros(nb); nwrong = np.zeros((nl, nb))
+    rng_e = np.random.default_rng(seed)
     bidx = np.full(L, -1)
     for bi, (lo, hi) in enumerate(buckets):
         bidx[lo:hi] = bi
@@ -103,8 +110,10 @@ def evaluate(model, a, probes, toks, lens, occ, bs=48, buckets=None):
     for i in range(0, N, bs):
         idx = np.arange(i, min(i + bs, N))
         x = torch.from_numpy(toks[idx]).to(dev)
-        s = torch.from_numpy(np.asarray(occ[idx]).astype(np.int64)).to(dev)
+        s_idx = np.sort(rng_e.permutation(N)[:len(idx)]) if control else idx
+        s = torch.from_numpy(np.asarray(occ[s_idx]).astype(np.int64)).to(dev)
         valid = torch.from_numpy(np.arange(L)[None] < lens[idx][:, None]).to(dev)
+        occupied = (s > 0)
         _, hs = hiddens(model, x)
         bb = bidx_t[None].expand(len(idx), L)
         # apply each probe once per batch, not once per (layer, bucket)
@@ -116,8 +125,49 @@ def evaluate(model, a, probes, toks, lens, occ, bs=48, buckets=None):
             if nm == 0:
                 continue
             cnt[bi] += nm
+            om = occupied & m[..., None]
+            occcnt[bi] += float(om.sum())
             for li in range(nl):
                 corr = corrs[li]
                 sqacc[li, bi] += float(corr[m].float().mean()) * nm
                 exact[li, bi] += float(corr.all(-1)[m].float().sum())
-    return exact / np.maximum(cnt, 1), sqacc / np.maximum(cnt, 1), cnt, buckets
+                # accuracy restricted to OCCUPIED squares (empty squares dominate
+                # and make raw per-square accuracy look high for free)
+                occacc[li, bi] += float((corr & om).sum())
+                nwrong[li, bi] += float((~corr)[m].float().sum())
+    return dict(exact=exact / np.maximum(cnt, 1),
+                sq=sqacc / np.maximum(cnt, 1),
+                occ=occacc / np.maximum(occcnt, 1),
+                nwrong=nwrong / np.maximum(cnt, 1),
+                cnt=cnt, buckets=buckets)
+
+
+def majority_baseline(toks, lens, occ, buckets, n=4000):
+    """Strongest trivial predictor: per (square, ply-bucket) majority class.
+    Any probe must beat this before 'the state is decodable' means anything."""
+    L = toks.shape[1]
+    bidx = np.full(L, -1)
+    for bi, (lo, hi) in enumerate(buckets):
+        bidx[lo:hi] = bi
+    counts = np.zeros((len(buckets), 64, NCLS), dtype=np.int64)
+    for i in range(0, min(n, len(toks)), 256):
+        j = slice(i, min(i + 256, n, len(toks)))
+        o = np.asarray(occ[j]).astype(np.int64)
+        v = np.arange(L)[None] < lens[j][:, None]
+        for bi in range(len(buckets)):
+            m = v & (bidx[None] == bi)
+            if m.sum() == 0:
+                continue
+            sel = o[m]
+            for c in range(NCLS):
+                counts[bi, :, c] += (sel == c).sum(0)
+    maj = counts.argmax(-1)
+    acc_sq, acc_occ = [], []
+    for bi in range(len(buckets)):
+        tot = counts[bi].sum()
+        hit = counts[bi].max(-1).sum()
+        acc_sq.append(hit / max(tot, 1))
+        occ_tot = counts[bi, :, 1:].sum()
+        occ_hit = sum(counts[bi, sq, maj[bi, sq]] for sq in range(64) if maj[bi, sq] > 0)
+        acc_occ.append(occ_hit / max(occ_tot, 1))
+    return np.array(acc_sq), np.array(acc_occ)
