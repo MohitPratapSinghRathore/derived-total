@@ -28,27 +28,27 @@
   "source": "results/attn_8L256_s*.json"
  },
  "occ40Attn": {
-  "value": "0.559",
+  "value": "0.555",
   "source": "results/attn_8L256_s*.json"
  },
  "occ40AttnSD": {
-  "value": "0.000",
+  "value": "0.003",
   "source": "results/attn_8L256_s*.json"
  },
  "occ40AttnN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L256_s*.json"
  },
  "ill40Attn": {
-  "value": "0.177",
+  "value": "0.176",
   "source": "results/attn_8L256_s*.json"
  },
  "ill40AttnSD": {
-  "value": "0.000",
+  "value": "0.002",
   "source": "results/attn_8L256_s*.json"
  },
  "ill40AttnN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L256_s*.json"
  },
  "hill05Attn": {
@@ -60,31 +60,43 @@
   "source": "results/attn_8L256_s*.json"
  },
  "hill05AttnN": {
-  "value": "1",
+  "value": "3",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hintAttn": {
+  "value": "26.1",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hintAttnSD": {
+  "value": "0.0",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hintAttnN": {
+  "value": "3",
   "source": "results/attn_8L256_s*.json"
  },
  "hill10Attn": {
-  "value": "40",
+  "value": "33",
   "source": "results/attn_8L256_s*.json"
  },
  "hill10AttnSD": {
-  "value": "0",
+  "value": "6",
   "source": "results/attn_8L256_s*.json"
  },
  "hill10AttnN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L256_s*.json"
  },
  "valAttn": {
-  "value": "3.029",
+  "value": "3.034",
   "source": "results/attn_8L256_s*.json"
  },
  "valAttnSD": {
-  "value": "0.000",
+  "value": "0.005",
   "source": "results/attn_8L256_s*.json"
  },
  "valAttnN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L256_s*.json"
  },
  "bestLayerAttn": {
@@ -96,8 +108,484 @@
   "source": "results/attn_8L256_s*.json"
  },
  "bestLayerAttnN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L256_s*.json"
+ },
+ "paramsAttnPM": {
+  "value": "7,505,976",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "occ40AttnPM": {
+  "value": "0.554",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "occ40AttnPMSD": {
+  "value": "0.002",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "occ40AttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "ill40AttnPM": {
+  "value": "0.172",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "ill40AttnPMSD": {
+  "value": "0.003",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "ill40AttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hill05AttnPM": {
+  "value": "30",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hill05AttnPMSD": {
+  "value": "0",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hill05AttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hintAttnPM": {
+  "value": "26.0",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hintAttnPMSD": {
+  "value": "0.1",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hintAttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hill10AttnPM": {
+  "value": "37",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hill10AttnPMSD": {
+  "value": "6",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "hill10AttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "valAttnPM": {
+  "value": "3.025",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "valAttnPMSD": {
+  "value": "0.009",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "valAttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "bestLayerAttnPM": {
+  "value": "7.0",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "bestLayerAttnPMSD": {
+  "value": "0.0",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "bestLayerAttnPMN": {
+  "value": "3",
+  "source": "results/attnpm_8L256_s*.json"
+ },
+ "paramsAlsbZero": {
+  "value": "7,508,416",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "occ40AlsbZero": {
+  "value": "0.558",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "occ40AlsbZeroSD": {
+  "value": "0.002",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "occ40AlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "ill40AlsbZero": {
+  "value": "0.170",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "ill40AlsbZeroSD": {
+  "value": "0.003",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "ill40AlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hill05AlsbZero": {
+  "value": "30",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hill05AlsbZeroSD": {
+  "value": "0",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hill05AlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hintAlsbZero": {
+  "value": "26.1",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hintAlsbZeroSD": {
+  "value": "0.1",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hintAlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hill10AlsbZero": {
+  "value": "35",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hill10AlsbZeroSD": {
+  "value": "7",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "hill10AlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "valAlsbZero": {
+  "value": "3.014",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "valAlsbZeroSD": {
+  "value": "0.005",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "valAlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "bestLayerAlsbZero": {
+  "value": "7.0",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "bestLayerAlsbZeroSD": {
+  "value": "0.0",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "bestLayerAlsbZeroN": {
+  "value": "2",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "paramsAlsbOne": {
+  "value": "7,508,416",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "occ40AlsbOne": {
+  "value": "0.632",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "occ40AlsbOneSD": {
+  "value": "0.003",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "occ40AlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "ill40AlsbOne": {
+  "value": "0.166",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "ill40AlsbOneSD": {
+  "value": "0.002",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "ill40AlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hill05AlsbOne": {
+  "value": "30",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hill05AlsbOneSD": {
+  "value": "0",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hill05AlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hintAlsbOne": {
+  "value": "26.5",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hintAlsbOneSD": {
+  "value": "0.2",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hintAlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hill10AlsbOne": {
+  "value": "40",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hill10AlsbOneSD": {
+  "value": "0",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "hill10AlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "valAlsbOne": {
+  "value": "3.002",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "valAlsbOneSD": {
+  "value": "0.009",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "valAlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "bestLayerAlsbOne": {
+  "value": "7.0",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "bestLayerAlsbOneSD": {
+  "value": "0.0",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "bestLayerAlsbOneN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "paramsAttnDeep": {
+  "value": "10,504,960",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "occ40AttnDeep": {
+  "value": "0.578",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "occ40AttnDeepSD": {
+  "value": "0.000",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "occ40AttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "ill40AttnDeep": {
+  "value": "0.149",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "ill40AttnDeepSD": {
+  "value": "0.000",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "ill40AttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hill05AttnDeep": {
+  "value": "30",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hill05AttnDeepSD": {
+  "value": "0",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hill05AttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hintAttnDeep": {
+  "value": "27.7",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hintAttnDeepSD": {
+  "value": "0.0",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hintAttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hill10AttnDeep": {
+  "value": "40",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hill10AttnDeepSD": {
+  "value": "0",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hill10AttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "valAttnDeep": {
+  "value": "2.917",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "valAttnDeepSD": {
+  "value": "0.000",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "valAttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "bestLayerAttnDeep": {
+  "value": "11.0",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "bestLayerAttnDeepSD": {
+  "value": "0.0",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "bestLayerAttnDeepN": {
+  "value": "1",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "paramsAttnWide": {
+  "value": "15,737,472",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "occ40AttnWide": {
+  "value": "0.628",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "occ40AttnWideSD": {
+  "value": "0.000",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "occ40AttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "ill40AttnWide": {
+  "value": "0.133",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "ill40AttnWideSD": {
+  "value": "0.000",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "ill40AttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hill05AttnWide": {
+  "value": "30",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hill05AttnWideSD": {
+  "value": "0",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hill05AttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hintAttnWide": {
+  "value": "29.4",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hintAttnWideSD": {
+  "value": "0.0",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hintAttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hill10AttnWide": {
+  "value": "40",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hill10AttnWideSD": {
+  "value": "0",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hill10AttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "valAttnWide": {
+  "value": "2.840",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "valAttnWideSD": {
+  "value": "0.000",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "valAttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "bestLayerAttnWide": {
+  "value": "7.0",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "bestLayerAttnWideSD": {
+  "value": "0.0",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "bestLayerAttnWideN": {
+  "value": "1",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "occ40Zab": {
+  "value": "0.559",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "occ40ZabSD": {
+  "value": "0.005",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "occ40ZabN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "ill40Zab": {
+  "value": "0.149",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "ill40ZabSD": {
+  "value": "0.005",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "ill40ZabN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "hill05Zab": {
+  "value": "30",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "hill05ZabSD": {
+  "value": "0",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "hill05ZabN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
  },
  "occFirst": {
   "value": "0.974",
@@ -246,6 +734,214 @@
  "belIllHiAttn": {
   "value": "0.364",
   "source": "results/attn_8L256_s0_belief.json"
+ },
+ "locIllAttnPM": {
+  "value": "0.804",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "locLegAttnPM": {
+  "value": "0.391",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "corrGlobalMinAttnPM": {
+  "value": "0.014",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "corrGlobalMaxAttnPM": {
+  "value": "0.104",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "ageFirstAttnPM": {
+  "value": "0.122",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "agePeakAttnPM": {
+  "value": "0.383",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "ageLastAttnPM": {
+  "value": "0.153",
+  "source": "results/attnpm_8L256_s0_coupling.json"
+ },
+ "belIllAttnPM": {
+  "value": "0.350",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belLegAttnPM": {
+  "value": "0.650",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belRandAttnPM": {
+  "value": "0.007",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belMisAttnPM": {
+  "value": "0.051",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belRatioAttnPM": {
+  "value": "49",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belRatioMisAttnPM": {
+  "value": "6.9",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belIllLoAttnPM": {
+  "value": "0.342",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "belIllHiAttnPM": {
+  "value": "0.358",
+  "source": "results/attnpm_8L256_s0_belief.json"
+ },
+ "locIllAlsbZero": {
+  "value": "0.801",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "locLegAlsbZero": {
+  "value": "0.384",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "corrGlobalMinAlsbZero": {
+  "value": "0.027",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "corrGlobalMaxAlsbZero": {
+  "value": "0.117",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "ageFirstAlsbZero": {
+  "value": "0.119",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "agePeakAlsbZero": {
+  "value": "0.379",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "ageLastAlsbZero": {
+  "value": "0.158",
+  "source": "results/alsb_l0_8L256_s0_coupling.json"
+ },
+ "belIllAlsbZero": {
+  "value": "0.358",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belLegAlsbZero": {
+  "value": "0.658",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belRandAlsbZero": {
+  "value": "0.007",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belMisAlsbZero": {
+  "value": "0.053",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belRatioAlsbZero": {
+  "value": "53",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belRatioMisAlsbZero": {
+  "value": "6.8",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belIllLoAlsbZero": {
+  "value": "0.350",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "belIllHiAlsbZero": {
+  "value": "0.367",
+  "source": "results/alsb_l0_8L256_s0_belief.json"
+ },
+ "locIllAlsbOne": {
+  "value": "0.806",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "locLegAlsbOne": {
+  "value": "0.399",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "corrGlobalMinAlsbOne": {
+  "value": "-0.048",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "corrGlobalMaxAlsbOne": {
+  "value": "0.080",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "ageFirstAlsbOne": {
+  "value": "0.102",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "agePeakAlsbOne": {
+  "value": "0.448",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "ageLastAlsbOne": {
+  "value": "0.448",
+  "source": "results/alsb_l1_8L256_s0_coupling.json"
+ },
+ "locIllRung1": {
+  "value": "0.831",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "locLegRung1": {
+  "value": "0.447",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "corrGlobalMinRung1": {
+  "value": "0.010",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "corrGlobalMaxRung1": {
+  "value": "0.099",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "ageFirstRung1": {
+  "value": "0.138",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "agePeakRung1": {
+  "value": "0.434",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "ageLastRung1": {
+  "value": "0.179",
+  "source": "results/attn_6L192_s0_coupling.json"
+ },
+ "belIllRung1": {
+  "value": "0.266",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belLegRung1": {
+  "value": "0.581",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belRandRung1": {
+  "value": "0.006",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belMisRung1": {
+  "value": "0.049",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belRatioRung1": {
+  "value": "43",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belRatioMisRung1": {
+  "value": "5.5",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belIllLoRung1": {
+  "value": "0.259",
+  "source": "results/attn_6L192_s0_belief.json"
+ },
+ "belIllHiRung1": {
+  "value": "0.272",
+  "source": "results/attn_6L192_s0_belief.json"
  },
  "synParamsAttn": {
   "value": "6,378,240",

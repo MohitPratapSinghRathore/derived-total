@@ -6,6 +6,7 @@ hand, and a key with no measured value resolves to n/a rather than to a guess.
 """
 import os, json, glob
 import numpy as np
+from horizon import interp_horizon
 
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
 OUT = os.path.join(os.path.dirname(__file__), "..", "paper", "results_macros.tex")
@@ -77,6 +78,8 @@ for cond, tag in [("attn_8L256", "Attn"), ("attnpm_8L256", "AttnPM"),
     pm(f"occ40{tag}", [np.array(r["fidelity_occ"])[r["best_layer"]][BI] for r in rs], src)
     pm(f"ill40{tag}", [r["illegal"][BI] for r in rs], src)
     pm(f"hill05{tag}", [r["H_ill_05"] for r in rs], src, "{:.0f}")
+    pm(f"hint{tag}", [interp_horizon(r["illegal"], r["buckets"], 0.05) for r in rs],
+       src, "{:.1f}")
     pm(f"hill10{tag}", [r["H_ill_10"] for r in rs], src, "{:.0f}")
     pm(f"val{tag}", [r["train_log"][-1]["val"] for r in rs], src)
     pm(f"bestLayer{tag}", [r["best_layer"] for r in rs], src, "{:.1f}")

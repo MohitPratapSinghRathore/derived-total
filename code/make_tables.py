@@ -5,6 +5,7 @@ hand, and an absent value prints n/a rather than a guess.
 """
 import os, json, glob
 import numpy as np
+from horizon import interp_horizon
 
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
 OUT = os.path.join(os.path.dirname(__file__), "..", "paper", "tables.tex")
@@ -114,8 +115,10 @@ def mechanism_table():
 
 def horizon_table():
     L = ["\\begin{table}[t]", "\\centering\\small",
-         "\\caption{Horizon and state fidelity by condition. $H_{\\mathrm{ill}}$ is the",
-         "first ply bucket where the illegal-move rate crosses the threshold.",
+         "\\caption{Horizon and state fidelity by condition. $H_{\\mathrm{ill}}(.05)$ is",
+         "the ply at which the illegal-move rate first crosses five percent,",
+         "interpolated between bucket midpoints because the bucketed read-off returns",
+         "the same bucket for every condition and so discriminates nothing.",
          "Mean\\,$\\pm$\\,s.d.\\ over seeds where more than one was run.}",
          "\\label{tab:horizon}", "\\begin{tabular}{lrcccc}", "\\toprule",
          "Model & Params & seeds & occ.\\ acc.\\ @40--50 & illegal @40--50 "
@@ -129,7 +132,8 @@ def horizon_table():
         L.append(f"{label} & {rs[0]['params']:,} & {len(rs)} & "
                  f"{pm([np.array(r['fidelity_occ'])[r['best_layer']][4] for r in rs])} & "
                  f"{pm([r['illegal'][4] for r in rs])} & "
-                 f"{pm([r['H_ill_05'] for r in rs], '{:.0f}')} \\\\".replace(",", "{,}"))
+                 f"{pm([interp_horizon(r['illegal'], r['buckets'], 0.05) for r in rs], '{:.1f}')}"
+                 f" \\\\".replace(",", "{,}"))
     zs = [load(f"alsb_l1_8L256_s{s}_zablate") for s in (0, 1, 2)]
     zs = [z for z in zs if z]
     if zs:
@@ -137,7 +141,8 @@ def horizon_table():
         L.append(f"\\quad read-out ablated at test & n/a & {len(zs)} & "
                  f"{pm([np.array(z['fidelity_occ'])[z['best_layer']][4] for z in zs])} & "
                  f"{pm([z['illegal'][4] for z in zs])} & "
-                 f"{pm([z['H_ill_05'] for z in zs], '{:.0f}')} \\\\")
+                 f"{pm([interp_horizon(z['illegal'], z['buckets'], 0.05) for z in zs], '{:.1f}')}"
+                 f" \\\\")
     L += ["\\midrule"]
     for cond, label in LADDER:
         r = load(f"{cond}_s0")
@@ -146,7 +151,8 @@ def horizon_table():
         any_ = True
         L.append(f"\\quad {label} & {r['params']:,} & 1 & "
                  f"{np.array(r['fidelity_occ'])[r['best_layer']][4]:.3f} & "
-                 f"{r['illegal'][4]:.3f} & {r['H_ill_05']:.0f} \\\\".replace(",", "{,}"))
+                 f"{r['illegal'][4]:.3f} & "
+                 f"{interp_horizon(r['illegal'], r['buckets'], 0.05):.1f} \\\\".replace(",", "{,}"))
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L if any_ else []
 
