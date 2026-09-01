@@ -33,27 +33,31 @@
 \maketitle
 
 \begin{abstract}
-Language models degrade over long reasoning chains, and the accuracy drop is
-usually reported as one number. That number confounds two failures with opposite
-remedies: the model has lost track of the world, or it holds the world correctly
-and chooses badly. We separate them in a setting with an exact external state
-oracle, chess from move notation with no search at inference, by reading linear
-probes against the true position at every token. Three findings follow. First,
-aggregate state fidelity, the quantity this literature normally reports, barely
-predicts behaviour: within a fixed reasoning depth, the correlation between the
-number of misremembered squares and playing an illegal move ranges from
-\result{corrGlobalMinAttn} to \result{corrGlobalMaxAttn}. Second, the same
-quantity measured locally predicts it strongly: the probe is wrong on precisely
-the squares a move touches for \result{locIllAttn} of illegal moves against
-\result{locLegAttn} of legal ones. Third, and centrally, the errors are coherent
-rather than random. Reconstructing the position the model appears to believe, we
-find \result{belIllAttn} of its illegal moves are legal in that believed
-position, against \result{belMisAttn} for the same move scored under another
-position's belief at equal depth and \result{belRandAttn} for an arbitrary
-illegal move. The model is not emitting noise. It is playing correctly on a board
-it has misremembered. We give the measurement protocol, report a failed
-prediction and a degenerate metric openly, and evaluate one architectural
-intervention with it.
+Language models degrade over long reasoning chains, and the drop is reported as
+one number. That number confounds two failures with opposite remedies: the model
+has lost track of the world, or it holds the world and chooses badly. We separate
+them where an exact state oracle exists, chess from move notation with no search
+at inference, reading linear probes against the true position at every token.
+
+Aggregate state fidelity, the quantity this literature reports, barely predicts
+behaviour: within a fixed depth the correlation between misremembered squares and
+playing an illegal move lies between \result{corrGlobalMinAttn} and
+\result{corrGlobalMaxAttn}. Restricted to the squares a move touches, it predicts
+strongly, \result{locIllAttn} against \result{locLegAttn}. And the errors are
+coherent. Reconstructing the position the model appears to believe,
+\result{belIllAttn} of its illegal moves are legal there, against
+\result{belMisAttn} for the same move under another position's belief at equal
+depth and \result{belRandAttn} for an arbitrary illegal move. Editing the probe
+direction encoding an occupied square removes \result{patchCutAttn} of the
+probability mass on moves from it, a norm-matched random edit
+\result{patchRandCutAttn}, so the representation is read and not merely present.
+The effect strengthens across a twelvefold range of model size. The model is not
+emitting noise; it plays correctly on a board it has misremembered.
+
+We report failures too: a predicted layer profile that ran backwards, a
+degenerate pre-registered metric, an auxiliary objective that improves the
+measurement of state more than its consequences, and a second domain needing
+seven designs to become measurable.
 \end{abstract}
 
 \noindent\textbf{Keywords:} long-horizon reasoning, state tracking, world models,
@@ -490,6 +494,80 @@ a factor of \result{belRatioMisAttn}. This is what we mean by coherent error, an
 it is the clearest statement we can make that long-horizon degradation here is a
 memory failure rather than a reasoning failure.
 
+\subsection{Inducing a false belief changes the action}
+\label{sec:causal}
+
+Belief consistency is observational. It shows the model errs coherently with a
+decayed state without showing that the state representation drives the action.
+We therefore intervene. At a position where the side to move genuinely occupies a
+square, we push the residual stream along the probe direction encoding "this
+square is empty" and ask whether the model stops proposing moves from it.
+
+Two safeguards decide whether such an experiment means anything, and both are
+reported. The manipulation check asks whether the edit changed the decoded belief
+at all: at the strength we use it does, in \result{patchFlipAttn} of cases. The
+norm-matched control applies a random direction of identical magnitude at the
+same position, which separates belief from mere perturbation sensitivity.
+
+Edit strength has to be calibrated rather than chosen, because a large enough
+push degrades the forward pass and will move behaviour for reasons having nothing
+to do with state. Table~\ref{tab:patchcal} reports the sweep. Below a quarter of
+the residual-stream magnitude the edit does not reliably flip the belief; above
+roughly one, the random control also starts destroying the output distribution,
+so any effect there is damage rather than belief. We report the intervention at
+\result{patchAlphaAttn}, inside the window where the manipulation succeeds and
+the control does not.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.66\linewidth]{patch_calibration.png}
+\caption{Choosing the edit strength. Too small and the belief does not flip; too
+large and a norm-matched random direction also destroys the output distribution,
+so any effect there is damage rather than belief. We report inside the shaded
+window.}
+\label{fig:patchcal}
+\end{figure}
+
+At that strength, editing the state direction removes \result{patchCutAttn} of
+the probability mass on moves from the affected square, decreasing it in
+\result{patchDecAttn} of \result{patchNAttn} cases. The norm-matched random edit
+removes \result{patchRandCutAttn} and decreases the mass in
+\result{patchRandDecAttn} of cases, which is indistinguishable from a coin flip.
+The state representation is not a decorative correlate of the model's
+computation. It is read.
+
+\subsection{How much of the planning error is really memory}
+\label{sec:plan}
+
+The other half of the decomposition needs care, because the conditioning that
+would isolate it cleanly is unattainable. Requiring the probe to recover the
+exact board leaves no samples past the opening, for the reason already given.
+Requiring only the squares the move touches leaves samples everywhere but does
+not constrain the rest of the board, so state loss elsewhere is still counted as
+a failure of judgement.
+
+We therefore vary the strictness and read the trend (Table~\ref{tab:strict}).
+Tightening the conditioning lowers the loss substantially. At ply 30 to 40 the
+median centipawn loss falls from \result{epsMed30to40tol64} with the board
+unconstrained to \result{epsMed30to40tol4} when at most four other squares may be
+wrong, and the blunder rate from \result{epsBl30to40tol64} to
+\result{epsBl30to40tol4}. Roughly half of what a naive reading would call
+degraded judgement is misattributed memory failure.
+
+The trend does not go to zero. Holding the conditioning fixed at four wrong
+squares, the median loss still grows with depth, from
+\result{epsMed20to30tol4} at ply 20 to 30 to \result{epsMed30to40tol4} at ply 30
+to 40. Judgement given intact state is not depth-invariant.
+
+We take the honest reading. Memory is the dominant component and the better
+characterised one, and it is not the only one. Our original framing of H4, a
+clean separation in which an intervention moves one term and leaves the other
+untouched, was too tidy for what the measurement supports. The decomposition
+still earns its place, because it converts one uninterpretable curve into two
+quantities with different remedies, but a practitioner should expect the terms to
+be entangled rather than orthogonal, and should report the conditioning they used
+when they quote either one.
+
 \subsection{Scale}
 \label{sec:scale}
 
@@ -598,49 +676,7 @@ strength & belief flipped & state edit: mass after & state decreased
 \end{tabular}
 \end{table}
 
-\subsection{Inducing a false belief changes the action}
-\label{sec:causal}
-
-Belief consistency is observational. It shows the model errs coherently with a
-decayed state without showing that the state representation drives the action.
-We therefore intervene. At a position where the side to move genuinely occupies a
-square, we push the residual stream along the probe direction encoding "this
-square is empty" and ask whether the model stops proposing moves from it.
-
-Two safeguards decide whether such an experiment means anything, and both are
-reported. The manipulation check asks whether the edit changed the decoded belief
-at all: at the strength we use it does, in \result{patchFlipAttn} of cases. The
-norm-matched control applies a random direction of identical magnitude at the
-same position, which separates belief from mere perturbation sensitivity.
-
-Edit strength has to be calibrated rather than chosen, because a large enough
-push degrades the forward pass and will move behaviour for reasons having nothing
-to do with state. Table~\ref{tab:patchcal} reports the sweep. Below a quarter of
-the residual-stream magnitude the edit does not reliably flip the belief; above
-roughly one, the random control also starts destroying the output distribution,
-so any effect there is damage rather than belief. We report the intervention at
-\result{patchAlphaAttn}, inside the window where the manipulation succeeds and
-the control does not.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.66\linewidth]{patch_calibration.png}
-\caption{Choosing the edit strength. Too small and the belief does not flip; too
-large and a norm-matched random direction also destroys the output distribution,
-so any effect there is damage rather than belief. We report inside the shaded
-window.}
-\label{fig:patchcal}
-\end{figure}
-
-At that strength, editing the state direction removes \result{patchCutAttn} of
-the probability mass on moves from the affected square, decreasing it in
-\result{patchDecAttn} of \result{patchNAttn} cases. The norm-matched random edit
-removes \result{patchRandCutAttn} and decreases the mass in
-\result{patchRandDecAttn} of cases, which is indistinguishable from a coin flip.
-The state representation is not a decorative correlate of the model's
-computation. It is read.
-
-\subsection{A second domain that did not work, and why}
+\subsection{A second domain, and what it took to build one}
 \label{sec:synthfail}
 
 We attempted a second oracle-bearing domain, a program updating integer variables
@@ -702,6 +738,18 @@ read, and whether one exists is a property of the task, not only of the
 architecture.
 
 
+\subsection{A degenerate metric, declared}
+Our horizon was pre-registered on exact-position fidelity. That quantity reaches
+zero by roughly ply \result{exactPly} in every condition, so it cannot
+discriminate between them, and conditioning on it is impossible because exact
+states essentially do not occur past the opening. We therefore report horizons on
+occupied-square accuracy and on the illegal-move rate. The revision was made
+after inspecting baseline data and before evaluating any intervention, and every
+definition is applied unchanged across conditions. We flag it rather than
+presenting the revised metric as the original plan, and we note that anyone
+measuring state tracking with an all-or-nothing criterion will obtain an
+unusable number for the same reason.
+
 \subsection{What the predictions came to}
 \label{sec:verdict}
 
@@ -738,50 +786,6 @@ our expectation (Section~\ref{sec:bottleneck}). And the quantity this literature
 reports as evidence of a world model turned out to carry almost no information
 about behaviour, which is the finding we would keep if we could keep only one
 (Section~\ref{sec:coupling}).
-
-\subsection{How much of the planning error is really memory}
-\label{sec:plan}
-
-The other half of the decomposition needs care, because the conditioning that
-would isolate it cleanly is unattainable. Requiring the probe to recover the
-exact board leaves no samples past the opening, for the reason already given.
-Requiring only the squares the move touches leaves samples everywhere but does
-not constrain the rest of the board, so state loss elsewhere is still counted as
-a failure of judgement.
-
-We therefore vary the strictness and read the trend (Table~\ref{tab:strict}).
-Tightening the conditioning lowers the loss substantially. At ply 30 to 40 the
-median centipawn loss falls from \result{epsMed30to40tol64} with the board
-unconstrained to \result{epsMed30to40tol4} when at most four other squares may be
-wrong, and the blunder rate from \result{epsBl30to40tol64} to
-\result{epsBl30to40tol4}. Roughly half of what a naive reading would call
-degraded judgement is misattributed memory failure.
-
-The trend does not go to zero. Holding the conditioning fixed at four wrong
-squares, the median loss still grows with depth, from
-\result{epsMed20to30tol4} at ply 20 to 30 to \result{epsMed30to40tol4} at ply 30
-to 40. Judgement given intact state is not depth-invariant.
-
-We take the honest reading. Memory is the dominant component and the better
-characterised one, and it is not the only one. Our original framing of H4, a
-clean separation in which an intervention moves one term and leaves the other
-untouched, was too tidy for what the measurement supports. The decomposition
-still earns its place, because it converts one uninterpretable curve into two
-quantities with different remedies, but a practitioner should expect the terms to
-be entangled rather than orthogonal, and should report the conditioning they used
-when they quote either one.
-
-\subsection{A degenerate metric, declared}
-Our horizon was pre-registered on exact-position fidelity. That quantity reaches
-zero by roughly ply \result{exactPly} in every condition, so it cannot
-discriminate between them, and conditioning on it is impossible because exact
-states essentially do not occur past the opening. We therefore report horizons on
-occupied-square accuracy and on the illegal-move rate. The revision was made
-after inspecting baseline data and before evaluating any intervention, and every
-definition is applied unchanged across conditions. We flag it rather than
-presenting the revised metric as the original plan, and we note that anyone
-measuring state tracking with an all-or-nothing criterion will obtain an
-unusable number for the same reason.
 
 \section{Discussion}
 
