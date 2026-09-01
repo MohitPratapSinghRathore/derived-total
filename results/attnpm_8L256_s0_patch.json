@@ -1,0 +1,34 @@
+{
+ "name": "attnpm_8L256_s0",
+ "layer": 7,
+ "alpha": 0.5,
+ "n": 600,
+ "manipulation_check_flip_rate": 1.0,
+ "state_edit_all": {
+  "n": 600,
+  "mass_before": 0.07358144020316436,
+  "mass_after": 0.004402380061360785,
+  "mean_abs_drop": 0.06917906014180357,
+  "mean_rel_drop": 0.9538435001968336,
+  "frac_decreased": 0.9983333333333333
+ },
+ "state_edit_where_belief_flipped": {
+  "n": 600,
+  "mass_before": 0.07358144020316436,
+  "mass_after": 0.004402380061360785,
+  "mean_abs_drop": 0.06917906014180357,
+  "mean_rel_drop": 0.9538435001968336,
+  "frac_decreased": 0.9983333333333333
+ },
+ "state_edit_where_belief_unchanged": {
+  "n": 0
+ },
+ "norm_matched_random_edit": {
+  "n": 600,
+  "mass_before": 0.07358144020316436,
+  "mass_after": 0.06590995393889974,
+  "mean_abs_drop": 0.007671486264264615,
+  "mean_rel_drop": -0.5139829225014332,
+  "frac_decreased": 0.5066666666666667
+ }
+}

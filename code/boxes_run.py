@@ -20,7 +20,7 @@ from model import ChessLM, param_count
 from boxes import gen, answer_weights, TOK, VOCAB, SEQ, NOBJ, MAX_QUERIES, BOX0
 
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
-BUCKETS = [(1, 6), (6, 11), (11, 16), (16, 21), (21, 25)]
+BUCKETS = [(1, 3), (3, 6), (6, 10), (10, 15), (15, 20), (20, 25)]
 DEV = "cuda"
 
 
@@ -82,8 +82,15 @@ def train(m, cond, seed, data, steps, bs, lr=3e-4, w=None):
     return log
 
 
-def fit_probe(m, data, n_layer, d=256, epochs=2, bs=64):
-    toks, lens, state = data[0], data[1], data[2]
+def fit_probe(m, data, n_layer, d=256, epochs=4, bs=64):
+    """Fit at QUERY positions only.
+
+    An earlier version trained across all token positions. State information is
+    concentrated at the query, so the average gradient was dominated by positions
+    carrying no signal and the probe collapsed to the marginal, reporting exact
+    chance while the model answered perfectly. Probe where the decision is made.
+    """
+    toks, lens, state, qpos = data[0], data[1], data[2], data[3]
     probes = [nn.Linear(d, NOBJ * NOBJ).to(DEV) for _ in range(n_layer)]
     opt = torch.optim.AdamW([p for pr in probes for p in pr.parameters()], lr=1e-3)
     N = len(toks)
@@ -93,7 +100,12 @@ def fit_probe(m, data, n_layer, d=256, epochs=2, bs=64):
             idx = order[i:i + bs]
             x = torch.from_numpy(toks[idx].astype(np.int64)).to(DEV)
             s = torch.from_numpy(state[idx].astype(np.int64)).to(DEV)
-            v = torch.from_numpy(np.arange(SEQ)[None] < lens[idx][:, None]).to(DEV)
+            vm = np.zeros((len(idx), SEQ), dtype=bool)
+            for r, gi in enumerate(idx):
+                for q in qpos[gi]:
+                    if q >= 0:
+                        vm[r, int(q) - 1] = True      # the query object token
+            v = torch.from_numpy(vm).to(DEV)
             with torch.no_grad(), torch.amp.autocast("cuda", dtype=torch.float16):
                 _, hs, _ = m(x, return_hidden=True)
             loss = 0
@@ -110,6 +122,7 @@ def measure(m, probes, data, n_layer, bs=64, seed=0):
     nb = len(BUCKETS)
     ans_hit = np.zeros(nb); ans_n = np.zeros(nb)
     st_hit = np.zeros((n_layer, nb)); st_n = np.zeros(nb)
+    qobj_hit = np.zeros((n_layer, nb))
     rng = np.random.default_rng(seed)
     bank = {b: [] for b in range(nb)}
     per_layer_cases = {li: {"est_bad": np.zeros(nb), "plan_bad": np.zeros(nb),
@@ -142,6 +155,7 @@ def measure(m, probes, data, n_layer, bs=64, seed=0):
                 st_n[b] += 1
                 for li in range(n_layer):
                     st_hit[li, b] += float((dec[li][r, qtok] == state[gi, qtok]).all())
+                    qobj_hit[li, b] += float(dec[li][r, qtok, o] == int(state[gi, qtok, o]))
                     C = per_layer_cases[li]
                     believed = int(dec[li][r, qtok, o])
                     intact = (believed == true_box)
@@ -162,6 +176,7 @@ def measure(m, probes, data, n_layer, bs=64, seed=0):
                     bank[b].append(dec[-1][r, qtok].copy())
     return dict(ans_acc=ans_hit / np.maximum(ans_n, 1),
                 state_acc=st_hit / np.maximum(st_n, 1),
+                qobj_acc=qobj_hit / np.maximum(st_n, 1),
                 n=ans_n, st_n=st_n, cases=per_layer_cases)
 
 
@@ -196,12 +211,13 @@ def main():
             nl = len(m.blocks)
             probes = fit_probe(m, pr, nl)
             res = measure(m, probes, ev, nl)
-            best = int(np.argmax(res["state_acc"].mean(1)))
+            best = int(np.argmax(res["qobj_acc"].mean(1)))
             C = res["cases"][best]
             rec = dict(cond=cond, seed=seed, params=param_count(m), buckets=BUCKETS,
                        best_layer=best, train_log=log, chance=1.0 / NOBJ,
                        ans_acc=res["ans_acc"].tolist(),
                        state_acc=res["state_acc"].tolist(),
+                       qobj_acc=res["qobj_acc"].tolist(),
                        n=res["n"].tolist(),
                        estate=(C["est_bad"] / np.maximum(res["st_n"], 1)).tolist(),
                        eplan=(C["plan_bad"] / np.maximum(C["plan_n"], 1)).tolist(),
@@ -211,8 +227,11 @@ def main():
                        belief_mismatched=(C["mis_hit"] / np.maximum(C["mis_n"], 1)).tolist(),
                        belief_overall=float(C["bel_hit"].sum() / max(C["bel_n"].sum(), 1)),
                        belief_mismatched_overall=float(C["mis_hit"].sum() / max(C["mis_n"].sum(), 1)))
+            torch.save({"model": m.state_dict(), "cond": cond, "seed": seed},
+                       os.path.join(RES, "..", "runs", f"{tag}.pt"))
             json.dump(rec, open(fp, "w"), indent=1)
             print(f"  {tag}: ans {np.round(res['ans_acc'], 3)}", flush=True)
+            print(f"      probe(queried obj) {np.round(res['qobj_acc'][best], 3)}", flush=True)
             print(f"      E_state {np.round(rec['estate'], 3)}  "
                   f"E_plan {np.round(rec['eplan'], 3)}", flush=True)
             print(f"      belief {rec['belief_overall']:.3f} vs mismatched "

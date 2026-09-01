@@ -35,7 +35,15 @@ import numpy as np
 
 NOBJ = 4                      # S4 is solvable; S5 is not
 MAX_OPS = 24
-MIN_GAP, MAX_GAP = 3, 4
+# Query after EVERY operation. Six earlier designs floored, and the common cause
+# was that all of them were all-or-nothing: with uniformly random updates and
+# sparse queries, a model either tracks the state exactly or sits at chance, the
+# same structure as parity, which is hard to learn from endpoint supervision.
+# Chess trains because it gives partial credit: a plausible move needs only
+# partial state, so there is a gradient of partial competence to climb. Querying
+# after every operation supplies the same thing here. Depth-one queries are
+# answerable directly, which gives the model a foothold from which to extend.
+MIN_GAP, MAX_GAP = 1, 1
 P_SWAP = 0.5                  # the rest are anchored MOVEs
 
 TOK = {"<pad>": 0, "<bos>": 1, "<swap>": 2, "<move>": 3, "<query>": 4}
