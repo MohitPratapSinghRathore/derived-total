@@ -2,43 +2,43 @@
  "name": "alsb_l1_8L256_s0",
  "depth": 10,
  "blunder_cp": 100,
- "conditioned_on": "top1 legal AND probe-exact state",
+ "conditioned_on": "top1 legal AND probe correct on the squares the move touches",
  "eplan": {
   "10-20": {
-   "n": 120,
-   "mean_cp_loss": 115.33333333333333,
-   "median_cp_loss": 12.5,
-   "blunder_rate": 0.08333333333333333
+   "n": 150,
+   "mean_cp_loss": 57.986666666666665,
+   "median_cp_loss": 13.0,
+   "blunder_rate": 0.11333333333333333
   },
   "20-30": {
-   "n": 4,
-   "mean_cp_loss": 18.5,
-   "median_cp_loss": 7.0,
-   "blunder_rate": 0.0
+   "n": 150,
+   "mean_cp_loss": 157.32666666666665,
+   "median_cp_loss": 41.5,
+   "blunder_rate": 0.26
   },
   "30-40": {
-   "n": 0,
-   "mean_cp_loss": null,
-   "median_cp_loss": null,
-   "blunder_rate": null
+   "n": 150,
+   "mean_cp_loss": 451.0733333333333,
+   "median_cp_loss": 95.0,
+   "blunder_rate": 0.49333333333333335
   },
   "40-50": {
-   "n": 0,
-   "mean_cp_loss": null,
-   "median_cp_loss": null,
-   "blunder_rate": null
+   "n": 150,
+   "mean_cp_loss": 592.2933333333333,
+   "median_cp_loss": 137.5,
+   "blunder_rate": 0.56
   },
   "50-60": {
-   "n": 0,
-   "mean_cp_loss": null,
-   "median_cp_loss": null,
-   "blunder_rate": null
+   "n": 150,
+   "mean_cp_loss": 521.8266666666667,
+   "median_cp_loss": 131.0,
+   "blunder_rate": 0.54
   },
   "60-80": {
-   "n": 0,
-   "mean_cp_loss": null,
-   "median_cp_loss": null,
-   "blunder_rate": null
+   "n": 150,
+   "mean_cp_loss": 802.0533333333333,
+   "median_cp_loss": 95.5,
+   "blunder_rate": 0.47333333333333333
   }
  }
 }

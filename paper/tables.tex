@@ -22,6 +22,7 @@ Recurrent channel ($\lambda{=}0$) & 7{,}508{,}416 & 0.03 to 0.12 & 0.801 & 0.384
 Recurrent channel ($\lambda{=}1$) & 7{,}508{,}416 & -0.05 to 0.08 & 0.806 & 0.399 & \textbf{0.366} & 0.093 & 0.021 & 0.656 \\
 6L/192 & 3{,}440{,}064 & 0.01 to 0.10 & 0.831 & 0.447 & \textbf{0.266} & 0.049 & 0.006 & 0.581 \\
 12L/384 & 22{,}835{,}328 & -0.02 to 0.07 & 0.747 & 0.327 & \textbf{0.412} & 0.056 & 0.009 & 0.713 \\
+12L/512 & 39{,}884{,}288 & -0.04 to 0.07 & 0.711 & 0.297 & \textbf{0.439} & 0.059 & 0.009 & 0.745 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -50,6 +51,7 @@ Recurrent channel ($\lambda{=}1$) & 7{,}508{,}416 & 3 & 0.632\{,}$\pm$\{,}0.003 
 \quad 12L/256 & 10{,}504{,}960 & 1 & 0.578 & 0.149 & 27.7 \\
 \quad 8L/384 & 15{,}737{,}472 & 1 & 0.628 & 0.133 & 29.4 \\
 \quad 12L/384 & 22{,}835{,}328 & 1 & 0.657 & 0.114 & 31.6 \\
+\quad 12L/512 & 39{,}884{,}288 & 1 & 0.695 & 0.101 & 33.7 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -83,10 +85,10 @@ This isolates judgement from memory.}
 \toprule
 Model & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--80 \\
 \midrule
-Attention-only & 22 & n/a & n/a & n/a & n/a & n/a \\
-Attention-only, parameter-matched & 31 & 24 & n/a & n/a & n/a & n/a \\
-Recurrent channel ($\lambda{=}0$) & 28 & 83 & n/a & n/a & n/a & n/a \\
-Recurrent channel ($\lambda{=}1$) & 115 & 18 & n/a & n/a & n/a & n/a \\
+Attention-only & 41 & 115 & 544 & 498 & 485 & 635 \\
+Attention-only, parameter-matched & 53 & 233 & 402 & 698 & 591 & 537 \\
+Recurrent channel ($\lambda{=}0$) & 66 & 111 & 335 & 526 & 547 & 552 \\
+Recurrent channel ($\lambda{=}1$) & 58 & 157 & 451 & 592 & 522 & 802 \\
 \bottomrule
 \end{tabular}
 \end{table}

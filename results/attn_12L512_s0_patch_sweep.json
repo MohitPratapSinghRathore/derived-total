@@ -1,0 +1,11 @@
+{
+ "0.5": {
+  "flip_rate": 1.0,
+  "state_mass_before": 0.08169718435088535,
+  "state_mass_after": 0.0035273060708963123,
+  "state_frac_decreased": 0.9966666666666667,
+  "random_mass_after": 0.080957992026698,
+  "random_frac_decreased": 0.44666666666666666,
+  "n": 600
+ }
+}

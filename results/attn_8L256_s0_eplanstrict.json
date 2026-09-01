@@ -1,0 +1,135 @@
+{
+ "name": "attn_8L256_s0",
+ "tolerances": [
+  0,
+  2,
+  4,
+  8,
+  16,
+  64
+ ],
+ "buckets": [
+  [
+   20,
+   30
+  ],
+  [
+   30,
+   40
+  ],
+  [
+   40,
+   50
+  ]
+ ],
+ "cells": {
+  "20-30|tol0": {
+   "n": 2,
+   "mean_cp": 87.0,
+   "median_cp": 87.0,
+   "blunder_rate": 0.5
+  },
+  "20-30|tol2": {
+   "n": 33,
+   "mean_cp": 135.3939393939394,
+   "median_cp": 51.0,
+   "blunder_rate": 0.30303030303030304
+  },
+  "20-30|tol4": {
+   "n": 90,
+   "mean_cp": 63.78888888888889,
+   "median_cp": 23.5,
+   "blunder_rate": 0.2222222222222222
+  },
+  "20-30|tol8": {
+   "n": 90,
+   "mean_cp": 77.32222222222222,
+   "median_cp": 30.5,
+   "blunder_rate": 0.2111111111111111
+  },
+  "20-30|tol16": {
+   "n": 90,
+   "mean_cp": 110.41111111111111,
+   "median_cp": 34.0,
+   "blunder_rate": 0.24444444444444444
+  },
+  "20-30|tol64": {
+   "n": 90,
+   "mean_cp": 126.84444444444445,
+   "median_cp": 44.0,
+   "blunder_rate": 0.28888888888888886
+  },
+  "30-40|tol0": {
+   "n": 0,
+   "mean_cp": null,
+   "median_cp": null,
+   "blunder_rate": null
+  },
+  "30-40|tol2": {
+   "n": 3,
+   "mean_cp": 70.0,
+   "median_cp": 13.0,
+   "blunder_rate": 0.3333333333333333
+  },
+  "30-40|tol4": {
+   "n": 28,
+   "mean_cp": 40.607142857142854,
+   "median_cp": 20.5,
+   "blunder_rate": 0.17857142857142858
+  },
+  "30-40|tol8": {
+   "n": 90,
+   "mean_cp": 259.14444444444445,
+   "median_cp": 56.5,
+   "blunder_rate": 0.4111111111111111
+  },
+  "30-40|tol16": {
+   "n": 90,
+   "mean_cp": 148.2111111111111,
+   "median_cp": 68.0,
+   "blunder_rate": 0.4444444444444444
+  },
+  "30-40|tol64": {
+   "n": 90,
+   "mean_cp": 460.14444444444445,
+   "median_cp": 69.0,
+   "blunder_rate": 0.4
+  },
+  "40-50|tol0": {
+   "n": 0,
+   "mean_cp": null,
+   "median_cp": null,
+   "blunder_rate": null
+  },
+  "40-50|tol2": {
+   "n": 0,
+   "mean_cp": null,
+   "median_cp": null,
+   "blunder_rate": null
+  },
+  "40-50|tol4": {
+   "n": 2,
+   "mean_cp": 304.5,
+   "median_cp": 304.5,
+   "blunder_rate": 1.0
+  },
+  "40-50|tol8": {
+   "n": 90,
+   "mean_cp": 467.1222222222222,
+   "median_cp": 63.5,
+   "blunder_rate": 0.4111111111111111
+  },
+  "40-50|tol16": {
+   "n": 90,
+   "mean_cp": 724.9777777777778,
+   "median_cp": 110.0,
+   "blunder_rate": 0.5111111111111111
+  },
+  "40-50|tol64": {
+   "n": 90,
+   "mean_cp": 829.4444444444445,
+   "median_cp": 120.5,
+   "blunder_rate": 0.5444444444444444
+  }
+ }
+}

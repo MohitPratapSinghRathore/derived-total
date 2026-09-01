@@ -636,195 +636,195 @@
   "source": "results/attn_8L256_s0.json"
  },
  "cp10to20Attn": {
-  "value": "22",
+  "value": "41",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "blunder10to20Attn": {
-  "value": "0.000",
+  "value": "0.127",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "cp20to30Attn": {
-  "value": "n/a",
+  "value": "115",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "blunder20to30Attn": {
-  "value": "n/a",
+  "value": "0.260",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "cp30to40Attn": {
-  "value": "n/a",
+  "value": "544",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "blunder30to40Attn": {
-  "value": "n/a",
+  "value": "0.467",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "cp40to50Attn": {
-  "value": "n/a",
+  "value": "498",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "blunder40to50Attn": {
-  "value": "n/a",
+  "value": "0.453",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "cp50to60Attn": {
-  "value": "n/a",
+  "value": "485",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "blunder50to60Attn": {
-  "value": "n/a",
+  "value": "0.513",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "cp60to80Attn": {
-  "value": "n/a",
+  "value": "635",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "blunder60to80Attn": {
-  "value": "n/a",
+  "value": "0.540",
   "source": "results/attn_8L256_s0_eplan.json"
  },
  "cp10to20AttnPM": {
-  "value": "31",
+  "value": "53",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "blunder10to20AttnPM": {
-  "value": "0.100",
+  "value": "0.113",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "cp20to30AttnPM": {
-  "value": "24",
+  "value": "233",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "blunder20to30AttnPM": {
-  "value": "0.000",
+  "value": "0.280",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "cp30to40AttnPM": {
-  "value": "n/a",
+  "value": "402",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "blunder30to40AttnPM": {
-  "value": "n/a",
+  "value": "0.413",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "cp40to50AttnPM": {
-  "value": "n/a",
+  "value": "698",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "blunder40to50AttnPM": {
-  "value": "n/a",
+  "value": "0.513",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "cp50to60AttnPM": {
-  "value": "n/a",
+  "value": "591",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "blunder50to60AttnPM": {
-  "value": "n/a",
+  "value": "0.527",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "cp60to80AttnPM": {
-  "value": "n/a",
+  "value": "537",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "blunder60to80AttnPM": {
-  "value": "n/a",
+  "value": "0.507",
   "source": "results/attnpm_8L256_s0_eplan.json"
  },
  "cp10to20AlsbZero": {
-  "value": "28",
+  "value": "66",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "blunder10to20AlsbZero": {
-  "value": "0.032",
+  "value": "0.140",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "cp20to30AlsbZero": {
-  "value": "83",
+  "value": "111",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "blunder20to30AlsbZero": {
-  "value": "0.000",
+  "value": "0.273",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "cp30to40AlsbZero": {
-  "value": "n/a",
+  "value": "335",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "blunder30to40AlsbZero": {
-  "value": "n/a",
+  "value": "0.413",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "cp40to50AlsbZero": {
-  "value": "n/a",
+  "value": "526",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "blunder40to50AlsbZero": {
-  "value": "n/a",
+  "value": "0.580",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "cp50to60AlsbZero": {
-  "value": "n/a",
+  "value": "547",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "blunder50to60AlsbZero": {
-  "value": "n/a",
+  "value": "0.467",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "cp60to80AlsbZero": {
-  "value": "n/a",
+  "value": "552",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "blunder60to80AlsbZero": {
-  "value": "n/a",
+  "value": "0.453",
   "source": "results/alsb_l0_8L256_s0_eplan.json"
  },
  "cp10to20AlsbOne": {
-  "value": "115",
+  "value": "58",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "blunder10to20AlsbOne": {
-  "value": "0.083",
+  "value": "0.113",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "cp20to30AlsbOne": {
-  "value": "18",
+  "value": "157",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "blunder20to30AlsbOne": {
-  "value": "0.000",
+  "value": "0.260",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "cp30to40AlsbOne": {
-  "value": "n/a",
+  "value": "451",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "blunder30to40AlsbOne": {
-  "value": "n/a",
+  "value": "0.493",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "cp40to50AlsbOne": {
-  "value": "n/a",
+  "value": "592",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "blunder40to50AlsbOne": {
-  "value": "n/a",
+  "value": "0.560",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "cp50to60AlsbOne": {
-  "value": "n/a",
+  "value": "522",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "blunder50to60AlsbOne": {
-  "value": "n/a",
+  "value": "0.540",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "cp60to80AlsbOne": {
-  "value": "n/a",
+  "value": "802",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "blunder60to80AlsbOne": {
-  "value": "n/a",
+  "value": "0.473",
   "source": "results/alsb_l1_8L256_s0_eplan.json"
  },
  "patchAlphaAttn": {
@@ -906,6 +906,46 @@
  "patchRandCutAlsbOne": {
   "value": "0.076",
   "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchAlphaRung4": {
+  "value": "0.50",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchNRung4": {
+  "value": "600",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchFlipRung4": {
+  "value": "1.000",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchMassBeforeRung4": {
+  "value": "0.082",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchMassAfterRung4": {
+  "value": "0.004",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchDecRung4": {
+  "value": "0.997",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchRandAfterRung4": {
+  "value": "0.081",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchRandDecRung4": {
+  "value": "0.447",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchCutRung4": {
+  "value": "0.957",
+  "source": "results/attn_12L512_s0_patch.json"
+ },
+ "patchRandCutRung4": {
+  "value": "0.009",
+  "source": "results/attn_12L512_s0_patch.json"
  },
  "locIllAttn": {
   "value": "0.806",
@@ -1266,6 +1306,66 @@
  "belIllHiRung3": {
   "value": "0.421",
   "source": "results/attn_12L384_s0_belief.json"
+ },
+ "locIllRung4": {
+  "value": "0.711",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "locLegRung4": {
+  "value": "0.297",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "corrGlobalMinRung4": {
+  "value": "-0.042",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "corrGlobalMaxRung4": {
+  "value": "0.071",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "ageFirstRung4": {
+  "value": "0.067",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "agePeakRung4": {
+  "value": "0.300",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "ageLastRung4": {
+  "value": "0.142",
+  "source": "results/attn_12L512_s0_coupling.json"
+ },
+ "belIllRung4": {
+  "value": "0.439",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belLegRung4": {
+  "value": "0.745",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belRandRung4": {
+  "value": "0.009",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belMisRung4": {
+  "value": "0.059",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belRatioRung4": {
+  "value": "49",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belRatioMisRung4": {
+  "value": "7.4",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belIllLoRung4": {
+  "value": "0.429",
+  "source": "results/attn_12L512_s0_belief.json"
+ },
+ "belIllHiRung4": {
+  "value": "0.449",
+  "source": "results/attn_12L512_s0_belief.json"
  },
  "synParamsAttn": {
   "value": "6,378,240",
