@@ -97,7 +97,8 @@ what that does and does not license.
 \paragraph{What we find.}
 Working with search-free autoregressive models trained only on chess move
 notation, we measure the internal state against a rules engine at every token and
-compare it with what the model actually does. Three results structure the paper.
+compare it with what the model actually does. Three results carry the argument, and the rest of
+the paper tests how far they reach.
 
 \begin{enumerate}[nosep]
 \item \textbf{Aggregate state fidelity is a poor predictor of behaviour.} Probe
@@ -695,7 +696,7 @@ separated a pure read-out query from a computed one, so that state tracking coul
 succeed without the arithmetic succeeding, and read-out accuracy still sat at
 chance.
 
-We draw two conclusions rather than one. The narrow conclusion is that this task
+We draw two conclusions from the arithmetic attempts. The narrow one is that this task
 family asks a small model to learn modular arithmetic before any state tracking
 becomes observable, and that our compute did not reach it. The broader one is a
 warning for anyone building synthetic state-tracking benchmarks: a task can be
@@ -705,6 +706,34 @@ The loss curve diagnoses this cheaply. A model that has learned the format and n
 content sits at the generator's token-type entropy, which is computable in
 advance and worth computing before trusting such a benchmark. We report this in
 place of an easy cross-domain result.
+
+\paragraph{A domain that does work.}
+Abandoning arithmetic entirely, we built the second domain around an assignment
+instead. Four objects sit in four boxes. The sequence states the initial
+assignment, then applies operations that permute it, and after every operation
+asks where one object now is. A \textsc{swap} names two boxes and moves their
+contents without naming the objects, so the affected object's location cannot be
+retrieved by attending to its last mention and has to be maintained. A
+\textsc{move} names the object, which gives an anchor and keeps the task
+learnable. The state is the assignment of objects to boxes, exact at every
+token, and the answer is a single symbol, so belief consistency here is exact
+rather than estimated: a wrong answer either is or is not the box the model's own
+probe says holds that object.
+
+Two further design choices were forced on us, and both are worth recording. Our
+first attempt used five objects. That makes the state an element of $S_5$, the
+smallest non-solvable symmetric group, which is precisely the case bounded-depth
+sequence models are known to be unable to track \citep{merrill2024illusion}; we
+had chosen the hardest available instance by accident. Four objects give $S_4$,
+which is solvable. Our second attempt queried only occasionally, which left the
+task all-or-nothing: with uniformly random updates and sparse queries a model
+either tracks the permutation exactly or sits at chance, a structure that is hard
+to learn from endpoint supervision. Querying after every operation supplies
+partial credit, since a query one step after an operation is answerable directly,
+and that is the foothold from which the model extends. Chess has this property
+for free, because a plausible move needs only partial state.
+
+With those two changes the task became measurable, and the outcome follows.
 
 The outcome is not the clean replication we hoped for, and it is more
 informative than one would have been (Table~\ref{tab:boxes}).
