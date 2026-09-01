@@ -1,0 +1,44 @@
+{
+ "name": "attn_8L256_s0",
+ "depth": 10,
+ "blunder_cp": 100,
+ "conditioned_on": "top1 legal AND probe-exact state",
+ "eplan": {
+  "10-20": {
+   "n": 24,
+   "mean_cp_loss": 22.458333333333332,
+   "median_cp_loss": 17.0,
+   "blunder_rate": 0.0
+  },
+  "20-30": {
+   "n": 0,
+   "mean_cp_loss": null,
+   "median_cp_loss": null,
+   "blunder_rate": null
+  },
+  "30-40": {
+   "n": 0,
+   "mean_cp_loss": null,
+   "median_cp_loss": null,
+   "blunder_rate": null
+  },
+  "40-50": {
+   "n": 0,
+   "mean_cp_loss": null,
+   "median_cp_loss": null,
+   "blunder_rate": null
+  },
+  "50-60": {
+   "n": 0,
+   "mean_cp_loss": null,
+   "median_cp_loss": null,
+   "blunder_rate": null
+  },
+  "60-80": {
+   "n": 0,
+   "mean_cp_loss": null,
+   "median_cp_loss": null,
+   "blunder_rate": null
+  }
+ }
+}

@@ -1,9 +1,16 @@
-"""E_plan: engine centipawn loss, CONDITIONED on the state being intact.
+"""E_plan: engine centipawn loss, conditioned on ACTION-RELEVANT state.
 
-A move is scored only when (a) the model's top-1 move is legal and (b) the
-layer-best probe recovers the exact position.  This is the conditioning that
-separates H3 (memory improves) from H4 (judgement improves) -- without it the
-two are confounded, which is the paper's central methodological claim.
+A move is scored only when the top-1 move is legal and the probe independently
+recovers the state the move depends on.
+
+An earlier version conditioned on recovering the EXACT position. That produced
+no samples at all beyond ply 30, for the same reason the exact-state metric is
+degenerate: whole-board recovery essentially never happens past the opening. The
+planning half of the decomposition was therefore unmeasurable at depth.
+
+Conditioning instead on the squares the move touches follows the paper's own
+result, that action-relevant state is the quantity carrying information about
+behaviour, and it yields usable sample sizes at every depth.
 """
 import os, json, argparse
 import numpy as np
@@ -56,17 +63,20 @@ def main():
             pred = logits.float().argmax(-1).cpu().numpy()
             h = hs[best].float()
             pstate = probe(h).reshape(len(idx), -1, 64, 13).argmax(-1)
-            intact = (pstate == s[:, :pstate.shape[1]]).all(-1).cpu().numpy()
+            # action-relevant: correctness per square, resolved per candidate move
+            sq_ok = (pstate == s[:, :pstate.shape[1]]).cpu().numpy()
             for r, gi in enumerate(idx):
                 board = chess.Board()
                 T = int(lens[gi])
                 for t in range(T - 1):
                     bi = next((k for k, (lo, hi) in enumerate(BUCKETS) if lo <= t < hi), None)
-                    if bi is not None and len(cand[bi]) < args.per_bucket and intact[r, t]:
+                    if bi is not None and len(cand[bi]) < args.per_bucket:
                         mv = itos.get(int(pred[r, t]), "")
                         try:
                             m_ = chess.Move.from_uci(mv)
-                            if m_ in board.legal_moves:
+                            if (m_ in board.legal_moves
+                                    and sq_ok[r, t, m_.from_square]
+                                    and sq_ok[r, t, m_.to_square]):
                                 cand[bi].append((board.fen(), mv))
                         except Exception:
                             pass
@@ -98,7 +108,8 @@ def main():
               f"blunder={out[f'{lo}-{hi}']['blunder_rate']}", flush=True)
     eng.quit()
     json.dump({"name": args.name, "depth": DEPTH, "blunder_cp": BLUNDER_CP,
-               "conditioned_on": "top1 legal AND probe-exact state", "eplan": out},
+               "conditioned_on": "top1 legal AND probe correct on the squares the move touches",
+               "eplan": out},
               open(os.path.join(RES, f"{args.name}_eplan.json"), "w"), indent=1)
 
 

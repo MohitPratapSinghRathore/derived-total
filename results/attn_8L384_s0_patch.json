@@ -1,0 +1,34 @@
+{
+ "name": "attn_8L384_s0",
+ "layer": 7,
+ "alpha": 0.5,
+ "n": 600,
+ "manipulation_check_flip_rate": 1.0,
+ "state_edit_all": {
+  "n": 600,
+  "mass_before": 0.0780082636589403,
+  "mass_after": 0.0047811388047856816,
+  "mean_abs_drop": 0.07322712485415461,
+  "mean_rel_drop": 0.9620273006019728,
+  "frac_decreased": 0.9966666666666667
+ },
+ "state_edit_where_belief_flipped": {
+  "n": 600,
+  "mass_before": 0.0780082636589403,
+  "mass_after": 0.0047811388047856816,
+  "mean_abs_drop": 0.07322712485415461,
+  "mean_rel_drop": 0.9620273006019728,
+  "frac_decreased": 0.9966666666666667
+ },
+ "state_edit_where_belief_unchanged": {
+  "n": 0
+ },
+ "norm_matched_random_edit": {
+  "n": 600,
+  "mass_before": 0.0780082636589403,
+  "mass_after": 0.07347686077078758,
+  "mean_abs_drop": 0.004531402888152722,
+  "mean_rel_drop": -0.6069429055973389,
+  "frac_decreased": 0.445
+ }
+}

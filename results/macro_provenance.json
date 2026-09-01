@@ -635,6 +635,198 @@
   "value": "0",
   "source": "results/attn_8L256_s0.json"
  },
+ "cp10to20Attn": {
+  "value": "22",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "blunder10to20Attn": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "cp20to30Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "blunder20to30Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "cp30to40Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "blunder30to40Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "cp40to50Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "blunder40to50Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "cp50to60Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "blunder50to60Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "cp60to80Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "blunder60to80Attn": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplan.json"
+ },
+ "cp10to20AttnPM": {
+  "value": "31",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "blunder10to20AttnPM": {
+  "value": "0.100",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "cp20to30AttnPM": {
+  "value": "24",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "blunder20to30AttnPM": {
+  "value": "0.000",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "cp30to40AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "blunder30to40AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "cp40to50AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "blunder40to50AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "cp50to60AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "blunder50to60AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "cp60to80AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "blunder60to80AttnPM": {
+  "value": "n/a",
+  "source": "results/attnpm_8L256_s0_eplan.json"
+ },
+ "cp10to20AlsbZero": {
+  "value": "28",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "blunder10to20AlsbZero": {
+  "value": "0.032",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "cp20to30AlsbZero": {
+  "value": "83",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "blunder20to30AlsbZero": {
+  "value": "0.000",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "cp30to40AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "blunder30to40AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "cp40to50AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "blunder40to50AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "cp50to60AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "blunder50to60AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "cp60to80AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "blunder60to80AlsbZero": {
+  "value": "n/a",
+  "source": "results/alsb_l0_8L256_s0_eplan.json"
+ },
+ "cp10to20AlsbOne": {
+  "value": "115",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "blunder10to20AlsbOne": {
+  "value": "0.083",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "cp20to30AlsbOne": {
+  "value": "18",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "blunder20to30AlsbOne": {
+  "value": "0.000",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "cp30to40AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "blunder30to40AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "cp40to50AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "blunder40to50AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "cp50to60AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "blunder50to60AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "cp60to80AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
+ "blunder60to80AlsbOne": {
+  "value": "n/a",
+  "source": "results/alsb_l1_8L256_s0_eplan.json"
+ },
  "patchAlphaAttn": {
   "value": "0.50",
   "source": "results/attn_8L256_s0_patch.json"
@@ -674,6 +866,46 @@
  "patchRandCutAttn": {
   "value": "0.077",
   "source": "results/attn_8L256_s0_patch.json"
+ },
+ "patchAlphaAlsbOne": {
+  "value": "0.50",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchNAlsbOne": {
+  "value": "600",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchFlipAlsbOne": {
+  "value": "1.000",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchMassBeforeAlsbOne": {
+  "value": "0.067",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchMassAfterAlsbOne": {
+  "value": "0.004",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchDecAlsbOne": {
+  "value": "0.998",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchRandAfterAlsbOne": {
+  "value": "0.062",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchRandDecAlsbOne": {
+  "value": "0.493",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchCutAlsbOne": {
+  "value": "0.948",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
+ },
+ "patchRandCutAlsbOne": {
+  "value": "0.076",
+  "source": "results/alsb_l1_8L256_s0_patch.json"
  },
  "locIllAttn": {
   "value": "0.806",
@@ -974,6 +1206,66 @@
  "belIllHiRung1": {
   "value": "0.272",
   "source": "results/attn_6L192_s0_belief.json"
+ },
+ "locIllRung3": {
+  "value": "0.747",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "locLegRung3": {
+  "value": "0.327",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "corrGlobalMinRung3": {
+  "value": "-0.021",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "corrGlobalMaxRung3": {
+  "value": "0.068",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "ageFirstRung3": {
+  "value": "0.087",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "agePeakRung3": {
+  "value": "0.326",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "ageLastRung3": {
+  "value": "0.137",
+  "source": "results/attn_12L384_s0_coupling.json"
+ },
+ "belIllRung3": {
+  "value": "0.412",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belLegRung3": {
+  "value": "0.713",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belRandRung3": {
+  "value": "0.009",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belMisRung3": {
+  "value": "0.056",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belRatioRung3": {
+  "value": "48",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belRatioMisRung3": {
+  "value": "7.4",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belIllLoRung3": {
+  "value": "0.402",
+  "source": "results/attn_12L384_s0_belief.json"
+ },
+ "belIllHiRung3": {
+  "value": "0.421",
+  "source": "results/attn_12L384_s0_belief.json"
  },
  "synParamsAttn": {
   "value": "6,378,240",
