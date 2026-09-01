@@ -70,8 +70,19 @@ def main():
     gate(len(bare) == 0, "no hardcoded decimal figures in prose",
          f"found {bare[:5]}" if bare else "")
 
-    # ---- built-artifact gates
+    # ---- staleness. A failing build once went unnoticed for a day because the
+    # output directory still held an older PDF and nothing checked its age.
     pdf = os.path.join(BUILD, "main.pdf")
+    if os.path.exists(pdf):
+        newest_src = max(os.path.getmtime(os.path.join(PAPER, f))
+                         for f in ("main.tex", "tables.tex", "results_macros.tex")
+                         if os.path.exists(os.path.join(PAPER, f)))
+        age = os.path.getmtime(pdf) - newest_src
+        gate(age > 0, "built PDF is newer than its sources",
+             f"PDF is {abs(age)/3600:.1f} h older than the newest source"
+             if age <= 0 else "")
+
+    # ---- built-artifact gates
     t = pdf_text(pdf)
     if t is None:
         warns.append("main.pdf not built or pypdf missing; PDF gates skipped")

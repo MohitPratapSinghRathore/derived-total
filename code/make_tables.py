@@ -38,6 +38,16 @@ def pm(v, fmt="{:.3f}"):
     return (fmt + "\\,$\\pm$\\," + fmt).format(a.mean(), a.std(ddof=1))
 
 
+
+def fnum(n):
+    """Format an integer with thousands separators protected for LaTeX.
+
+    Applying a comma replacement to a whole table row also corrupts the thin-space
+    macros produced by pm(), which silently broke the build for a day.
+    """
+    return "{:,}".format(int(n)).replace(",", "{,}")
+
+
 def controls_table():
     r = load("attn_8L256_s0")
     if not r or "control_random_occ" not in r:
@@ -106,9 +116,8 @@ def mechanism_table():
          "\\midrule"]
     for (lab, prm, cor, li, ll, bi, bm, br, bc) in rows:
         bm_s = "n/a" if bm is None else f"{bm:.3f}"
-        L.append(f"{lab} & {prm:,} & {cor} & {li:.3f} & {ll:.3f} & "
-                 f"\\textbf{{{bi:.3f}}} & {bm_s} & {br:.3f} & {bc:.3f} \\\\"
-                 .replace(",", "{,}"))
+        L.append(f"{lab} & {fnum(prm)} & {cor} & {li:.3f} & {ll:.3f} & "
+                 f"\\textbf{{{bi:.3f}}} & {bm_s} & {br:.3f} & {bc:.3f} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L
 
@@ -129,11 +138,11 @@ def horizon_table():
         if not rs:
             continue
         any_ = True
-        L.append(f"{label} & {rs[0]['params']:,} & {len(rs)} & "
+        L.append(f"{label} & {fnum(rs[0]['params'])} & {len(rs)} & "
                  f"{pm([np.array(r['fidelity_occ'])[r['best_layer']][4] for r in rs])} & "
                  f"{pm([r['illegal'][4] for r in rs])} & "
                  f"{pm([interp_horizon(r['illegal'], r['buckets'], 0.05) for r in rs], '{:.1f}')}"
-                 f" \\\\".replace(",", "{,}"))
+                 f" \\\\")
     zs = [load(f"alsb_l1_8L256_s{s}_zablate") for s in (0, 1, 2)]
     zs = [z for z in zs if z]
     if zs:
@@ -149,10 +158,10 @@ def horizon_table():
         if not r:
             continue
         any_ = True
-        L.append(f"\\quad {label} & {r['params']:,} & 1 & "
+        L.append(f"\\quad {label} & {fnum(r['params'])} & 1 & "
                  f"{np.array(r['fidelity_occ'])[r['best_layer']][4]:.3f} & "
                  f"{r['illegal'][4]:.3f} & "
-                 f"{interp_horizon(r['illegal'], r['buckets'], 0.05):.1f} \\\\".replace(",", "{,}"))
+                 f"{interp_horizon(r['illegal'], r['buckets'], 0.05):.1f} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L if any_ else []
 
@@ -205,9 +214,77 @@ def patch_table():
     return L
 
 
+def strictness_table():
+    """Planning error as the conditioning on state is tightened."""
+    d = load("attn_8L256_s0_eplanstrict")
+    if not d:
+        return []
+    tols = d["tolerances"]
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Planning error against how strictly we condition on state. Each",
+         "cell gives the median engine centipawn loss, the blunder rate, and the",
+         "sample size, over legal moves whose touched squares the probe recovers and",
+         "with at most the stated number of other squares wrong. Tightening the",
+         "conditioning lowers the loss, so part of what looks like degraded judgement",
+         "is state loss elsewhere on the board. Loss still grows with depth at fixed",
+         "conditioning, so part of it is not. Cells with fewer than ten samples are",
+         "reported as n/a.}",
+         "\\label{tab:strict}",
+         "\\begin{tabular}{l" + "c" * len(tols) + "}", "\\toprule",
+         "Ply & " + " & ".join(("any" if t >= 64 else "$\\leq " + str(t) + "$")
+                               for t in tols) + " \\\\",
+         "\\midrule"]
+    for lo, hi in d["buckets"]:
+        cells = []
+        for t in tols:
+            c = d["cells"].get(f"{lo}-{hi}|tol{t}")
+            if not c or c["median_cp"] is None or c["n"] < 10:
+                cells.append("n/a")
+            else:
+                cells.append(f"{c['median_cp']:.0f} / {c['blunder_rate']:.2f} "
+                             f"({c['n']})")
+        L.append(f"{lo}--{hi} & " + " & ".join(cells) + " \\\\")
+    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
+    return L
+
+
+def boxes_table():
+    """Domain 2: the same decomposition on permutation tracking."""
+    rows = []
+    for cond, label in [("attn", "Attention-only"),
+                        ("alsb_l1", "Recurrent channel ($\\lambda{=}1$)")]:
+        rs = [load(f"boxes_{cond}_s{s}") for s in (0, 1, 2)]
+        rs = [r for r in rs if r]
+        if rs:
+            rows.append((label, rs))
+    if not rows:
+        return []
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Domain 2, permutation tracking. Answer accuracy at the shallowest",
+         "and deepest depths against a chance rate of one in four, the probe's",
+         "recovery of the queried object at depth, and belief consistency beside its",
+         "mismatched control. The attention-only model solves the task well above",
+         "chance while its state stays at chance under the probe, so it is not",
+         "maintaining a linearly decodable assignment. The supervised channel is, and",
+         "its errors are coherent with it.}",
+         "\\label{tab:boxes}", "\\begin{tabular}{lccccc}", "\\toprule",
+         "Model & seeds & acc.\\ shallow & acc.\\ deep & probe deep "
+         "& belief / control \\\\", "\\midrule"]
+    for label, rs in rows:
+        L.append(f"{label} & {len(rs)} & "
+                 f"{pm([r['ans_acc'][0] for r in rs])} & "
+                 f"{pm([r['ans_acc'][-1] for r in rs])} & "
+                 f"{pm([np.array(r['qobj_acc'])[r['best_layer']][-1] for r in rs])} & "
+                 f"{pm([r['belief_overall'] for r in rs])} / "
+                 f"{pm([r['belief_mismatched_overall'] for r in rs])} \\\\")
+    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
+    return L
+
+
 def main():
     L = ["% AUTO-GENERATED by code/make_tables.py. Do not edit by hand.", ""]
-    for f in (controls_table, mechanism_table, horizon_table, patch_table, eplan_table):
+    for f in (controls_table, mechanism_table, horizon_table, patch_table,
+              eplan_table, strictness_table, boxes_table):
         L += f()
     open(OUT, "w", encoding="utf-8").write("\n".join(L))
     print(f"wrote {OUT} ({len(L)} lines)")

@@ -588,11 +588,11 @@
   "source": "results/alsb_l1_8L256_s*_zablate.json"
  },
  "occFirst": {
-  "value": "0.974",
+  "value": "0.975",
   "source": "results/attn_8L256_s0.json"
  },
  "occLast": {
-  "value": "0.063",
+  "value": "0.066",
   "source": "results/attn_8L256_s0.json"
  },
  "illFirst": {
@@ -619,12 +619,20 @@
   "value": "7",
   "source": "results/attn_8L256_s0.json"
  },
+ "ctlRand40": {
+  "value": "0.195",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "ctlShuf40": {
+  "value": "0.166",
+  "source": "results/attn_8L256_s0.json"
+ },
  "ctlMaj40": {
   "value": "0.261",
   "source": "results/attn_8L256_s0.json"
  },
  "layerProfFirst": {
-  "value": "0.322",
+  "value": "0.323",
   "source": "results/attn_8L256_s0.json"
  },
  "layerProfLast": {
@@ -1442,5 +1450,397 @@
  "synPlanShallowAttnN": {
   "value": "1",
   "source": "results/synth_attn_s*.json"
+ },
+ "epsMed20to30tol0": {
+  "value": "10",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl20to30tol0": {
+  "value": "0.333",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN20to30tol0": {
+  "value": "3",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed20to30tol2": {
+  "value": "24",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl20to30tol2": {
+  "value": "0.183",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN20to30tol2": {
+  "value": "115",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed20to30tol4": {
+  "value": "20",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl20to30tol4": {
+  "value": "0.208",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN20to30tol4": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed20to30tol8": {
+  "value": "28",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl20to30tol8": {
+  "value": "0.208",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN20to30tol8": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed20to30tol16": {
+  "value": "33",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl20to30tol16": {
+  "value": "0.275",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN20to30tol16": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed20to30tol64": {
+  "value": "37",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl20to30tol64": {
+  "value": "0.283",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN20to30tol64": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed30to40tol0": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl30to40tol0": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN30to40tol0": {
+  "value": "0",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed30to40tol2": {
+  "value": "9",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl30to40tol2": {
+  "value": "0.167",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN30to40tol2": {
+  "value": "6",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed30to40tol4": {
+  "value": "41",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl30to40tol4": {
+  "value": "0.224",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN30to40tol4": {
+  "value": "85",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed30to40tol8": {
+  "value": "60",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl30to40tol8": {
+  "value": "0.383",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN30to40tol8": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed30to40tol16": {
+  "value": "68",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl30to40tol16": {
+  "value": "0.425",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN30to40tol16": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed30to40tol64": {
+  "value": "64",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl30to40tol64": {
+  "value": "0.392",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN30to40tol64": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed40to50tol0": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl40to50tol0": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN40to50tol0": {
+  "value": "0",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed40to50tol2": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl40to50tol2": {
+  "value": "n/a",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN40to50tol2": {
+  "value": "0",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed40to50tol4": {
+  "value": "69",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl40to50tol4": {
+  "value": "0.462",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN40to50tol4": {
+  "value": "13",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed40to50tol8": {
+  "value": "70",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl40to50tol8": {
+  "value": "0.433",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN40to50tol8": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed40to50tol16": {
+  "value": "109",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl40to50tol16": {
+  "value": "0.517",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN40to50tol16": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsMed40to50tol64": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsBl40to50tol64": {
+  "value": "0.533",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "epsN40to50tol64": {
+  "value": "120",
+  "source": "results/attn_8L256_s0_eplanstrict.json"
+ },
+ "chanceBoxAttn": {
+  "value": "0.25",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "ansShallowBoxAttn": {
+  "value": "1.000",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "ansShallowBoxAttnSD": {
+  "value": "0.000",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "ansShallowBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "ansDeepBoxAttn": {
+  "value": "0.589",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "ansDeepBoxAttnSD": {
+  "value": "0.010",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "ansDeepBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "probeDeepBoxAttn": {
+  "value": "0.263",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "probeDeepBoxAttnSD": {
+  "value": "0.010",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "probeDeepBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "beliefBoxAttn": {
+  "value": "0.256",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "beliefBoxAttnSD": {
+  "value": "0.005",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "beliefBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "beliefMisBoxAttn": {
+  "value": "0.249",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "beliefMisBoxAttnSD": {
+  "value": "0.003",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "beliefMisBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "estateDeepBoxAttn": {
+  "value": "0.737",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "estateDeepBoxAttnSD": {
+  "value": "0.010",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "estateDeepBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "eplanDeepBoxAttn": {
+  "value": "0.395",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "eplanDeepBoxAttnSD": {
+  "value": "0.014",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "eplanDeepBoxAttnN": {
+  "value": "3",
+  "source": "results/boxes_attn_s*.json"
+ },
+ "chanceBoxAlsb": {
+  "value": "0.25",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "ansShallowBoxAlsb": {
+  "value": "1.000",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "ansShallowBoxAlsbSD": {
+  "value": "0.000",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "ansShallowBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "ansDeepBoxAlsb": {
+  "value": "0.989",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "ansDeepBoxAlsbSD": {
+  "value": "0.001",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "ansDeepBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "probeDeepBoxAlsb": {
+  "value": "0.983",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "probeDeepBoxAlsbSD": {
+  "value": "0.001",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "probeDeepBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "beliefBoxAlsb": {
+  "value": "0.701",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "beliefBoxAlsbSD": {
+  "value": "0.017",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "beliefBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "beliefMisBoxAlsb": {
+  "value": "0.254",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "beliefMisBoxAlsbSD": {
+  "value": "0.009",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "beliefMisBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "estateDeepBoxAlsb": {
+  "value": "0.017",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "estateDeepBoxAlsbSD": {
+  "value": "0.001",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "estateDeepBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "eplanDeepBoxAlsb": {
+  "value": "0.003",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "eplanDeepBoxAlsbSD": {
+  "value": "0.000",
+  "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "eplanDeepBoxAlsbN": {
+  "value": "3",
+  "source": "results/boxes_alsb_l1_s*.json"
  }
 }
