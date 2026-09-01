@@ -2,6 +2,7 @@
 import os, json, glob
 import numpy as np
 import matplotlib
+from horizon import interp_horizon
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -175,9 +176,10 @@ def fig_scale():
         if not r or "H_ill_05" not in r:
             continue
         bel = load(f"{n}_belief")
-        rungs.append((r["params"], r["H_ill_05"],
+        rungs.append((r["params"], interp_horizon(r["illegal"], r["buckets"], 0.05),
                       bel["overall"]["illegal_legal_in_belief"] if bel else None,
-                      bel["overall"]["mismatched_belief_legal"] if bel else None))
+                      bel["overall"]["mismatched_belief_legal"] if bel else None,
+                      bel["overall"]["legal_legal_in_belief"] if bel else None))
     if len(rungs) < 2:
         return
     rungs.sort()
@@ -193,6 +195,12 @@ def fig_scale():
                    color="#8b0000", label="own belief")
         ax[1].plot([p[i] for i in idx], [rungs[i][3] for i in idx], "^--", ms=4,
                    color="#888", label="mismatched control")
+        # normalised by each model's own decoding ceiling, since the ceiling
+        # itself rises with scale and would otherwise inflate the trend
+        ceil = [rungs[i][4] for i in idx]
+        ax[1].plot([p[i] for i in idx],
+                   [rungs[i][2] / c for i, c in zip(idx, ceil)], "s-", ms=4,
+                   color="#1f4e79", label="own belief / ceiling")
         ax[1].set_xscale("log"); ax[1].set_xlabel("parameters (M)")
         ax[1].set_ylabel("illegal move legal in belief")
         ax[1].set_title("(b) coherence of errors against scale")

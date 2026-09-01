@@ -587,6 +587,18 @@
   "value": "3",
   "source": "results/alsb_l1_8L256_s*_zablate.json"
  },
+ "hintZab": {
+  "value": "27.2",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "hintZabSD": {
+  "value": "0.4",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "hintZabN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
  "occFirst": {
   "value": "0.975",
   "source": "results/attn_8L256_s0.json"
@@ -1842,5 +1854,165 @@
  "eplanDeepBoxAlsbN": {
   "value": "3",
   "source": "results/boxes_alsb_l1_s*.json"
+ },
+ "aucAgg10to20": {
+  "value": "0.687",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAct10to20": {
+  "value": "0.683",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAgg20to30": {
+  "value": "0.634",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAct20to30": {
+  "value": "0.684",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAgg30to40": {
+  "value": "0.591",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAct30to40": {
+  "value": "0.664",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAgg40to50": {
+  "value": "0.542",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAct40to50": {
+  "value": "0.641",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAgg50to60": {
+  "value": "0.550",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAct50to60": {
+  "value": "0.619",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAgg60to80": {
+  "value": "0.532",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAct60to80": {
+  "value": "0.594",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "betaAgg": {
+  "value": "0.119",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "betaAct": {
+  "value": "0.511",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAggMin": {
+  "value": "0.532",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucAggMax": {
+  "value": "0.687",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucActMin": {
+  "value": "0.594",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "aucActMax": {
+  "value": "0.684",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "lmIntact": {
+  "value": "3.010",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmIntactSD": {
+  "value": "0.008",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmIntactN": {
+  "value": "3",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmAblated": {
+  "value": "3.199",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmAblatedSD": {
+  "value": "0.022",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmAblatedN": {
+  "value": "3",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmDelta": {
+  "value": "0.189",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmDeltaSD": {
+  "value": "0.017",
+  "source": "results/readout_ablation_check.json"
+ },
+ "lmDeltaN": {
+  "value": "3",
+  "source": "results/readout_ablation_check.json"
+ },
+ "injRatio": {
+  "value": "0.150",
+  "source": "results/readout_ablation_check.json"
+ },
+ "injRatioSD": {
+  "value": "0.004",
+  "source": "results/readout_ablation_check.json"
+ },
+ "injRatioN": {
+  "value": "3",
+  "source": "results/readout_ablation_check.json"
+ },
+ "belRatioSmall": {
+  "value": "0.458",
+  "source": "results/*_belief.json"
+ },
+ "belRatioLarge": {
+  "value": "0.590",
+  "source": "results/*_belief.json"
+ },
+ "paramsSmall": {
+  "value": "3,440,064",
+  "source": "results/*.json"
+ },
+ "paramsLarge": {
+  "value": "39,884,288",
+  "source": "results/*.json"
+ },
+ "massIntact": {
+  "value": "0.615",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "massIntactSD": {
+  "value": "0.005",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "massIntactN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*.json"
+ },
+ "massAblated": {
+  "value": "0.647",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "massAblatedSD": {
+  "value": "0.005",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
+ },
+ "massAblatedN": {
+  "value": "3",
+  "source": "results/alsb_l1_8L256_s*_zablate.json"
  }
 }

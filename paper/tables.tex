@@ -120,6 +120,32 @@ Recurrent channel ($\lambda{=}1$) & 58 & 157 & 451 & 592 & 522 & 802 \\
 
 \begin{table}[t]
 \centering\small
+\caption{Aggregate and action-relevant state error compared like for
+like, as predictors of the same binary outcome on the same samples:
+whether the model's top-1 move is illegal. AUC is computed within each
+depth bucket so neither predictor can simply be tracking depth. The
+standardised coefficients come from a logistic fit containing both
+predictors. The aggregate measure is informative and it is the weaker of
+the two, and the gap widens with depth.}
+\label{tab:auc}
+\begin{tabular}{lccccr}
+\toprule
+Ply & AUC aggregate & AUC action-relevant & $\beta$ aggregate & $\beta$ action-relevant & $n$ \\
+\midrule
+10--20 & 0.687 & \textbf{0.683} & +0.077 & \textbf{+0.148} & 25{,}000 \\
+20--30 & 0.634 & \textbf{0.684} & +0.139 & \textbf{+0.351} & 25{,}000 \\
+30--40 & 0.591 & \textbf{0.664} & +0.114 & \textbf{+0.507} & 24{,}084 \\
+40--50 & 0.542 & \textbf{0.641} & +0.047 & \textbf{+0.571} & 21{,}856 \\
+50--60 & 0.550 & \textbf{0.619} & +0.099 & \textbf{+0.512} & 18{,}752 \\
+60--80 & 0.532 & \textbf{0.594} & +0.065 & \textbf{+0.445} & 27{,}350 \\
+\midrule
+pooled, depth as covariate & n/a & n/a & +0.119 & \textbf{+0.511} & 142{,}042 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\small
 \caption{Planning error against how strictly we condition on state. Each
 cell gives the median engine centipawn loss, the blunder rate, and the
 sample size, over legal moves whose touched squares the probe recovers and

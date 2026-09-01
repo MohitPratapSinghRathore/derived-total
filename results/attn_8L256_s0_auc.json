@@ -1,0 +1,85 @@
+{
+ "name": "attn_8L256_s0",
+ "buckets": [
+  [
+   10,
+   20
+  ],
+  [
+   20,
+   30
+  ],
+  [
+   30,
+   40
+  ],
+  [
+   40,
+   50
+  ],
+  [
+   50,
+   60
+  ],
+  [
+   60,
+   80
+  ]
+ ],
+ "per_bucket": {
+  "10-20": {
+   "auc_aggregate": 0.686972125529561,
+   "auc_action_relevant": 0.6830533881163572,
+   "beta_aggregate": 0.0770722488335233,
+   "beta_action_relevant": 0.14773671660155496,
+   "n": 25000,
+   "illegal_rate": 0.01176
+  },
+  "20-30": {
+   "auc_aggregate": 0.6340017233459281,
+   "auc_action_relevant": 0.684370773261006,
+   "beta_aggregate": 0.1385320762338346,
+   "beta_action_relevant": 0.3507861968413012,
+   "n": 25000,
+   "illegal_rate": 0.04296
+  },
+  "30-40": {
+   "auc_aggregate": 0.5905719240961133,
+   "auc_action_relevant": 0.6644968543059233,
+   "beta_aggregate": 0.11423519655018506,
+   "beta_action_relevant": 0.5068692310886824,
+   "n": 24084,
+   "illegal_rate": 0.09724298289320711
+  },
+  "40-50": {
+   "auc_aggregate": 0.5421186921041049,
+   "auc_action_relevant": 0.6414053465825913,
+   "beta_aggregate": 0.046801044283800955,
+   "beta_action_relevant": 0.5706478687457552,
+   "n": 21856,
+   "illegal_rate": 0.17404831625183015
+  },
+  "50-60": {
+   "auc_aggregate": 0.5504582835680005,
+   "auc_action_relevant": 0.6194221246236549,
+   "beta_aggregate": 0.09923092872278538,
+   "beta_action_relevant": 0.5122940548886026,
+   "n": 18752,
+   "illegal_rate": 0.2333084470989761
+  },
+  "60-80": {
+   "auc_aggregate": 0.5316069823901243,
+   "auc_action_relevant": 0.5937441577527796,
+   "beta_aggregate": 0.06544098889046306,
+   "beta_action_relevant": 0.44486701441706344,
+   "n": 27350,
+   "illegal_rate": 0.2927605118829982
+  }
+ },
+ "pooled_with_depth_covariate": {
+  "beta_aggregate": 0.11939089833582162,
+  "beta_action_relevant": 0.5113150011471369,
+  "beta_depth": 0.6413928183609502,
+  "n": 142042
+ }
+}

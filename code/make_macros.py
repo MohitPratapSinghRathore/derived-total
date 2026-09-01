@@ -92,6 +92,8 @@ if rs:
     pm("occ40Zab", [np.array(r["fidelity_occ"])[r["best_layer"]][BI] for r in rs], src)
     pm("ill40Zab", [r["illegal"][BI] for r in rs], src)
     pm("hill05Zab", [r["H_ill_05"] for r in rs], src, "{:.0f}")
+    pm("hintZab", [interp_horizon(r["illegal"], r["buckets"], 0.05) for r in rs],
+       src, "{:.1f}")
 
 # baseline controls + curve endpoints
 r = load("attn_8L256_s0")
@@ -239,6 +241,58 @@ for cond, tag in [("attn", "BoxAttn"), ("alsb_l1", "BoxAlsb")]:
     pm(f"beliefMis{tag}", [r["belief_mismatched_overall"] for r in rs], src)
     pm(f"estateDeep{tag}", [r["estate"][-1] for r in rs], src)
     pm(f"eplanDeep{tag}", [r["eplan"][-1] for r in rs], src)
+
+
+
+# ------------------------------------- like-for-like AUC and the read-out ablation
+d = load("attn_8L256_s0_auc")
+if d:
+    src = "results/attn_8L256_s0_auc.json"
+    for k, v in d["per_bucket"].items():
+        tag = k.replace("-", "to")
+        put(f"aucAgg{tag}", v["auc_aggregate"], src)
+        put(f"aucAct{tag}", v["auc_action_relevant"], src)
+    pooled = d["pooled_with_depth_covariate"]
+    put("betaAgg", pooled["beta_aggregate"], src)
+    put("betaAct", pooled["beta_action_relevant"], src)
+    aa = [v["auc_aggregate"] for v in d["per_bucket"].values()]
+    ac = [v["auc_action_relevant"] for v in d["per_bucket"].values()]
+    put("aucAggMin", min(aa), src); put("aucAggMax", max(aa), src)
+    put("aucActMin", min(ac), src); put("aucActMax", max(ac), src)
+
+d = load("readout_ablation_check")
+if d:
+    src = "results/readout_ablation_check.json"
+    vals = list(d.values())
+    pm("lmIntact", [v["lm_loss_intact"] for v in vals], src)
+    pm("lmAblated", [v["lm_loss_ablated"] for v in vals], src)
+    pm("lmDelta", [v["delta"] for v in vals], src)
+    pm("injRatio", [v["injection_ratio"] for v in vals], src)
+
+# belief normalised by each model's own decoding ceiling, across the ladder
+_rungs = []
+for _n in ("attn_6L192_s0", "attn_8L256_s0", "attn_12L256_s0", "attn_8L384_s0",
+           "attn_12L384_s0", "attn_12L512_s0"):
+    _b = load(f"{_n}_belief"); _r = load(_n)
+    if _b and _r:
+        _o = _b["overall"]
+        _rungs.append((_r["params"], _o["illegal_legal_in_belief"] /
+                       max(_o["legal_legal_in_belief"], 1e-9)))
+if len(_rungs) >= 2:
+    _rungs.sort()
+    put("belRatioSmall", _rungs[0][1], "results/*_belief.json")
+    put("belRatioLarge", _rungs[-1][1], "results/*_belief.json")
+    put("paramsSmall", _rungs[0][0], "results/*.json", "{:,.0f}")
+    put("paramsLarge", _rungs[-1][0], "results/*.json", "{:,.0f}")
+
+# legal probability mass, intact against ablated read-out
+_i, _a = [], []
+for _s in (0, 1, 2):
+    _x = load(f"alsb_l1_8L256_s{_s}"); _y = load(f"alsb_l1_8L256_s{_s}_zablate")
+    if _x: _i.append(_x["legal_mass"][4])
+    if _y: _a.append(_y["legal_mass"][4])
+if _i: pm("massIntact", _i, "results/alsb_l1_8L256_s*.json")
+if _a: pm("massAblated", _a, "results/alsb_l1_8L256_s*_zablate.json")
 
 
 def main():
