@@ -40,7 +40,13 @@ def main():
     wait_for_analysis()
 
     # 2. domain 2, now that it reaches a measurable regime
-    sh([py, "boxes_run.py", "--conds", "attn,attnpm,alsb_l0,alsb_l1",
+    # Only the two informative conditions. Domain 2 exists to test whether the
+    # MECHANISM generalises, not to repeat the architecture comparison, which the
+    # chess arm settled with three seeds. attn asks whether decay, coupling and
+    # belief consistency replicate; alsb_l1 asks whether availability without use
+    # replicates. attnpm and alsb_l0 would cost hours to re-answer a settled
+    # question.
+    sh([py, "boxes_run.py", "--conds", "attn,alsb_l1",
         "--seeds", "0,1,2", "--steps", "8000", "--n_train", "120000",
         "--n_probe", "4000", "--n_eval", "4000"], "domain 2")
 
