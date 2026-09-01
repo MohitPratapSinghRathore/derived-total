@@ -883,6 +883,38 @@
   "value": "0.448",
   "source": "results/alsb_l1_8L256_s0_coupling.json"
  },
+ "belIllAlsbOne": {
+  "value": "0.366",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belLegAlsbOne": {
+  "value": "0.656",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belRandAlsbOne": {
+  "value": "0.021",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belMisAlsbOne": {
+  "value": "0.093",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belRatioAlsbOne": {
+  "value": "17",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belRatioMisAlsbOne": {
+  "value": "3.9",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belIllLoAlsbOne": {
+  "value": "0.358",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
+ "belIllHiAlsbOne": {
+  "value": "0.374",
+  "source": "results/alsb_l1_8L256_s0_belief.json"
+ },
  "locIllRung1": {
   "value": "0.831",
   "source": "results/attn_6L192_s0_coupling.json"

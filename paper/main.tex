@@ -166,8 +166,8 @@ should measure.
 \item The belief-consistency result: long-horizon errors are coherent actions on
 a decayed state, established against mismatched-belief and random-move controls,
 and supported causally by an intervention that induces a false belief and changes
-the action accordingly, with a calibrated edit strength and a norm-matched
-control.
+the action accordingly (Section~\ref{sec:causal}), with a calibrated edit
+strength and a norm-matched control.
 \item An honest account of two methodological failures, a degenerate metric and
 an unlearnable task design, both of which shaped the protocol and neither of
 which is usually reported.
@@ -244,7 +244,8 @@ Stated plainly: long-horizon failure is reported as a single number, so it canno
 be acted on. A practitioner watching accuracy fall at step thirty cannot tell
 whether to buy a larger model, add a verifier, or change the architecture,
 because the measurement does not distinguish the causes. The artifact is a
-measurement procedure.
+measurement procedure, and Table~\ref{tab:dp} states the principles it
+embodies.
 
 \begin{table}[t]
 \centering\small
@@ -668,6 +669,43 @@ The loss curve diagnoses this cheaply. A model that has learned the format and n
 content sits at the generator's token-type entropy, which is computable in
 advance and worth computing before trusting such a benchmark. We report this in
 place of a cross-domain result, which we do not have.
+
+\subsection{What the predictions came to}
+\label{sec:verdict}
+
+Pre-registration is only worth the words if the verdicts are stated, including
+the ones that went against us.
+
+\begin{description}[nosep]
+\item[H1, supported.] State fidelity declines with depth, from
+\result{occFirst} to \result{occLast} occupied-square accuracy, clear of a
+majority predictor, a label-permutation control, and a randomised-weight model
+(Table~\ref{tab:controls}, Figure~\ref{fig:decay}). The behavioural horizon,
+\result{hintAttn} ply, sits well inside the context window.
+\item[H2, supported.] The horizon grows slowly with scale, from
+\result{hintAttn} ply at \result{paramsAttn} parameters to
+\result{hintAttnWide} at \result{paramsAttnWide} (Section~\ref{sec:scale}).
+\item[H3, supported only weakly.] The supervised recurrent channel raises state
+decodability substantially and the horizon by \result{hintAlsbOne} against
+\result{hintAttn} ply. The architecture without supervision changes neither.
+\item[H4, not supported as predicted.] We expected an intervention that improved
+state tracking to improve behaviour through it. Instead the intervention improved
+the measurement far more than its consequences, matching a model twice its size
+on decodability while capturing a fraction of the behavioural gain
+(Section~\ref{sec:alsb}). We designed H4 to be able to fail and it failed, in a
+direction that supports the paper's main claim rather than undermining it.
+\item[H5, partially addressed.] The natural-language transfer test our protocol
+specifies was not run and is absent rather than approximated
+(Section~\ref{sec:limits}). A second oracle-bearing domain, reached only after
+several failed designs, tests the weaker claim
+(Section~\ref{sec:synthfail}).
+\end{description}
+
+Two further results were not predicted at all. The layer profile ran opposite to
+our expectation (Section~\ref{sec:bottleneck}). And the quantity this literature
+reports as evidence of a world model turned out to carry almost no information
+about behaviour, which is the finding we would keep if we could keep only one
+(Section~\ref{sec:coupling}).
 
 \subsection{A degenerate metric, declared}
 Our horizon was pre-registered on exact-position fidelity. That quantity reaches
