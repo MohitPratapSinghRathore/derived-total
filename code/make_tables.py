@@ -87,10 +87,16 @@ def mechanism_table():
         Lc = c["locality"]
         it = Lc["illegal_touched_wrong"] + Lc["illegal_touched_ok"]
         lt = Lc["legal_touched_wrong"] + Lc["legal_touched_ok"]
-        cors = [x for x in c["within_bucket_corr_wrongsquares_illegal"] if x is not None]
+        # AUC, not the point-biserial correlation: the correlation is attenuated
+        # against a skewed binary outcome and Section 7.2 disowns it.
+        au = load(f"{cond}_s0_auc")
+        if au:
+            aa = [v["auc_aggregate"] for v in au["per_bucket"].values()]
+            agg_s = f"{min(aa):.2f} to {max(aa):.2f}"
+        else:
+            agg_s = "n/a"
         o = b["overall"]
-        rows.append((label, r["params"],
-                     f"{min(cors):.2f} to {max(cors):.2f}" if cors else "n/a",
+        rows.append((label, r["params"], agg_s,
                      Lc["illegal_touched_wrong"] / max(it, 1),
                      Lc["legal_touched_wrong"] / max(lt, 1),
                      o["illegal_legal_in_belief"],
@@ -100,9 +106,10 @@ def mechanism_table():
     if not rows:
         return []
     L = ["\\begin{table}[t]", "\\centering\\small",
-         "\\caption{Does state loss explain behaviour? Aggregate error is the",
-         "within-depth correlation between misremembered squares and playing an",
-         "illegal move. Action-relevant error is the probability the probe is wrong",
+         "\\caption{Does state loss explain behaviour? The aggregate column is the",
+         "within-depth AUC of whole-board probe error as a predictor of an illegal",
+         "move, reported as a range over depth buckets. Action-relevant error is the",
+         "probability the probe is wrong",
          "on the squares the move uses. Belief consistency is the share of illegal",
          "moves that are legal in the model's own decoded board, beside the same",
          "move under another position's belief, an arbitrary illegal move, and the",
@@ -112,7 +119,7 @@ def mechanism_table():
          "& & aggregate & \\multicolumn{2}{c}{action-relevant}"
          " & \\multicolumn{4}{c}{belief consistency} \\\\",
          "\\cmidrule(lr){4-5}\\cmidrule(lr){6-9}",
-         "Model & Params & corr. & illegal & legal & own & mismatch & random & ceiling \\\\",
+         "Model & Params & AUC & illegal & legal & own & mismatch & random & ceiling \\\\",
          "\\midrule"]
     for (lab, prm, cor, li, ll, bi, bm, br, bc) in rows:
         bm_s = "n/a" if bm is None else f"{bm:.3f}"

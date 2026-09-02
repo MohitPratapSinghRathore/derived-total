@@ -420,14 +420,11 @@ is still a claim about a standard practice. Whole-board probe accuracy is a
 usable but weak proxy for whether a world model is load-bearing, it degrades as a
 proxy exactly where long-horizon behaviour matters most, and a measurement
 restricted to the state an action consumes is several times more informative from
-the same probe and the same activations.
-
-\subsection{Action-relevant fidelity does}
-
-Restricting the measurement to the squares a move touches changes the picture.
-The probe is wrong on those squares for \result{locIllAttn} of illegal moves and
-\result{locLegAttn} of legal moves. The relevant question is not how much of the
-world the model has lost but whether it has lost the part it is about to use.
+the same probe and the same activations. Stated as a conditional rather than a
+ranking, the probe is wrong on the squares a move touches for
+\result{locIllAttn} of illegal moves against \result{locLegAttn} of legal ones.
+The relevant question is not how much of the world the model has lost, but
+whether it has lost the part it is about to use.
 
 \subsection{The errors are coherent}
 \label{sec:belief}
@@ -545,16 +542,16 @@ when they quote either one.
 \subsection{Scale}
 \label{sec:scale}
 
-Horizon is read off the illegal-move curve at the ply where it first crosses five
-percent, interpolated between bucket midpoints. We report the interpolated value
-because the bucketed one returns the same bucket for every condition here and so
-cannot discriminate between them; the underlying curve is the same either way.
+The behavioural horizon is read off the illegal-move curve at the ply where it
+first crosses five percent, interpolated between bucket midpoints because the
+bucketed read-off returns the same bucket for every condition and so cannot
+discriminate between them. A second horizon defined on the representation is
+introduced in Section~\ref{sec:hfid}; both are tabulated together there.
 
-Across the ladder the horizon grows with scale and grows slowly. The baseline at
-\result{paramsAttn} parameters reaches \result{hintAttn} ply. Adding depth at
-constant width, \result{paramsAttnDeep} parameters, reaches
-\result{hintAttnDeep}. Adding width, \result{paramsAttnWide} parameters, reaches
-\result{hintAttnWide}. Roughly doubling the parameter count buys a few ply, which
+Across the ladder the behavioural horizon grows with scale and grows slowly,
+from \result{hintRung1} ply at \result{paramsSmall} parameters to
+\result{hintRung6} at \result{paramsLarge}, three seeds per rung. Roughly an
+order of magnitude in parameters buys about half again as much depth, which
 is consistent with H2 and with the cost mismatch of Section~\ref{sec:bottleneck}:
 scaling helps, and it does not buy back a missing mechanism cheaply.
 
@@ -627,7 +624,7 @@ a much larger behavioural gain, \result{ill40AttnWide} and
 
 Two models with the same measured world model, then, and very different
 behaviour. This is the paper's thesis arriving from the other direction. In
-Section~\ref{sec:coupling} aggregate decodability failed to predict behaviour
+Section~\ref{sec:coupling} aggregate decodability predicted behaviour weakly
 across positions within a model; here it fails to predict behaviour across
 models. An auxiliary loss that makes the state linearly available does exactly
 what it is asked to do, and being available is not the same as being used.
@@ -797,8 +794,6 @@ bound. Ranking by whether the probe is \emph{wrong} on those squares requires th
 oracle at inference, which is the very thing an abstention rule exists to avoid.
 It is an upper bound on what a perfect state monitor could deliver, not a method.
 
-\input{tab_abstain}
-
 The honest result is modest. Probe certainty alone is a weaker signal than the
 model's own confidence, with an AUC of \result{abAucProbe} against
 \result{abAucConf}. Combined with confidence it is better than either alone: at
@@ -822,8 +817,11 @@ read-outs, not a different signal, are the lever.
 Both horizons used so far are read off behaviour, and the read-out ablation
 showed why that is fragile: a model can lower its illegal-move rate by hedging
 toward the legal-move prior, without knowing the position any better. A horizon
-defined on the representation avoids this, because it never consults the output
-distribution.
+defined on the representation largely avoids this, because it does not depend on
+the confidence of the output. It is not wholly independent of the model's
+behaviour, since the squares it scores are those the chosen move touches, but it
+reads no probability mass and so a model that spreads its mass more evenly gains
+nothing from doing so.
 
 We define $H_{\mathrm{fid}}$ as the depth at which the probability that the probe
 is wrong on the squares the model's chosen move touches first crosses one half.
@@ -866,9 +864,9 @@ the ones that went against us.
 majority predictor, a label-permutation control, and a randomised-weight model
 (Table~\ref{tab:controls}, Figure~\ref{fig:decay}). The behavioural horizon,
 \result{hintAttn} ply, sits well inside the context window.
-\item[H2, supported.] The horizon grows slowly with scale, from
-\result{hintAttn} ply at \result{paramsAttn} parameters to
-\result{hintAttnWide} at \result{paramsAttnWide} (Section~\ref{sec:scale}).
+\item[H2, supported.] The horizon grows slowly with scale across six rungs at
+three seeds each, from \result{hintRung1} ply at \result{paramsSmall} parameters
+to \result{hintRung6} at \result{paramsLarge} (Section~\ref{sec:scale}).
 \item[H3, supported only weakly.] The supervised recurrent channel raises state
 decodability substantially and the horizon by \result{hintAlsbOne} against
 \result{hintAttn} ply. The architecture without supervision changes neither.
@@ -904,9 +902,10 @@ hardest.
 
 The practical content of this paper is a change in what to measure. Reporting
 that a probe recovers a world model at some aggregate accuracy is weak evidence
-that the model is load-bearing, because aggregate accuracy is nearly
-uninformative about the next action. Measuring the same representation on the
-components an action depends on is informative. Any team instrumenting a system
+that the model is load-bearing: aggregate accuracy predicts the validity of the
+next action, and it predicts it poorly, and it gets worse with depth. Measuring
+the same representation on the components an action depends on is substantially
+more informative from the same activations. Any team instrumenting a system
 for long-horizon reliability should condition on the state the action uses.
 
 The belief-consistency result reframes the failure. A model that plays a coherent
@@ -1003,7 +1002,7 @@ Long-horizon failure in Transformers is normally measured as one number and
 treated with more inference-time compute. Measured against an exact oracle it
 separates into two, and in the setting we can measure cleanly, the memory
 component dominates and behaves in a specific way. Aggregate world-model accuracy
-says little about what a model will do next. The same measurement, restricted to
+is a weak guide to what a model will do next. The same measurement, restricted to
 the state an action depends on, says a great deal. And the failures themselves
 are coherent: the model plays a reasonable move in a board it has misremembered.
 The people who stand to gain from measuring this are not primarily the builders
@@ -1033,7 +1032,8 @@ commercial, or not-for-profit sectors.
 The code and evaluation artifacts will be made available upon acceptance.
 \else
 The training and evaluation code, the measurement pipeline, and the result files
-from which every reported value is generated are available from the authors.
+from which every reported value is generated are available at
+\url{https://github.com/MohitPratapSinghRathore/content-rot}.
 \fi
 
 \paragraph{AI usage declaration.}
