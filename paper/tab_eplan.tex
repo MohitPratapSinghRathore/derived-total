@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering\small
+\caption{Planning error: mean engine centipawn loss, scored only where the
+move is legal and the probe independently recovers the exact position.
+This isolates judgement from memory.}
+\label{tab:eplan}
+\begin{tabular}{lcccccc}
+\toprule
+Model & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--80 \\
+\midrule
+Attention-only & 41 & 115 & 544 & 498 & 485 & 635 \\
+Attention-only, parameter-matched & 53 & 233 & 402 & 698 & 591 & 537 \\
+Recurrent channel ($\lambda{=}0$) & 66 & 111 & 335 & 526 & 547 & 552 \\
+Recurrent channel ($\lambda{=}1$) & 58 & 157 & 451 & 592 & 522 & 802 \\
+\bottomrule
+\end{tabular}
+\end{table}

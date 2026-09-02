@@ -1,0 +1,379 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}\setlength{\emergencystretch}{3em}
+\usepackage{amsmath,amssymb,booktabs,graphicx,array,enumitem,caption}
+\graphicspath{{figures/}}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\input{results_macros.tex}
+
+\newif\ifanon
+\ifdefined\ANON\anontrue\else\anonfalse\fi
+
+\title{\bf Coherent Errors: Chess Transformers Play Correctly\\on Misremembered Boards}
+\ifanon
+  \author{\normalsize\itshape Anonymous submission}
+\else
+  \author{Mohit Pratap Singh Rathore \and Gunveer Sinh Kalsi \and Sriharsha Meduri\\
+  \small Oviqo Private Limited}
+\fi
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+When a search-free chess transformer plays an illegal move, is it producing
+noise, or acting correctly on a board it has misremembered? We answer this by
+reading linear probes against a rules-engine oracle at every token, in models of
+\result{paramsSmall} to \result{paramsLarge} parameters. Of the illegal moves a
+model plays, \result{belIllAttn} are legal in the position its own probe says it
+believes, against \result{belMisAttn} for the same move scored under another
+position's belief and \result{belRandAttn} for an arbitrary illegal move, with a
+decoding ceiling of \result{belLegAttn}. The belief is causally load-bearing:
+editing the single probe direction that encodes an occupied square removes
+\result{patchCutAttn} of the probability mass on moves from it, while a
+norm-matched random edit removes \result{patchRandCutAttn} and shifts the mass at
+chance. Both effects strengthen monotonically across a twelvefold range of model
+size. We also find that where a world model is measured matters: whole-board
+probe accuracy predicts an illegal next move at AUC \result{aucAggMin} to
+\result{aucAggMax}, while the same representation restricted to the squares the
+move uses reaches \result{aucActMin} to \result{aucActMax}, the two being
+indistinguishable in the opening and separating with depth. Long-horizon failure
+here is not noise breaking through. It is competent play in a world that has
+drifted.
+\end{abstract}
+
+\section{Introduction}
+
+A transformer stores nothing between positions. Every token's representation is
+rebuilt from the whole prefix through attention \citep{vaswani2017attention}, so
+any quantity a task requires exists only because the network re-derives it, at
+every layer and every position. That re-derivation is dependable over short spans
+and unreliable over long ones, and the usual remedies act outside the model:
+tree search \citep{yao2023tree}, process supervision \citep{lightman2024lets},
+sampling with a vote \citep{wang2023selfconsistency}. Each raises accuracy and
+none says what fails inside.
+
+The question matters because two candidate failures recommend opposite remedies.
+If the model has forgotten the world, a verifier that rescores outputs pays
+repeatedly to repair something the architecture gave away. If the model holds the
+world and reasons badly over it, a verifier is exactly right. Telling them apart
+requires reading an intermediate representation against a known-correct
+intermediate state, and open-ended text has no such state.
+
+Chess from move notation does, and that is why we use it: a rules engine gives
+the exact position after any prefix, legality is decidable, and depth is
+uniformly scaled. We are explicit that this buys measurement precision at the
+cost of generality, and Section~\ref{sec:limits} states what it does not license.
+Prior work established that such models carry board-state representations and
+that intervening on them changes behaviour \citep{li2023emergent,
+karvonen2024emergent, toshniwal2022chess}. We take that as premise. Our question
+is what happens to those representations as reasoning deepens, and whether their
+failures explain the model's failures.
+
+\paragraph{Findings.}
+\begin{enumerate}[nosep,leftmargin=*]
+\item \textbf{The errors are coherent.} \result{belIllAttn} of illegal moves are
+legal in the model's own decoded board, against \result{belMisAttn} for a
+mismatched belief and \result{belRandAttn} for a random illegal move.
+\item \textbf{The belief is read, not merely present.} A calibrated edit to one
+probe direction removes \result{patchCutAttn} of the mass on moves from the
+affected square; a norm-matched random edit removes \result{patchRandCutAttn}.
+\item \textbf{Where the world model is measured matters, increasingly with
+depth.} Aggregate probe accuracy predicts illegality at AUC \result{aucAggMin} to
+\result{aucAggMax}; restricted to the squares the move uses,
+\result{aucActMin} to \result{aucActMax}.
+\end{enumerate}
+
+\section{Setup}
+\label{sec:setup}
+
+\paragraph{Data and oracle.} \result{nGames} human games above a rating floor,
+deduplicated and split \emph{by game} so no prefix is shared between probe
+fitting and evaluation: \result{ntrainlm} for training, \result{ntrainprobe} for
+probes, \result{neval} for evaluation, mean length \result{meanPly} plies. A
+rules engine emits the exact state after every token. Models are decoder-only,
+trained on move notation alone, with no search at inference.
+
+\paragraph{Probes and controls.} One linear head per layer predicting per-square
+occupancy, fitted on the probe split and reported on the evaluation split.
+Because most squares are empty, we report accuracy on occupied squares against
+three controls: a per-square per-depth majority predictor, a label-permutation
+control that pairs activations with another game's state at equal depth, and a
+randomised-weight model of identical architecture
+(Table~\ref{tab:controls}, following \citealp{hewitt2019designing}).
+
+\paragraph{Observables.} State-tracking error is observed behaviourally as the
+rate at which the model's top-1 move is illegal in the true position, and
+representationally as probe-oracle disagreement.
+
+\section{Results}
+
+\subsection{State and behaviour decay together}
+
+\input{tab_controls}
+
+Occupied-square decodability falls from \result{occFirst} in the opening to
+\result{occLast} in the deepest bucket, while the illegal top-1 rate rises from
+\result{illFirst} to \result{illLast} and the mass on legal moves falls from
+\result{massFirst} to \result{massLast} (Figure~\ref{fig:decay}). At mid-game the
+trained model is clear of every trivial explanation, \result{occ40Attn} against
+\result{ctlMaj40} for the majority predictor. There is a real state
+representation, and it is being lost.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{decay.png}
+\caption{Internal state and external behaviour decay together. (a) Occupied-square
+accuracy against three controls. (b) Illegal top-1 rate and the probability mass
+on legal continuations.}
+\label{fig:decay}
+\end{figure}
+
+\subsection{Where the world model is measured matters}
+
+Two curves falling together is not evidence that one causes the other. We score
+aggregate and action-relevant state error identically, as predictors of the same
+binary outcome on the same samples, within depth so neither can simply track
+depth (Table~\ref{tab:auc}).
+
+\input{tab_auc}
+
+Aggregate board fidelity predicts an illegal move at AUC \result{aucAggMin} to
+\result{aucAggMax}, which is above chance and not negligible. The same
+representation restricted to the two squares the move touches reaches
+\result{aucActMin} to \result{aucActMax}. In the opening the two are nearly
+indistinguishable; the gap opens with depth, and in a joint fit the
+action-relevant term carries a standardised weight of \result{betaAct} against
+\result{betaAgg}. Whole-board probe accuracy, the quantity usually reported as
+evidence of a world model, is a usable but weak proxy for whether that model is
+load-bearing, and it weakens exactly where long-horizon behaviour matters.
+
+\subsection{The errors are coherent}
+\label{sec:belief}
+
+If state loss drives the failure, an invalid action should be valid in the state
+the model believes it is in. We reconstruct that believed position from the
+probe, clearing castling rights so nothing is licensed by an assumption we did
+not decode, and test pseudo-legality because a decoded board may lack a king.
+
+\input{tab_mechanism}
+
+Of the illegal moves the model plays, \result{belIllAttn} are legal in its own
+believed position, with a bootstrap interval of [\result{belIllLoAttn},
+\result{belIllHiAttn}]. Two controls bound the alternatives. The same move scored
+against a believed position decoded elsewhere at equal depth is legal
+\result{belMisAttn} of the time, so the effect is specific to this belief at this
+position rather than to plausible boards generally. An arbitrary illegal move
+scored against the model's own believed position is legal \result{belRandAttn} of
+the time, so the believed board is not permissive. The ceiling on what this test
+can detect is \result{belLegAttn}, the rate at which genuinely legal moves are
+recovered, which is below one because probe decoding is lossy.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{belief.png}
+\caption{(a) Belief consistency against depth, restricted to buckets with at
+least thirty illegal cases. (b) Pooled, with the decoding ceiling marked.}
+\label{fig:belief}
+\end{figure}
+
+\subsection{Inducing a false belief changes the action}
+\label{sec:causal}
+
+The result above is observational. We therefore intervene: at a position where
+the side to move genuinely occupies a square, we push the residual stream along
+the probe direction encoding ``this square is empty'' and ask whether the model
+stops proposing moves from it.
+
+Edit strength must be calibrated rather than chosen, because a large enough push
+degrades the forward pass and moves behaviour for reasons unrelated to belief.
+Below a quarter of the residual-stream magnitude the edit does not reliably flip
+the decoded belief; above roughly one, the norm-matched random control also
+destroys the output distribution. We report at \result{patchAlphaAttn}, inside
+that window (Figure~\ref{fig:patchcal}).
+
+\input{tab_patch}
+
+At that strength the manipulation check succeeds in \result{patchFlipAttn} of
+cases, the state edit removes \result{patchCutAttn} of the probability mass on
+moves from the affected square, and the norm-matched random edit removes
+\result{patchRandCutAttn} while changing the mass in \result{patchRandDecAttn} of
+cases, which is a coin flip. The state representation is read.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\linewidth]{patch_calibration.png}
+\caption{Calibrating the intervention. Too small and the belief does not flip;
+too large and a random direction also destroys the output. We report inside the
+shaded window.}
+\label{fig:patchcal}
+\end{figure}
+
+\subsection{Both effects strengthen with scale}
+
+\input{tab_scale}
+
+Across six rungs from \result{paramsSmall} to \result{paramsLarge} parameters,
+three seeds each, belief consistency normalised by each model's own decoding
+ceiling rises monotonically from \result{belRatioNRung1} to
+\result{belRatioNRung6}, while the mismatched control stays flat
+(Figure~\ref{fig:scale}). The mechanism is not an artifact of the smallest
+models: larger models make a \emph{larger} fraction of their errors coherently.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{scale.png}
+\caption{(a) Both horizons against scale. (b) Belief consistency normalised by
+each model's decoding ceiling, with its matched control. Three seeds per rung.}
+\label{fig:scale}
+\end{figure}
+
+\paragraph{A horizon that does not depend on behaviour.}
+Behavioural horizons are fragile: ablating the recurrent read-out of a variant
+model \emph{lowers} its illegal-move rate while \emph{raising} its language-model
+loss, because the ablated model hedges toward the legal-move prior
+(Appendix). We therefore also define $H_{\mathrm{fid}}$, the depth at which the
+probe first fails on the squares the chosen move touches more than half the time.
+It never consults the output distribution, so hedging buys nothing. It runs from
+\result{hfidRung1} to \result{hfidRung6} ply across the ladder against
+\result{hintRung1} to \result{hintRung6} for the behavioural horizon, ordering
+the models identically.
+
+\section{What failed}
+
+Four results went against us and are reported where they changed a decision. We
+predicted state would be most decodable mid-stack; it is maximal at the final
+block, rising from \result{layerProfFirst} to \result{layerProfLast}. Our
+pre-registered horizon, defined on exact-position fidelity, is degenerate: that
+quantity is zero past ply \result{exactPly} in every condition. An auxiliary
+state objective raises probe accuracy to the level of a model twice the size,
+\result{occ40AlsbOne} against \result{occ40AttnWide}, while buying a small
+fraction of its behavioural gain. And a second oracle-bearing domain took seven
+designs to reach a measurable regime, then failed to replicate for its
+attention-only condition, because the task permits resolving one queried object
+on demand rather than maintaining state. All four are detailed in the appendix.
+
+\section{Discussion and limitations}
+\label{sec:limits}
+
+The practical content is a change in what to measure. Reporting that a probe
+recovers a world model at some aggregate accuracy is weak evidence that the model
+is load-bearing; the same representation scored on the state an action consumes
+is substantially more informative, increasingly so with depth. Any team
+instrumenting a system for long-horizon reliability should condition on the state
+the action uses.
+
+The belief-consistency result also reframes the failure. A model that plays a
+coherent move in a misremembered position is not behaving erratically, and
+treatments assuming erratic behaviour aim at the wrong target: sampling several
+chains and voting will not help if every chain is drawn from the same drifted
+state.
+
+\paragraph{What this does not show.} Our models span \result{paramsSmall} to
+\result{paramsLarge} parameters in a single domain. We make no claim about
+frontier-scale systems or about natural language, and the natural-language
+transfer test is absent rather than approximated. Probe decoding is lossy, which
+is why the ceiling is reported rather than assumed; belief consistency is tested
+with pseudo-legal moves, which the random-move control is designed to bound. The
+strongest available next test is a domain with an exact oracle that is neither
+chess nor constructed as a benchmark, and we argue program execution traces are
+that domain.
+
+\section{Conclusion}
+
+Measured against an exact oracle, long-horizon failure in these models separates
+into memory and judgement, and the memory component behaves in a specific and
+somewhat unsettling way. The model does not degrade into noise. It plays a
+reasonable move in a board it has misremembered, and it does so more consistently
+as it gets larger.
+
+
+\appendix
+\section{The intervention we evaluated with the diagnostic}
+\label{app:alsb}
+
+To test whether the diagnostic discriminates between architectures, we trained a
+variant with a fixed-width gated recurrent channel inserted after every $k$-th
+attention block, carrying $z_t \in \mathbb{R}^{d_s}$ with $d_s \ll d$, read back
+into the residual stream, with an optional auxiliary loss supervising $z_t$ to be
+the state. Architecture, supervision and read-out are varied independently
+against a parameter-matched attention-only control.
+
+\input{tab_horizon}
+
+With the auxiliary objective active, state decodability rises sharply, from
+\result{occ40Attn} to \result{occ40AlsbOne} at matched parameters and tokens. The
+architecture without the objective, \result{occ40AlsbZero}, is indistinguishable
+from baseline. Behaviour barely follows: the illegal rate improves from
+\result{ill40Attn} to \result{ill40AlsbOne} and the horizon from
+\result{hintAttn} to \result{hintAlsbOne} ply, while a plain attention model of
+twice the size reaches almost the same decodability, \result{occ40AttnWide}, and
+converts it into a much larger behavioural gain. An auxiliary loss that makes
+state linearly available does what it is asked; being available is not being
+used.
+
+\paragraph{An ablation that improves behaviour.} Zeroing the read-out at test
+time lowers the illegal rate, from \result{ill40AlsbOne} to \result{ill40Zab},
+and lengthens the horizon. Language-model loss rises when it is removed, from
+\result{lmIntact} to \result{lmAblated} across seeds, and the read-out injects a
+vector of \result{injRatio} of the residual stream's norm, so it is not
+vestigial. The ablated model is worse at prediction and better at staying legal
+because it places more mass on legal moves, \result{massAblated} against
+\result{massIntact}, while committing less to any one. The illegal rate is
+therefore not a monotone proxy for state quality, which is why we also report
+$H_{\mathrm{fid}}$.
+
+\section{How much of the planning error is really memory}
+\label{app:plan}
+
+The conditioning that would isolate judgement cleanly is unattainable: requiring
+the probe to recover the exact board leaves no samples past the opening.
+Requiring only the squares the move touches leaves samples everywhere but does
+not constrain the rest of the board. We therefore vary the strictness.
+
+\input{tab_strictness}
+
+Tightening lowers the loss substantially: at ply 30 to 40 the median centipawn
+loss falls from \result{epsMed30to40tol64} with the board unconstrained to
+\result{epsMed30to40tol4} when at most four other squares may be wrong, and the
+blunder rate from \result{epsBl30to40tol64} to \result{epsBl30to40tol4}. Roughly
+half of what a naive reading calls degraded judgement is misattributed memory
+failure. It does not go to zero: at fixed conditioning the loss still grows with
+depth, from \result{epsMed20to30tol4} to \result{epsMed30to40tol4}. Memory is the
+dominant component and not the only one.
+
+\section{A second domain, and why it did not replicate}
+\label{app:boxes}
+
+We attempted a second oracle-bearing domain. Four arithmetic designs floored
+because they required modular arithmetic before state tracking became visible;
+training loss sat at the generator's token-type entropy, the value a model
+reaches by learning the format and nothing else. A fifth, permutation tracking
+over five objects, also floored, and instructively: with five objects the state
+is an element of $S_5$, the smallest non-solvable symmetric group, which is
+precisely the case bounded-depth models are known to be unable to track
+\citep{merrill2024illusion}. Four objects give the solvable $S_4$. A sixth was
+all-or-nothing, admitting no partial credit; querying after every operation
+supplies it.
+
+\input{tab_boxes}
+
+The seventh design is measurable, and the outcome is not a replication. With the
+supervised channel the task is nearly solved at every depth and belief
+consistency reproduces, \result{beliefBoxAlsb} against a mismatched control of
+\result{beliefMisBoxAlsb}. The attention-only model solves the task well above
+chance, \result{ansDeepBoxAttn} at depth, while its probe recovers state at
+\result{probeDeepBoxAttn}, which is chance. The same probe procedure recovers
+\result{probeDeepBoxAlsb} in the other model, so this is a fact about the model.
+The task permits resolving one queried object on demand by tracing its history,
+so it never obliges the model to maintain an assignment. Chess allows no such
+shortcut. A task can carry an exact oracle, be learnable, and still fail to
+measure state maintenance.
+
+\bibliographystyle{apalike}
+\bibliography{refs}
+
+\end{document}

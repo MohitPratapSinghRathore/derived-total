@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering\small
+\caption{Aggregate and action-relevant state error compared like for
+like, as predictors of the same binary outcome on the same samples:
+whether the model's top-1 move is illegal. AUC is computed within each
+depth bucket so neither predictor can simply be tracking depth. The
+standardised coefficients come from a logistic fit containing both
+predictors. The aggregate measure is informative and it is the weaker of
+the two, and the gap widens with depth.}
+\label{tab:auc}
+\begin{tabular}{lccccr}
+\toprule
+Ply & AUC aggregate & AUC action-relevant & $\beta$ aggregate & $\beta$ action-relevant & $n$ \\
+\midrule
+10--20 & 0.671 & \textbf{0.687} & +0.065 & \textbf{+0.153} & 15{,}000 \\
+20--30 & 0.627 & \textbf{0.681} & +0.120 & \textbf{+0.332} & 15{,}000 \\
+30--40 & 0.584 & \textbf{0.662} & +0.100 & \textbf{+0.506} & 14{,}511 \\
+40--50 & 0.548 & \textbf{0.643} & +0.057 & \textbf{+0.573} & 13{,}176 \\
+50--60 & 0.551 & \textbf{0.617} & +0.114 & \textbf{+0.500} & 11{,}262 \\
+60--80 & 0.538 & \textbf{0.592} & +0.076 & \textbf{+0.431} & 16{,}426 \\
+\midrule
+pooled, depth as covariate & n/a & n/a & +0.118 & \textbf{+0.504} & 85{,}375 \\
+\bottomrule
+\end{tabular}
+\end{table}

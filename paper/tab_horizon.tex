@@ -1,0 +1,28 @@
+\begin{table}[t]
+\centering\small
+\caption{Horizon and state fidelity by condition. $H_{\mathrm{ill}}(.05)$ is
+the ply at which the illegal-move rate first crosses five percent,
+interpolated between bucket midpoints because the bucketed read-off returns
+the same bucket for every condition and so discriminates nothing.
+Mean\,$\pm$\,s.d.\ over seeds where more than one was run.}
+\label{tab:horizon}
+\begin{tabular}{lrcccc}
+\toprule
+Model & Params & seeds & occ.\ acc.\ @40--50 & illegal @40--50 & $H_{\mathrm{ill}}(.05)$ \\
+\midrule
+Attention-only & 7{,}345{,}920 & 3 & 0.555\,$\pm$\,0.003 & 0.176\,$\pm$\,0.002 & 26.1\,$\pm$\,0.0 \\
+Attention-only, parameter-matched & 7{,}505{,}976 & 3 & 0.554\,$\pm$\,0.002 & 0.172\,$\pm$\,0.003 & 26.0\,$\pm$\,0.1 \\
+Recurrent channel ($\lambda{=}0$) & 7{,}508{,}416 & 2 & 0.558\,$\pm$\,0.002 & 0.170\,$\pm$\,0.003 & 26.1\,$\pm$\,0.1 \\
+Recurrent channel ($\lambda{=}1$) & 7{,}508{,}416 & 3 & 0.632\,$\pm$\,0.003 & 0.166\,$\pm$\,0.002 & 26.5\,$\pm$\,0.2 \\
+\midrule
+\quad read-out ablated at test & n/a & 3 & 0.559\,$\pm$\,0.005 & 0.149\,$\pm$\,0.005 & 27.2\,$\pm$\,0.4 \\
+\midrule
+\quad 6L/192 & 3{,}440{,}064 & 3 & 0.468\,$\pm$\,0.006 & 0.245\,$\pm$\,0.003 & 21.4\,$\pm$\,0.1 \\
+\quad 8L/256 & 7{,}345{,}920 & 3 & 0.555\,$\pm$\,0.003 & 0.176\,$\pm$\,0.002 & 26.1\,$\pm$\,0.0 \\
+\quad 12L/256 & 10{,}504{,}960 & 3 & 0.577\,$\pm$\,0.005 & 0.149\,$\pm$\,0.001 & 27.8\,$\pm$\,0.2 \\
+\quad 8L/384 & 15{,}737{,}472 & 3 & 0.632\,$\pm$\,0.006 & 0.134\,$\pm$\,0.004 & 29.5\,$\pm$\,0.2 \\
+\quad 12L/384 & 22{,}835{,}328 & 3 & 0.656\,$\pm$\,0.001 & 0.112\,$\pm$\,0.002 & 31.7\,$\pm$\,0.3 \\
+\quad 12L/512 & 39{,}884{,}288 & 3 & 0.694\,$\pm$\,0.003 & 0.101\,$\pm$\,0.001 & 33.8\,$\pm$\,0.1 \\
+\bottomrule
+\end{tabular}
+\end{table}

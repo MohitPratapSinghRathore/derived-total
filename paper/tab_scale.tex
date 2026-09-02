@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering\small
+\caption{The scale ladder, three seeds per rung. $H_{\mathrm{ill}}$ is read
+off behaviour, the ply at which the illegal-move rate crosses five percent.
+$H_{\mathrm{fid}}$ is read off the representation, the depth at which the
+probe first fails on the squares the chosen move touches more than half the
+time, and so cannot be moved by hedging. Belief consistency is normalised by
+each model's own decoding ceiling, because the ceiling itself rises with
+size. Mean\,$\pm$\,s.d.\ over seeds.}
+\label{tab:scale}
+\begin{tabular}{lrccccc}
+\toprule
+Model & Params & seeds & $H_{\mathrm{ill}}(.05)$ & $H_{\mathrm{fid}}(.5)$ & belief\,/\,ceiling & mismatch \\
+\midrule
+6L/192 & 3{,}440{,}064 & 3 & 21.4\,$\pm$\,0.1 & 33.8\,$\pm$\,0.2 & 0.476\,$\pm$\,0.017 & 0.051\,$\pm$\,0.002 \\
+8L/256 & 7{,}345{,}920 & 3 & 26.1\,$\pm$\,0.0 & 40.8\,$\pm$\,0.5 & 0.534\,$\pm$\,0.008 & 0.052\,$\pm$\,0.001 \\
+12L/256 & 10{,}504{,}960 & 3 & 27.8\,$\pm$\,0.2 & 42.1\,$\pm$\,0.3 & 0.552\,$\pm$\,0.007 & 0.051\,$\pm$\,0.002 \\
+8L/384 & 15{,}737{,}472 & 3 & 29.5\,$\pm$\,0.2 & 50.0\,$\pm$\,0.4 & 0.568\,$\pm$\,0.008 & 0.053\,$\pm$\,0.001 \\
+12L/384 & 22{,}835{,}328 & 3 & 31.7\,$\pm$\,0.3 & 52.5\,$\pm$\,0.5 & 0.577\,$\pm$\,0.005 & 0.053\,$\pm$\,0.003 \\
+12L/512 & 39{,}884{,}288 & 3 & 33.8\,$\pm$\,0.1 & 59.1\,$\pm$\,0.5 & 0.587\,$\pm$\,0.011 & 0.056\,$\pm$\,0.004 \\
+\bottomrule
+\end{tabular}
+\end{table}
