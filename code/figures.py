@@ -167,44 +167,42 @@ def fig_patch():
 
 
 def fig_scale():
-    rungs = []
-    for f in sorted(glob.glob(os.path.join(RES, "attn_*_s0.json"))):
-        n = os.path.basename(f)[:-5]
-        if any(t in n for t in ("coupling", "belief", "patch", "eplan")):
-            continue
-        r = load(n)
-        if not r or "H_ill_05" not in r:
-            continue
-        bel = load(f"{n}_belief")
-        rungs.append((r["params"], interp_horizon(r["illegal"], r["buckets"], 0.05),
-                      bel["overall"]["illegal_legal_in_belief"] if bel else None,
-                      bel["overall"]["mismatched_belief_legal"] if bel else None,
-                      bel["overall"]["legal_legal_in_belief"] if bel else None))
-    if len(rungs) < 2:
+    """Seeded ladder: both horizons, and belief normalised by the ceiling."""
+    from ladder_stats import RUNGS, rung_stats, ms
+    rows = [(lab, rung_stats(base)) for base, lab in RUNGS]
+    rows = [(lab, st) for lab, st in rows if st]
+    if len(rows) < 2:
         return
-    rungs.sort()
-    p = [r[0] / 1e6 for r in rungs]
+    rows.sort(key=lambda r: r[1]["params"])
+    P = [st["params"] / 1e6 for _, st in rows]
+
+    def band(key):
+        m = [ms(st[key])[0] for _, st in rows]
+        e = [ms(st[key])[1] for _, st in rows]
+        return np.array(m, float), np.array(e, float)
+
     fig, ax = plt.subplots(1, 2, figsize=(6.8, 2.5))
-    ax[0].plot(p, [r[1] for r in rungs], "o-", ms=4, color="#1f4e79")
+    for key, col, lab, mk in (("h_ill", "#8b0000", "behavioural $H_{ill}(.05)$", "o"),
+                              ("h_fid", "#1f4e79", "fidelity $H_{fid}(.5)$", "s")):
+        m, e = band(key)
+        ax[0].errorbar(P, m, yerr=e, fmt=mk + "-", ms=4, capsize=2,
+                       color=col, label=lab)
     ax[0].set_xscale("log"); ax[0].set_xlabel("parameters (M)")
-    ax[0].set_ylabel("horizon $H_{ill}(0.05)$ (ply)")
+    ax[0].set_ylabel("horizon (ply)")
     ax[0].set_title("(a) horizon against scale")
-    idx = [i for i, r in enumerate(rungs) if r[2] is not None]
-    if idx:
-        ax[1].plot([p[i] for i in idx], [rungs[i][2] for i in idx], "o-", ms=4,
-                   color="#8b0000", label="own belief")
-        ax[1].plot([p[i] for i in idx], [rungs[i][3] for i in idx], "^--", ms=4,
-                   color="#888", label="mismatched control")
-        # normalised by each model's own decoding ceiling, since the ceiling
-        # itself rises with scale and would otherwise inflate the trend
-        ceil = [rungs[i][4] for i in idx]
-        ax[1].plot([p[i] for i in idx],
-                   [rungs[i][2] / c for i, c in zip(idx, ceil)], "s-", ms=4,
-                   color="#1f4e79", label="own belief / ceiling")
-        ax[1].set_xscale("log"); ax[1].set_xlabel("parameters (M)")
-        ax[1].set_ylabel("illegal move legal in belief")
-        ax[1].set_title("(b) coherence of errors against scale")
-        ax[1].legend(frameon=False)
+    ax[0].legend(frameon=False)
+
+    m, e = band("bel_ratio")
+    ax[1].errorbar(P, m, yerr=e, fmt="o-", ms=4, capsize=2, color="#8b0000",
+                   label="own belief / ceiling")
+    mm, ee = band("bel_mis")
+    ax[1].errorbar(P, mm, yerr=ee, fmt="^--", ms=4, capsize=2, color="#888",
+                   label="mismatched control")
+    ax[1].set_xscale("log"); ax[1].set_xlabel("parameters (M)")
+    ax[1].set_ylabel("illegal move legal in belief")
+    ax[1].set_ylim(0, 0.72)
+    ax[1].set_title("(b) coherence of errors against scale")
+    ax[1].legend(frameon=False)
     plt.tight_layout(); plt.savefig(os.path.join(FIG, "scale.png")); plt.close()
     print("figures/scale.png")
 

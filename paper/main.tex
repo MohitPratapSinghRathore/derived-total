@@ -560,15 +560,24 @@ scaling helps, and it does not buy back a missing mechanism cheaply.
 
 The question that matters more for the reach of this paper is not whether the
 horizon moves with scale, which it does, but whether the mechanism does.
-Figure~\ref{fig:scale}(b) reports belief consistency at every rung. The raw rate
-rises with size, but so does each model's decoding ceiling, so the honest
-quantity is the ratio of the two. Normalised that way the coherence of errors
-still rises, from \result{belRatioSmall} at \result{paramsSmall} parameters to
-\result{belRatioLarge} at \result{paramsLarge}, while the mismatched control stays
-flat. What we have characterised strengthens with scale over the range we can
-reach rather than washing out, which is evidence against it being an artifact of
-the smallest models. Every rung is a single seed, so we read the direction of the
-trend and not its precise slope.
+Figure~\ref{fig:scale}(b) and Table~\ref{tab:scale} report belief consistency at
+every rung, three seeds each. The raw rate rises with size, but so does each
+model's decoding ceiling, so the honest quantity is the ratio of the two.
+Normalised that way the coherence of errors still rises monotonically, from
+\result{belRatioNRung1} at \result{paramsSmall} parameters to
+\result{belRatioNRung6} at \result{paramsLarge}, with seed spreads of a few parts
+in a thousand, while the mismatched control stays flat near
+\result{beliefMisBoxAttn}. What we have characterised strengthens with scale over
+the range we can reach rather than washing out, which is evidence against its
+being an artifact of the smallest models.
+
+Both horizons order the models identically and both grow sublinearly in
+parameters, the behavioural one from \result{hintRung1} to \result{hintRung6} ply
+and the fidelity one from \result{hfidRung1} to \result{hfidRung6}
+(Table~\ref{tab:scale}). Roughly an order of magnitude in parameters buys about
+half again as much depth, which is consistent with H2 and with the cost mismatch
+of Section~\ref{sec:bottleneck}: scaling helps, and it does not buy back a
+missing mechanism cheaply.
 
 
 \begin{figure}[t]

@@ -380,15 +380,15 @@
   "source": "results/attn_12L256_s*.json"
  },
  "occ40AttnDeep": {
-  "value": "0.578",
+  "value": "0.577",
   "source": "results/attn_12L256_s*.json"
  },
  "occ40AttnDeepSD": {
-  "value": "0.000",
+  "value": "0.005",
   "source": "results/attn_12L256_s*.json"
  },
  "occ40AttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "ill40AttnDeep": {
@@ -396,11 +396,11 @@
   "source": "results/attn_12L256_s*.json"
  },
  "ill40AttnDeepSD": {
-  "value": "0.000",
+  "value": "0.001",
   "source": "results/attn_12L256_s*.json"
  },
  "ill40AttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "hill05AttnDeep": {
@@ -412,19 +412,19 @@
   "source": "results/attn_12L256_s*.json"
  },
  "hill05AttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "hintAttnDeep": {
-  "value": "27.7",
+  "value": "27.8",
   "source": "results/attn_12L256_s*.json"
  },
  "hintAttnDeepSD": {
-  "value": "0.0",
+  "value": "0.2",
   "source": "results/attn_12L256_s*.json"
  },
  "hintAttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "hill10AttnDeep": {
@@ -436,19 +436,19 @@
   "source": "results/attn_12L256_s*.json"
  },
  "hill10AttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "valAttnDeep": {
-  "value": "2.917",
+  "value": "2.919",
   "source": "results/attn_12L256_s*.json"
  },
  "valAttnDeepSD": {
-  "value": "0.000",
+  "value": "0.008",
   "source": "results/attn_12L256_s*.json"
  },
  "valAttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "bestLayerAttnDeep": {
@@ -460,7 +460,7 @@
   "source": "results/attn_12L256_s*.json"
  },
  "bestLayerAttnDeepN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_12L256_s*.json"
  },
  "paramsAttnWide": {
@@ -468,27 +468,27 @@
   "source": "results/attn_8L384_s*.json"
  },
  "occ40AttnWide": {
-  "value": "0.628",
+  "value": "0.632",
   "source": "results/attn_8L384_s*.json"
  },
  "occ40AttnWideSD": {
-  "value": "0.000",
+  "value": "0.006",
   "source": "results/attn_8L384_s*.json"
  },
  "occ40AttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "ill40AttnWide": {
-  "value": "0.133",
+  "value": "0.134",
   "source": "results/attn_8L384_s*.json"
  },
  "ill40AttnWideSD": {
-  "value": "0.000",
+  "value": "0.004",
   "source": "results/attn_8L384_s*.json"
  },
  "ill40AttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "hill05AttnWide": {
@@ -500,19 +500,19 @@
   "source": "results/attn_8L384_s*.json"
  },
  "hill05AttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "hintAttnWide": {
-  "value": "29.4",
+  "value": "29.5",
   "source": "results/attn_8L384_s*.json"
  },
  "hintAttnWideSD": {
-  "value": "0.0",
+  "value": "0.2",
   "source": "results/attn_8L384_s*.json"
  },
  "hintAttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "hill10AttnWide": {
@@ -524,19 +524,19 @@
   "source": "results/attn_8L384_s*.json"
  },
  "hill10AttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "valAttnWide": {
-  "value": "2.840",
+  "value": "2.843",
   "source": "results/attn_8L384_s*.json"
  },
  "valAttnWideSD": {
-  "value": "0.000",
+  "value": "0.010",
   "source": "results/attn_8L384_s*.json"
  },
  "valAttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "bestLayerAttnWide": {
@@ -548,7 +548,7 @@
   "source": "results/attn_8L384_s*.json"
  },
  "bestLayerAttnWideN": {
-  "value": "1",
+  "value": "3",
   "source": "results/attn_8L384_s*.json"
  },
  "occ40Zab": {
@@ -2017,59 +2017,59 @@
  },
  "hfidRung1": {
   "value": "33.8",
-  "source": "results/attn_6L192_s0_auc.json"
+  "source": "results/attn_6L192_s*.json"
  },
  "actErrFirstRung1": {
-  "value": "0.201",
-  "source": "results/attn_6L192_s0_auc.json"
+  "value": "0.207",
+  "source": "results/attn_6L192_s*.json"
  },
  "actErrLastRung1": {
   "value": "0.788",
   "source": "results/attn_6L192_s0_auc.json"
  },
  "hfidAttn": {
-  "value": "41.3",
-  "source": "results/attn_8L256_s0_auc.json"
+  "value": "40.8",
+  "source": "results/attn_8L256_s*.json"
  },
  "actErrFirstAttn": {
-  "value": "0.142",
-  "source": "results/attn_8L256_s0_auc.json"
+  "value": "0.146",
+  "source": "results/attn_8L256_s*.json"
  },
  "actErrLastAttn": {
   "value": "0.694",
   "source": "results/attn_8L256_s0_auc.json"
  },
  "hfidAttnDeep": {
-  "value": "42.5",
-  "source": "results/attn_12L256_s0_auc.json"
+  "value": "42.1",
+  "source": "results/attn_12L256_s*.json"
  },
  "actErrFirstAttnDeep": {
-  "value": "0.139",
-  "source": "results/attn_12L256_s0_auc.json"
+  "value": "0.141",
+  "source": "results/attn_12L256_s*.json"
  },
  "actErrLastAttnDeep": {
   "value": "0.675",
   "source": "results/attn_12L256_s0_auc.json"
  },
  "hfidAttnWide": {
-  "value": "49.7",
-  "source": "results/attn_8L384_s0_auc.json"
+  "value": "50.0",
+  "source": "results/attn_8L384_s*.json"
  },
  "actErrFirstAttnWide": {
-  "value": "0.099",
-  "source": "results/attn_8L384_s0_auc.json"
+  "value": "0.096",
+  "source": "results/attn_8L384_s*.json"
  },
  "actErrLastAttnWide": {
   "value": "0.623",
   "source": "results/attn_8L384_s0_auc.json"
  },
  "hfidRung5": {
-  "value": "51.9",
-  "source": "results/attn_12L384_s0_auc.json"
+  "value": "52.5",
+  "source": "results/attn_12L384_s*.json"
  },
  "actErrFirstRung5": {
-  "value": "0.099",
-  "source": "results/attn_12L384_s0_auc.json"
+  "value": "0.095",
+  "source": "results/attn_12L384_s*.json"
  },
  "actErrLastRung5": {
   "value": "0.600",
@@ -2077,11 +2077,11 @@
  },
  "hfidRung6": {
   "value": "59.1",
-  "source": "results/attn_12L512_s0_auc.json"
+  "source": "results/attn_12L512_s*.json"
  },
  "actErrFirstRung6": {
-  "value": "0.076",
-  "source": "results/attn_12L512_s0_auc.json"
+  "value": "0.078",
+  "source": "results/attn_12L512_s*.json"
  },
  "actErrLastRung6": {
   "value": "0.557",
@@ -2089,26 +2089,158 @@
  },
  "hintRung1": {
   "value": "21.4",
-  "source": "results/attn_6L192_s0.json"
+  "source": "results/attn_6L192_s*.json"
  },
  "paramsRung1": {
   "value": "3,440,064",
   "source": "results/attn_6L192_s0.json"
  },
  "hintRung5": {
-  "value": "31.6",
-  "source": "results/attn_12L384_s0.json"
+  "value": "31.7",
+  "source": "results/attn_12L384_s*.json"
  },
  "paramsRung5": {
   "value": "22,835,328",
   "source": "results/attn_12L384_s0.json"
  },
  "hintRung6": {
-  "value": "33.7",
-  "source": "results/attn_12L512_s0.json"
+  "value": "33.8",
+  "source": "results/attn_12L512_s*.json"
  },
  "paramsRung6": {
   "value": "39,884,288",
   "source": "results/attn_12L512_s0.json"
+ },
+ "nseedRung1": {
+  "value": "3",
+  "source": "results/attn_6L192_s*.json"
+ },
+ "hintRung1SD": {
+  "value": "0.1",
+  "source": "results/attn_6L192_s*.json"
+ },
+ "hfidRung1SD": {
+  "value": "0.2",
+  "source": "results/attn_6L192_s*.json"
+ },
+ "belRatioNRung1": {
+  "value": "0.476",
+  "source": "results/attn_6L192_s*.json"
+ },
+ "belRatioNRung1SD": {
+  "value": "0.017",
+  "source": "results/attn_6L192_s*.json"
+ },
+ "actErrFirstRung1SD": {
+  "value": "0.006",
+  "source": "results/attn_6L192_s*.json"
+ },
+ "nseedAttn": {
+  "value": "3",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "hfidAttnSD": {
+  "value": "0.5",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "belRatioNAttn": {
+  "value": "0.534",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "belRatioNAttnSD": {
+  "value": "0.008",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "actErrFirstAttnSD": {
+  "value": "0.004",
+  "source": "results/attn_8L256_s*.json"
+ },
+ "nseedAttnDeep": {
+  "value": "3",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "hfidAttnDeepSD": {
+  "value": "0.3",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "belRatioNAttnDeep": {
+  "value": "0.552",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "belRatioNAttnDeepSD": {
+  "value": "0.007",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "actErrFirstAttnDeepSD": {
+  "value": "0.002",
+  "source": "results/attn_12L256_s*.json"
+ },
+ "nseedAttnWide": {
+  "value": "3",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "hfidAttnWideSD": {
+  "value": "0.4",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "belRatioNAttnWide": {
+  "value": "0.568",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "belRatioNAttnWideSD": {
+  "value": "0.008",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "actErrFirstAttnWideSD": {
+  "value": "0.003",
+  "source": "results/attn_8L384_s*.json"
+ },
+ "nseedRung5": {
+  "value": "3",
+  "source": "results/attn_12L384_s*.json"
+ },
+ "hintRung5SD": {
+  "value": "0.3",
+  "source": "results/attn_12L384_s*.json"
+ },
+ "hfidRung5SD": {
+  "value": "0.5",
+  "source": "results/attn_12L384_s*.json"
+ },
+ "belRatioNRung5": {
+  "value": "0.577",
+  "source": "results/attn_12L384_s*.json"
+ },
+ "belRatioNRung5SD": {
+  "value": "0.005",
+  "source": "results/attn_12L384_s*.json"
+ },
+ "actErrFirstRung5SD": {
+  "value": "0.004",
+  "source": "results/attn_12L384_s*.json"
+ },
+ "nseedRung6": {
+  "value": "3",
+  "source": "results/attn_12L512_s*.json"
+ },
+ "hintRung6SD": {
+  "value": "0.1",
+  "source": "results/attn_12L512_s*.json"
+ },
+ "hfidRung6SD": {
+  "value": "0.5",
+  "source": "results/attn_12L512_s*.json"
+ },
+ "belRatioNRung6": {
+  "value": "0.587",
+  "source": "results/attn_12L512_s*.json"
+ },
+ "belRatioNRung6SD": {
+  "value": "0.011",
+  "source": "results/attn_12L512_s*.json"
+ },
+ "actErrFirstRung6SD": {
+  "value": "0.002",
+  "source": "results/attn_12L512_s*.json"
  }
 }
