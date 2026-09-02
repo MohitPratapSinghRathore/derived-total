@@ -209,3 +209,25 @@ Recurrent channel ($\lambda{=}1$) & 3 & 1.000\,$\pm$\,0.000 & 0.989\,$\pm$\,0.00
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{Selective prediction. Each column ranks positions by one signal
+and reports the illegal-move rate among those retained at each coverage.
+Probe certainty is computable at inference; the oracle column is not, and
+is shown only as an upper bound on what a perfect state monitor could
+achieve. Positions from ply 20 onward.}
+\label{tab:abstain}
+\begin{tabular}{lccccc}
+\toprule
+Coverage & model conf. & entropy & probe cert. & combined & oracle bound \\
+\midrule
+100\% & 0.1974 & 0.1974 & 0.1974 & 0.1974 & 0.1974 \\
+90\% & 0.1830 & 0.1803 & 0.1911 & 0.1822 & 0.1769 \\
+80\% & 0.1727 & 0.1677 & 0.1837 & 0.1696 & 0.1567 \\
+70\% & 0.1626 & 0.1548 & 0.1755 & 0.1555 & 0.1372 \\
+60\% & 0.1523 & 0.1422 & 0.1655 & 0.1404 & 0.1150 \\
+50\% & 0.1415 & 0.1307 & 0.1550 & 0.1238 & 0.0928 \\
+\bottomrule
+\end{tabular}
+\end{table}

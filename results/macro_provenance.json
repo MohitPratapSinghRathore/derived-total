@@ -2242,5 +2242,49 @@
  "actErrFirstRung6SD": {
   "value": "0.002",
   "source": "results/attn_12L512_s*.json"
+ },
+ "abBase": {
+  "value": "0.197",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abAucConf": {
+  "value": "0.628",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abAucEnt": {
+  "value": "0.649",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abAucProbe": {
+  "value": "0.593",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abConf50": {
+  "value": "0.141",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abEnt50": {
+  "value": "0.131",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abProbe50": {
+  "value": "0.155",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abComb50": {
+  "value": "0.124",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abOracle50": {
+  "value": "0.093",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abBetaConf": {
+  "value": "0.554",
+  "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "abBetaProbe": {
+  "value": "0.367",
+  "source": "results/attn_8L256_s0_abstain.json"
  }
 }

@@ -1,0 +1,59 @@
+{
+ "name": "attn_8L256_s0",
+ "n": 145161,
+ "base_illegal_rate": 0.19738772810878955,
+ "auc": {
+  "model_confidence": 0.6278965150565791,
+  "model_entropy": 0.6488251667840155,
+  "probe_uncertainty": 0.593340584998251,
+  "action_relevant_oracle": 0.647282301027682
+ },
+ "coverage": {
+  "1.0": {
+   "model_confidence": 0.19738772810878955,
+   "model_entropy": 0.19738772810878955,
+   "probe_uncertainty": 0.19738772810878955,
+   "combined": 0.19738772810878955,
+   "action_relevant_oracle": 0.19738772810878955
+  },
+  "0.9": {
+   "model_confidence": 0.18304705918373596,
+   "model_entropy": 0.18031444230121552,
+   "probe_uncertainty": 0.19109182205076392,
+   "combined": 0.18216680444566916,
+   "action_relevant_oracle": 0.17686996723921497
+  },
+  "0.8": {
+   "model_confidence": 0.17271459079636264,
+   "model_entropy": 0.16773732433177183,
+   "probe_uncertainty": 0.18373691099476439,
+   "combined": 0.16956289611463213,
+   "action_relevant_oracle": 0.15671500413337008
+  },
+  "0.7": {
+   "model_confidence": 0.16257922292642601,
+   "model_entropy": 0.15478486792898477,
+   "probe_uncertainty": 0.17552060780222808,
+   "combined": 0.15546392158406488,
+   "action_relevant_oracle": 0.13716883832618196
+  },
+  "0.6": {
+   "model_confidence": 0.15233765040874436,
+   "model_entropy": 0.14218793055938275,
+   "probe_uncertainty": 0.16548406356204648,
+   "combined": 0.14043124827776246,
+   "action_relevant_oracle": 0.1150110223201984
+  },
+  "0.5": {
+   "model_confidence": 0.14149903554698265,
+   "model_entropy": 0.13071093965279693,
+   "probe_uncertainty": 0.1550289335905208,
+   "combined": 0.12384954532929182,
+   "action_relevant_oracle": 0.09280793607054284
+  }
+ },
+ "joint_fit": {
+  "beta_model_confidence": 0.5544426350153168,
+  "beta_probe_uncertainty": 0.36707606652876823
+ }
+}
