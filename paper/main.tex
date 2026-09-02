@@ -14,7 +14,7 @@
 \newif\ifanon
 \ifdefined\ANON\anontrue\else\anonfalse\fi
 
-\title{\bf Coherent Errors: Long-Horizon Failure as Action\\on Misremembered State}
+\title{\bf Coherent Errors: Chess Transformers Play Correctly\\on Misremembered Boards}
 
 \ifanon
   \author{\normalsize\itshape Author names and affiliations removed for double-anonymous peer review}
@@ -60,8 +60,8 @@ more than its consequences, and a second domain needing seven designs to become
 measurable.
 \end{abstract}
 
-\noindent\textbf{Keywords:} long-horizon reasoning, state tracking, world models,
-probing, model diagnostics, design science
+\noindent\textbf{Keywords:} state tracking, world models, probing, model
+diagnostics, chess, long-horizon reasoning
 
 \section{Introduction}
 
@@ -101,34 +101,34 @@ compare it with what the model actually does. Three results carry the argument, 
 the paper tests how far they reach.
 
 \begin{enumerate}[nosep]
-\item \textbf{Aggregate state fidelity is the weaker predictor of behaviour.}
-Scored as a predictor of an illegal next move within a fixed depth, whole-board
-probe accuracy reaches an AUC of \result{aucAggMin} to \result{aucAggMax}. It
-carries information, and it is the weaker signal: the same representation
-restricted to the squares the move uses reaches \result{aucActMin} to
-\result{aucActMax}, and the gap widens with depth.
-\item \textbf{Action-relevant state fidelity is the stronger predictor.} The
-probe is wrong on the squares a move touches for \result{locIllAttn} of illegal
-moves against \result{locLegAttn} of legal ones, and in a joint logistic fit with
-depth held fixed it carries a standardised weight of \result{betaAct} against
-\result{betaAgg} for the aggregate. What matters is less how much of the world
-has been lost than whether the part about to be used has been lost.
-\item \textbf{The errors are coherent.} We reconstruct the board the model appears
-to believe and ask whether its illegal move is legal there. It is, for
+\item \textbf{The errors are coherent.} We reconstruct the board the model
+appears to believe and ask whether its illegal move is legal there. It is, for
 \result{belIllAttn} of illegal moves, with a bootstrap interval of
 [\result{belIllLoAttn}, \result{belIllHiAttn}]. The same move scored against
-another position's believed board at equal depth is legal
-\result{belMisAttn} of the time, and an arbitrary illegal move scored against the
-model's own believed board is legal \result{belRandAttn} of the time. Lossy
-decoding caps what is detectable at \result{belLegAttn}, the rate for moves that
-were genuinely legal.
+another position's believed board at equal depth is legal \result{belMisAttn} of
+the time, and an arbitrary illegal move scored against the model's own believed
+board is legal \result{belRandAttn} of the time. Lossy decoding caps what is
+detectable at \result{belLegAttn}, the rate for moves that were genuinely legal.
+\item \textbf{The representation is read, not merely present.} Editing the probe
+direction that encodes an occupied square removes \result{patchCutAttn} of the
+probability mass on moves from that square, while a norm-matched random edit
+removes \result{patchRandCutAttn} and shifts the mass at chance. The edit
+strength is calibrated rather than chosen.
+\item \textbf{Where the world model is measured matters, increasingly with
+depth.} Whole-board probe accuracy predicts an illegal next move with an AUC of
+\result{aucAggMin} to \result{aucAggMax}. The same representation restricted to
+the squares the move uses reaches \result{aucActMin} to \result{aucActMax}. In
+the opening the two are almost indistinguishable; the gap opens as reasoning
+deepens, and in a joint fit the action-relevant term carries a standardised
+weight of \result{betaAct} against \result{betaAgg}.
 \end{enumerate}
 
-The third result is the one we would defend hardest. Long-horizon failure in
-these models is not noise breaking through as the context grows. It is competent
-play in a world that has drifted, which is a claim about memory rather than about
-reasoning, and it explains why fluency survives correctness: the model is doing
-the right thing, in the wrong place.
+The first two are the ones we would defend hardest, and they belong together:
+the errors are coherent with a decayed state, and that state is causally
+load-bearing rather than an epiphenomenon. Failure here is not noise breaking
+through as the context grows. It is competent play in a world that has drifted,
+which is a claim about memory rather than about reasoning, and it explains why
+fluency outlives correctness: the model does the right thing, in the wrong place.
 
 \paragraph{Why chess.}
 Chess presented purely as move notation, with no tree search at inference, gives
@@ -142,50 +142,28 @@ combinatorial, so surface heuristics do not substitute for computation. Chess is
 our instrument, not our subject, and we are explicit in
 Section~\ref{sec:limits} about the reach that buys.
 
-\paragraph{Research questions and objectives.}
-\begin{itemize}[nosep]
-\item \textbf{RQ1.} Can long-horizon accuracy loss be separated into state
-tracking and planning, and estimated separately?
-\textbf{RO1:} define both and give an estimator for each
-(Sections~\ref{sec:formal}, \ref{sec:diag}).
-\item \textbf{RQ2.} Does internal state loss explain behavioural failure, or
-merely accompany it?
-\textbf{RO2:} test the link per token, at the level of the specific state a given
-action depends on (Sections~\ref{sec:coupling}, \ref{sec:belief}).
-\item \textbf{RQ3.} How far does a search-free model reason before its state stops
-being recoverable, and how does that depth respond to scale?
-\textbf{RO3:} measure the horizon across a model ladder against trivial baselines
-(Sections~\ref{sec:decay}, \ref{sec:scale}).
-\item \textbf{RQ4.} Does the diagnostic discriminate between architectural
-interventions?
-\textbf{RO4:} evaluate a fixed-width recurrent state channel with
-parameter-matched and ablated controls (Section~\ref{sec:alsb}).
-\end{itemize}
-
 \paragraph{Contributions.}
 \begin{enumerate}[nosep]
-\item A per-token decomposition of long-horizon error into state-tracking and
-planning components, with an exact oracle rather than a learned verifier.
-\item The finding that aggregate probe accuracy, the standard reported measure of
-a world model, is close to uninformative about behaviour, while the same measure
-restricted to action-relevant state is not. This changes what practitioners
-should measure.
-\item The belief-consistency result: long-horizon errors are coherent actions on
-a decayed state, established against mismatched-belief and random-move controls,
-and supported causally by an intervention that induces a false belief and changes
-the action accordingly (Section~\ref{sec:causal}), with a calibrated edit
-strength and a norm-matched control.
-\item An honest account of two methodological failures, a degenerate metric and
-an unlearnable task design, both of which shaped the protocol and neither of
-which is usually reported.
-\item Transferable design knowledge for building such diagnostics wherever an
-external state oracle can be constructed.
+\item \textbf{Long-horizon errors are coherent.} An invalid action is usually a
+valid action in the position the model believes it is in, established against
+mismatched-belief and random-move controls, and strengthening across the range of
+model sizes we can train.
+\item \textbf{The state representation is read, not merely present.} Inducing a
+false belief by editing a single probe direction changes the action accordingly,
+at a calibrated edit strength and against a norm-matched control.
+\item \textbf{Where a world model is measured matters.} Whole-board probe
+accuracy predicts whether the next action will be valid, and the same measurement
+restricted to the state that action consumes predicts it better, with the gap
+widening as reasoning deepens. We define a horizon on that fidelity directly,
+which avoids a failure mode of behavioural horizons that we document.
+\item \textbf{A per-token decomposition} of long-horizon error into
+state-tracking and planning components, against an exact oracle rather than a
+learned verifier, with the conditioning analysis needed to keep the two apart.
+\item \textbf{An account of what failed}, including a degenerate metric, a
+prediction that ran backwards, an intervention that improved the measurement more
+than the behaviour, and seven task designs before a second domain became
+measurable. Each changed a decision and none is usually reported.
 \end{enumerate}
-
-We present this as design-science research in the sense of
-\citet{hevner2004design} and \citet{peffers2007design}, where the contribution is
-an artifact together with the design knowledge it carries
-\citep{gregor2013positioning}.
 
 \section{Related Work}
 
@@ -256,43 +234,14 @@ losing it.
 Stated plainly: long-horizon failure is reported as a single number, so it cannot
 be acted on. A practitioner watching accuracy fall at step thirty cannot tell
 whether to buy a larger model, add a verifier, or change the architecture,
-because the measurement does not distinguish the causes. The artifact is a
-measurement procedure, and Table~\ref{tab:dp} states the principles it
-embodies.
+because the measurement does not distinguish the causes.
 
-\begin{table}[t]
-\centering\small
-\caption{Design principles and their realisation.}
-\label{tab:dp}
-\begin{tabular}{@{}p{0.36\linewidth}p{0.59\linewidth}@{}}
-\toprule
-\textbf{Design principle} & \textbf{Realisation in this work} \\
-\midrule
-\textbf{DP1.} Ground the diagnostic in an external oracle, never in model
-self-report. &
-A rules engine labels the exact state after every token, so probe targets are
-independent of the model being measured. \\
-\addlinespace
-\textbf{DP2.} Separate the failure modes before attributing any effect. &
-Planning error is scored only where the move is legal and the state is
-independently verified as intact. \\
-\addlinespace
-\textbf{DP3.} Establish what a trivial predictor achieves before claiming a
-representation exists. &
-Decodability is reported against a per-square majority predictor, a
-label-permutation control, and a randomised-weight model of identical shape. \\
-\addlinespace
-\textbf{DP4.} Measure the state the action actually depends on, not the state in
-aggregate. &
-Errors are scored on the squares a candidate move touches, which is what makes
-the representation predictive of behaviour at all. \\
-\addlinespace
-\textbf{DP5.} Test coherence, not just correlation. &
-The believed board is reconstructed and the model's own action is re-scored in
-it, against mismatched-belief and random-move controls. \\
-\bottomrule
-\end{tabular}
-\end{table}
+The procedure rests on four commitments, each ruling out a way of fooling
+oneself. The diagnostic is grounded in an external oracle rather than model
+self-report. The two failure modes are separated before any effect is attributed.
+Every decodability number is reported against trivial predictors that could
+produce it without a world model. And the representation is tested by
+intervention, not only by correlation.
 
 \paragraph{In scope.} Search-free autoregressive decoders; domains with an exact,
 cheaply computable state oracle; state of bounded description length.
@@ -817,6 +766,32 @@ read, and whether one exists is a property of the task, not only of the
 architecture.
 
 
+\subsection{A horizon that does not depend on behaviour}
+\label{sec:hfid}
+
+Both horizons used so far are read off behaviour, and the read-out ablation
+showed why that is fragile: a model can lower its illegal-move rate by hedging
+toward the legal-move prior, without knowing the position any better. A horizon
+defined on the representation avoids this, because it never consults the output
+distribution.
+
+We define $H_{\mathrm{fid}}$ as the depth at which the probability that the probe
+is wrong on the squares the model's chosen move touches first crosses one half.
+It uses the same probe and the same activations as everything else, and it is
+immune to hedging: a model that spreads mass over legal moves gains nothing,
+since the measure asks what it knows, not what it emits.
+
+Read this way the ladder is orderly. The smallest model reaches
+\result{hfidRung1} ply, the baseline \result{hfidAttn}, and the largest
+\result{hfidRung6}. The behavioural horizon orders the same models the same way,
+\result{hintRung1}, \result{hintAttn} and \result{hintRung6} ply, on a shorter
+scale because it asks a harder question of the model. Action-relevant error at
+the shallowest depth runs from \result{actErrFirstRung1} in the smallest model to
+\result{actErrFirstRung6} in the largest. We report both horizons throughout, and
+prefer this one where the comparison is between architectures rather than between
+depths, since that is where hedging is most likely to confound a behavioural
+reading.
+
 \subsection{A degenerate metric, declared}
 Our horizon was pre-registered on exact-position fidelity. That quantity reaches
 zero by roughly ply \result{exactPly} in every condition, so it cannot
@@ -860,11 +835,20 @@ several failed designs, tests the weaker claim
 (Section~\ref{sec:synthfail}).
 \end{description}
 
-Two further results were not predicted at all. The layer profile ran opposite to
-our expectation (Section~\ref{sec:bottleneck}). And the quantity this literature
-reports as evidence of a world model turned out to carry almost no information
-about behaviour, which is the finding we would keep if we could keep only one
+Three results were not predicted at all. The layer profile ran opposite to our
+expectation (Section~\ref{sec:bottleneck}). Ablating the recurrent read-out
+improved behaviour while worsening prediction, which turned out to say something
+about our own observable rather than about the artifact
+(Section~\ref{sec:alsb}). And the standard whole-board measure of a world model
+proved a weaker predictor of behaviour than the same measure restricted to the
+state an action consumes, by a margin that grows with depth
 (Section~\ref{sec:coupling}).
+
+If we could keep only one result it would be belief consistency together with the
+causal edit, which say that these models act coherently on a state they are
+losing. The measurement-placement result is a practical corollary: it tells you
+where to look, and it matters most exactly where long-horizon behaviour is
+hardest.
 
 \section{Discussion}
 
@@ -894,40 +878,18 @@ A first design of a second domain turned out to be unlearnable, for a reason tha
 was diagnosable from the loss curve. Each changed a decision, and each is
 reported where it did so.
 
-\section{Implications for Individuals, Organisations, and Society}
-
-\paragraph{For the people who rely on long answers.}
-Someone working through a discharge summary, a tenancy agreement, or a benefits
-calculation with a model's help is rarely able to audit step twenty-eight. Our
-central finding says something uncomfortable about that situation: when state has
-drifted, the output is not merely wrong, it is coherent, and coherence is exactly
-the signal a non-expert reader uses to decide whether to trust it. The failure is
-therefore least visible to the reader least able to check it. A measured horizon,
-stated plainly, gives that reader something they do not currently have.
-
-\paragraph{For managers and organisations.}
-Long-horizon reliability is a property to be governed rather than a number to be
-procured. The decomposition tells a team which remedy fits: a recurring
-inference-time cost for a policy problem, or a one-time structural change for a
-memory problem. It also supports ordinary practice, triage of workloads that
-exceed a measured horizon, human review placed at the depth where reliability
-falls rather than spread evenly, and audit evidence that a limit was known and
-respected.
-
-\paragraph{Strategic implications.}
-An organisation that can measure its own horizon is better placed than one
-accepting a vendor's average. The diagnostic needs a rules engine and a linear
-probe, not privileged access at scale, so it can be owned and audited in-house.
-Treating a measured limit as documentation rather than as an embarrassment turns
-a weakness into a defensible position with auditors and regulators.
-
-\paragraph{For society and digital equity.}
-Buying reliability with inference-time compute concentrates capability among
-those who can afford to spend it on every query. Diagnosing the failure instead,
-and fixing what is structural, is the kind of remedy that travels to on-device
-assistants and public-sector systems that cannot buy deliberation per request.
-The equity question is not whether frontier systems can reason for fifty steps.
-It is whether affordable ones can be honest about where they stop.
+\paragraph{What this implies for practice.}
+The decomposition tells a team which remedy fits the failure they have. Where
+state-tracking error dominates, an inference-time verifier is an expensive way to
+buy back something the architecture gave away, and it is a recurring per-query
+cost rather than a one-off. Where planning error dominates, a verifier is exactly
+right. Reporting only the sum leaves a practitioner unable to tell which world
+they are in, and the two worlds recommend opposite purchases. The measurement
+needed to tell them apart is a rules engine and a linear probe, not privileged
+access to a model at scale, so it can be run in-house on a system a team already
+depends on. For the reader of a long generated answer, who is rarely in a
+position to audit step twenty-eight, the practical value is a stated depth beyond
+which the output should not be trusted without checking.
 
 \section{Limitations}
 \label{sec:limits}

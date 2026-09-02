@@ -1,0 +1,97 @@
+{
+ "name": "attn_12L256_s0",
+ "buckets": [
+  [
+   10,
+   20
+  ],
+  [
+   20,
+   30
+  ],
+  [
+   30,
+   40
+  ],
+  [
+   40,
+   50
+  ],
+  [
+   50,
+   60
+  ],
+  [
+   60,
+   80
+  ]
+ ],
+ "per_bucket": {
+  "10-20": {
+   "auc_aggregate": 0.7263324783249574,
+   "auc_action_relevant": 0.697728618020172,
+   "beta_aggregate": 0.08484922617965064,
+   "beta_action_relevant": 0.13002936626113865,
+   "n": 15000,
+   "illegal_rate": 0.009666666666666667,
+   "action_relevant_error": 0.1394,
+   "aggregate_wrong_squares": 8.682066666666667
+  },
+  "20-30": {
+   "auc_aggregate": 0.6227713792505399,
+   "auc_action_relevant": 0.6842820265311949,
+   "beta_aggregate": 0.08757141983679181,
+   "beta_action_relevant": 0.31968340604671563,
+   "n": 15000,
+   "illegal_rate": 0.0358,
+   "action_relevant_error": 0.2684666666666667,
+   "aggregate_wrong_squares": 14.471533333333333
+  },
+  "30-40": {
+   "auc_aggregate": 0.5746201947619454,
+   "auc_action_relevant": 0.6481757312556888,
+   "beta_aggregate": 0.08491329249062123,
+   "beta_action_relevant": 0.43083050207398077,
+   "n": 14511,
+   "illegal_rate": 0.08428089035903798,
+   "action_relevant_error": 0.42609055199503826,
+   "aggregate_wrong_squares": 19.00537523258218
+  },
+  "40-50": {
+   "auc_aggregate": 0.5473186851702108,
+   "auc_action_relevant": 0.6371526775552411,
+   "beta_aggregate": 0.05061136309968968,
+   "beta_action_relevant": 0.5198002288070669,
+   "n": 13176,
+   "illegal_rate": 0.14367030965391622,
+   "action_relevant_error": 0.5252732240437158,
+   "aggregate_wrong_squares": 20.165983606557376
+  },
+  "50-60": {
+   "auc_aggregate": 0.5436231747382662,
+   "auc_action_relevant": 0.6229431079529195,
+   "beta_aggregate": 0.06384953641862595,
+   "beta_action_relevant": 0.5247737221995016,
+   "n": 11262,
+   "illegal_rate": 0.21665778724915646,
+   "action_relevant_error": 0.5918131770555851,
+   "aggregate_wrong_squares": 18.945213993961996
+  },
+  "60-80": {
+   "auc_aggregate": 0.5367898137326766,
+   "auc_action_relevant": 0.596852150529301,
+   "beta_aggregate": 0.0700290575191726,
+   "beta_action_relevant": 0.4485671424068408,
+   "n": 16426,
+   "illegal_rate": 0.2703640569828321,
+   "action_relevant_error": 0.6751491537805917,
+   "aggregate_wrong_squares": 15.849628637525873
+  }
+ },
+ "pooled_with_depth_covariate": {
+  "beta_aggregate": 0.09404245070000838,
+  "beta_action_relevant": 0.48317370037051527,
+  "beta_depth": 0.6444403092730161,
+  "n": 85375
+ }
+}

@@ -117,7 +117,11 @@ def main():
         out["per_bucket"][f"{lo}-{hi}"] = {
             "auc_aggregate": a_auc, "auc_action_relevant": c_auc,
             "beta_aggregate": float(beta[0]), "beta_action_relevant": float(beta[1]),
-            "n": int(len(y)), "illegal_rate": float(y.mean())}
+            "n": int(len(y)), "illegal_rate": float(y.mean()),
+            # action-relevant state error for the move the model actually chose;
+            # this is the curve the fidelity-based horizon is read off
+            "action_relevant_error": float(np.mean(d["act"])),
+            "aggregate_wrong_squares": float(np.mean(d["agg"]))}
         print(f"{str(lo)+'-'+str(hi):>8} {a_auc:14.3f} {c_auc:15.3f} "
               f"{beta[0]:9.3f} {beta[1]:9.3f} {len(y):7d}")
 
