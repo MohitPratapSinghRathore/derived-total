@@ -1,0 +1,28 @@
+\begin{table}[t]
+\centering\small
+\caption{Inference clustered on the game. Intervals resample whole
+games rather than positions, since positions within a game share an
+opening and a history. The lower block compares nested models by held-out
+log loss on a split by game, so each predictor's contribution is measured
+out of sample. Lower is better.}
+\label{tab:stats}
+\begin{tabular}{lcc}
+\toprule
+Quantity & Estimate & 95\% CI (clustered) \\
+\midrule
+belief consistency & 0.3892 & [0.3822, 0.3976] \\
+\quad mismatched-belief control & 0.0654 & [0.0620, 0.0687] \\
+\quad random-move control & 0.0079 & [0.0068, 0.0093] \\
+AUC, whole board & 0.6287 & [0.6233, 0.6333] \\
+AUC, move-touched & 0.6961 & [0.6926, 0.6998] \\
+\quad difference & +0.0674 & [+0.0618, +0.0732] \\
+\midrule
+Held-out log loss & \multicolumn{2}{c}{} \\
+depth only & 0.3630 & \\
+\quad $+$ whole board & 0.3595 & \\
+\quad $+$ move-touched & 0.3451 & \\
+\quad $+$ both & 0.3439 & \\
+\quad $+$ both and confidence & 0.3340 & \\
+\bottomrule
+\end{tabular}
+\end{table}

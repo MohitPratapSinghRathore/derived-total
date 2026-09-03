@@ -6,16 +6,17 @@ sample size, over legal moves whose touched squares the probe recovers and
 with at most the stated number of other squares wrong. Tightening the
 conditioning lowers the loss, so part of what looks like degraded judgement
 is state loss elsewhere on the board. Loss still grows with depth at fixed
-conditioning, so part of it is not. Cells with fewer than ten samples are
-reported as n/a.}
+conditioning, so part of it is not. Cells with fewer than thirty scored
+positions are reported as n/a, and that scarcity is itself the finding:
+at depth a nearly intact board is rare.}
 \label{tab:strict}
 \begin{tabular}{lcccccc}
 \toprule
 Ply & $\leq 0$ & $\leq 2$ & $\leq 4$ & $\leq 8$ & $\leq 16$ & any \\
 \midrule
-20--30 & n/a & 24 / 0.18 (115) & 20 / 0.21 (120) & 28 / 0.21 (120) & 33 / 0.28 (120) & 37 / 0.28 (120) \\
-30--40 & n/a & n/a & 41 / 0.22 (85) & 60 / 0.38 (120) & 68 / 0.42 (120) & 64 / 0.39 (120) \\
-40--50 & n/a & n/a & 69 / 0.46 (13) & 70 / 0.43 (120) & 109 / 0.52 (120) & 120 / 0.53 (120) \\
+20--30 & n/a & 24 / 0.18 (115) & 24 / 0.21 (300) & 31 / 0.22 (300) & 44 / 0.31 (300) & 58 / 0.34 (300) \\
+30--40 & n/a & n/a & 38 / 0.25 (85) & 62 / 0.36 (300) & 75 / 0.41 (300) & 91 / 0.47 (300) \\
+40--50 & n/a & n/a & n/a & 67 / 0.41 (300) & 120 / 0.53 (300) & 111 / 0.52 (300) \\
 \bottomrule
 \end{tabular}
 \end{table}
