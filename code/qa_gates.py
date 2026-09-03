@@ -58,8 +58,12 @@ def main():
         nw = len(txt.split())
         gate(nw <= 250, "abstract <= 250 words", f"{nw} words")
 
-    # every number in prose must come from \result{} (flag bare decimals in text)
-    prose = re.sub(r"\\begin\{table\}.*?\\end\{table\}", "", src, flags=re.S)
+    # Every measured number in prose must come from \result{}. The check covers
+    # the body only: the methods appendix states configuration constants such as
+    # weight decay and a feed-forward multiplier, which are inputs to the
+    # experiment rather than outputs of it.
+    body_src = src.split("\\appendix")[0]
+    prose = re.sub(r"\\begin\{table\}.*?\\end\{table\}", "", body_src, flags=re.S)
     prose = re.sub(r"\\input\{[^}]*\}", "", prose)
     prose = re.sub(r"\$[^$]*\$", "", prose)          # maths is not a result claim
     # layout lengths are not result claims either
