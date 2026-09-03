@@ -14,7 +14,7 @@
 \newif\ifanon
 \ifdefined\ANON\anontrue\else\anonfalse\fi
 
-\title{\bf Coherent Errors: Chess Transformers Play Correctly\\on Misremembered Boards}
+\title{\bf Coherent Errors: Chess Transformers Act\\on Misremembered Boards}
 
 \ifanon
   \author{\normalsize\itshape Author names and affiliations removed for double-anonymous peer review}
@@ -33,31 +33,31 @@
 \maketitle
 
 \begin{abstract}
-Language models degrade over long reasoning chains, and the drop is reported as
-one number. That number confounds two failures with opposite remedies: the model
-has lost track of the world, or it holds the world and chooses badly. We separate
-them where an exact state oracle exists, chess from move notation with no search
-at inference, in models of \result{paramsSmall} to \result{paramsLarge}
-parameters, reading linear probes against the true position at every token.
+Long-horizon failure is reported as one number, which confounds two failures with
+opposite remedies: the model has lost track of the world, or it holds the world
+and chooses badly. We separate them where an exact state oracle exists, chess
+from move notation with no search at inference, in models of
+\result{paramsSmall} to \result{paramsLarge} parameters, reading linear probes
+against the true position at every token.
 
-Aggregate state fidelity, the quantity this literature reports, is the weaker
-predictor of behaviour, reaching an AUC of \result{aucAggMin} to
-\result{aucAggMax} for an illegal next move within a fixed depth. Restricted to
-the squares a move touches it reaches \result{aucActMin} to \result{aucActMax},
-and dominates a joint fit. And the errors are
+Aggregate state fidelity, the quantity usually reported, is the weaker predictor
+of an illegal next move within a fixed depth, at AUC \result{aucAggMin} to
+\result{aucAggMax} against \result{aucActMin} to \result{aucActMax} for the same
+representation restricted to the squares the move touches. And the errors are
 coherent. Reconstructing the position the model appears to believe,
 \result{belIllAttn} of its illegal moves are legal there, against
 \result{belMisAttn} for the same move under another position's belief and
 \result{belRandAttn} for an arbitrary illegal move. Editing the probe direction
 encoding an occupied square removes \result{patchCutAttn} of the probability mass
 on moves from it, a norm-matched random edit \result{patchRandCutAttn}, so the
-representation is read and not merely present. The effect strengthens with scale.
-The model is not emitting noise; it plays correctly on a board it misremembers.
+representation is read and not merely present. Belief consistency rises
+monotonically across six model sizes; the causal edit is not measured at every
+size. A substantial identified subset of long-horizon errors is coherent with a
+degraded state representation that the policy demonstrably reads.
 
-We report failures too: a layer profile that ran backwards, a degenerate
-pre-registered metric, an auxiliary objective improving the measurement of state
-more than its consequences, and a second domain needing seven designs to become
-measurable.
+We report failures too: a backwards layer profile, a degenerate pre-registered
+metric, an auxiliary objective improving the measurement of state more than its
+consequences, and a second domain needing seven designs to become measurable.
 \end{abstract}
 
 \noindent\textbf{Keywords:} state tracking, world models, probing, model
@@ -119,7 +119,7 @@ depth.} Whole-board probe accuracy predicts an illegal next move with an AUC of
 \result{aucAggMin} to \result{aucAggMax}. The same representation restricted to
 the squares the move uses reaches \result{aucActMin} to \result{aucActMax}. In
 the opening the two are almost indistinguishable; the gap opens as reasoning
-deepens, and in a joint fit the action-relevant term carries a standardised
+deepens, and in a joint fit the move-touched term carries a standardised
 weight of \result{betaAct} against \result{betaAgg}.
 \end{enumerate}
 
@@ -144,10 +144,10 @@ Section~\ref{sec:limits} about the reach that buys.
 
 \paragraph{Contributions.}
 \begin{enumerate}[nosep]
-\item \textbf{Long-horizon errors are coherent.} An invalid action is usually a
-valid action in the position the model believes it is in, established against
-mismatched-belief and random-move controls, and strengthening across the range of
-model sizes we can train.
+\item \textbf{A substantial identified subset of long-horizon errors is
+coherent.} Invalid actions are valid in the position the model appears to believe
+far more often than matched controls allow, and the identified share rises across
+the range of model sizes we train.
 \item \textbf{The state representation is read, not merely present.} Inducing a
 false belief by editing a single probe direction changes the action accordingly,
 at a calibrated edit strength and against a norm-matched control.
@@ -202,10 +202,39 @@ premise rather than our result. That literature
 answers whether a world model exists. We take its existence as given and ask a
 different question: how the fidelity of that world model varies with reasoning
 depth, and whether its failures explain the model's behavioural failures at the
-level of individual actions. Probe design follows the control-task discipline of
-\citet{hewitt2019designing}. To our knowledge the belief-consistency test of
-Section~\ref{sec:belief}, which asks whether a wrong action is right in the
-model's own decoded world, has not been reported.
+level of individual actions. Probe design
+follows the control-task discipline of \citet{hewitt2019designing}.
+
+\paragraph{Concurrent work, and what is actually new here.}
+The measurement at the centre of this paper is not new.
+\citet{balogh2026verification} report the fraction of illegal chess moves that
+are legal on a probe-reconstructed board, and reach a conclusion close to the
+opposite of ours: for models trained on large datasets that fraction is small, and
+the gradient of their board-state probe is nearly orthogonal to that of the
+next-token head, which they read as the probe lacking a causal role in
+generation. \citet{li2026tracking} separate state tracking from decision quality
+in searchless chess transformers, treating illegal moves as direct evidence of
+tracking failure. \citet{walker2026chess} benchmark exact state tracking across
+architectures over a parameter range close to ours, and
+\citet{pereira2026transformers} show world-state representations decaying during
+generation in frontier reasoning models, with a causal restoration experiment.
+\citet{harang2025tracking} document loss of coherent internal state over long
+sequences. State decay with depth, chess state tracking, and scaling this
+measurement are therefore not novel contributions of ours, and we do not claim
+them.
+
+What differs is the conditions and the conclusion. Their illegal moves are
+adversarially induced; ours arise on ordinary held-out trajectories, which is a
+different population and may have a different mechanism. We add same-depth
+mismatched-belief and random-move controls, which bound how much of the effect a
+merely plausible board would produce. We compare aggregate against
+action-conditioned predictors on equal footing rather than assuming the aggregate
+is the right one. And where their gradient-orthogonality analysis finds the probe
+weakly coupled to generation, our calibrated residual-stream intervention finds a
+strong effect on the action. Those two results are not strictly contradictory,
+since a direction can be causally load-bearing at one layer while its gradient is
+near-orthogonal to the output head, but the tension is real and we flag it as the
+most useful open question this paper raises.
 
 \paragraph{Expressivity of state.}
 Theory bounds what these architectures can track: state-space models are weaker
@@ -270,26 +299,52 @@ $F^{(\ell)}(t) = \Pr[\hat{s}_t^{(\ell)} = s_t]$, the probability the exact state
 is linearly decodable at depth $t$.
 \end{definition}
 
-\begin{definition}[Action-relevant fidelity]
-For an action $a$ touching a set of state components $R(a)$, the probability that
-$\hat{s}_t$ and $s_t$ agree on $R(a)$. For a chess move this is the origin and
-destination squares.
+\begin{definition}[Move-touched fidelity]
+The probability that $\hat{s}_t$ and $s_t$ agree on the origin and destination
+squares of the selected move. We name it for what it measures rather than calling
+it move-touched, because it is a deliberately local proxy. The state an action
+actually depends on is larger: legality can turn on intermediate path squares for
+sliding pieces, the king's square and post-move attack status, pins and
+discovered attacks, castling rights and transit squares, the en-passant target,
+side to move, and promotion. A fuller treatment would define
+$R_{\mathrm{legal}}(a, s)$, the complete set of components legality depends on,
+and report a progression from whole-board through move-touched to path-aware and
+fully legality-aware fidelity. We report the local proxy and the controls that
+bound it, and leave that progression to future work.
 \end{definition}
 
-\begin{definition}[Error decomposition]
-State-tracking error $E_{\mathrm{state}}(t)=\Pr[\hat{s}_t \neq s_t]$, observable
-through the illegal-move rate. Planning error
-$E_{\mathrm{plan}}(t)=\Pr[\text{blunder} \mid \hat{s}_t = s_t]$, from engine
-centipawn loss conditional on intact state. Observed error is
-$E_{\mathrm{state}} + (1-E_{\mathrm{state}})E_{\mathrm{plan}}$, and benchmarks
-report only that sum.
+\begin{definition}[Behavioural error and its stratification]
+Let $Y_t = 1$ when the action selected at depth $t$ is behaviourally invalid, and
+let $M_t = 1$ when the decoded state disagrees with the oracle on the components
+the selected action reads. By the law of total probability,
+\[
+\Pr(Y_t{=}1) = \Pr(M_t{=}1)\Pr(Y_t{=}1 \mid M_t{=}1)
+             + \Pr(M_t{=}0)\Pr(Y_t{=}1 \mid M_t{=}0).
+\]
+This is an observational stratification and not a causal decomposition. The first
+term is not by itself memory-caused error and the second is not by itself
+policy-caused error.
 \end{definition}
 
-\begin{definition}[Belief consistency]
-An action is \emph{belief-consistent} when it is invalid in $s_t$ but valid in
-$\hat{s}_t$. The rate of belief consistency among invalid actions distinguishes
-coherent action on a wrong state from incoherent action.
+\begin{definition}[Belief-consistent error]
+Write $\mathcal{A}(s)$ for the actions valid in state $s$ and
+$\widetilde{\mathcal{A}}(\hat{s})$ for those admitted by the decoded state. An
+error is \emph{belief-consistent} when
+$B_t = \mathbf{1}[\,a_t \notin \mathcal{A}(s_t) \wedge a_t \in
+\widetilde{\mathcal{A}}(\hat{s}_t)\,]$, and we report
+$\Pr(B_t{=}1 \mid a_t \notin \mathcal{A}(s_t))$.
 \end{definition}
+
+Two consequences of this framing are worth stating plainly, because an earlier
+version of this paper got them wrong. A state mismatch need not produce a
+behavioural error: our own measurements show the probe wrong on the squares a
+move touches for a substantial fraction of \emph{legal} moves, so
+$M_t{=}1$ does not imply $Y_t{=}1$. And because the probe is an incomplete and
+lossy read of the state, belief consistency identifies a subset of errors rather
+than partitioning all of them. The errors it does not identify are
+\emph{unresolved}: they may be genuine policy failures, state errors the probe
+did not capture, information the probe cannot read linearly, or reconstruction
+failures. We do not call them planning errors.
 
 \section{The State-Space Bottleneck}
 \label{sec:bottleneck}
@@ -329,8 +384,9 @@ of the stack.}
 \label{sec:diag}
 
 \paragraph{Data.} Public game records above a rating floor, deduplicated by
-move-sequence hash, split by \emph{game} so no prefix is shared between probe
-fitting and evaluation. The corpus holds \result{nGames} games:
+move-sequence hash, split by \emph{game}, so no position from a given game appears in more
+than one split. Splitting by game does not make the splits prefix-disjoint,
+since distinct games share openings, and we do not claim it does. The corpus holds \result{nGames} games:
 \result{ntrainlm} for training, \result{ntrainprobe} for probes, \result{neval}
 for evaluation, mean length \result{meanPly} plies, move vocabulary
 \result{nVocab}.
@@ -388,7 +444,7 @@ one phenomenon. The relationship is real but weaker than that, and measuring it
 carelessly overstates it.
 
 An earlier version of this analysis compared a point-biserial correlation for the
-aggregate predictor against a conditional probability for the action-relevant
+aggregate predictor against a conditional probability for the move-touched
 one. Those are different statistics, and the contrast flattered the conclusion: a
 correlation against a heavily skewed binary outcome is attenuated, so the
 aggregate measure looked uninformative when it was merely differently scaled. We
@@ -401,7 +457,7 @@ negligible. The same representation restricted to the two squares the move
 touches reaches \result{aucActMin} to \result{aucActMax}, and the two are
 closest in the opening and furthest apart at depth: at ply 40 to 50 the aggregate
 reaches \result{aucAgg40to50} against \result{aucAct40to50}. Fitted jointly
-with depth as a covariate, the action-relevant term takes a standardised weight
+with depth as a covariate, the move-touched term takes a standardised weight
 of \result{betaAct} against \result{betaAgg} for the aggregate.
 
 \begin{figure}[t]
@@ -425,6 +481,31 @@ ranking, the probe is wrong on the squares a move touches for
 \result{locIllAttn} of illegal moves against \result{locLegAttn} of legal ones.
 The relevant question is not how much of the world the model has lost, but
 whether it has lost the part it is about to use.
+
+\subsection{Which squares, not how many}
+\label{sec:sqcontrol}
+
+Move-touched fidelity scores two squares where the aggregate averages
+sixty-four, and a statistic over two concentrated variables can look sharper than
+one over sixty-four diluted ones for reasons unrelated to relevance. The control
+that separates those explanations is a random pair.
+
+\input{tab_sqcontrol}
+
+Two randomly chosen squares predict an illegal move at an AUC of
+\result{sqTwoRandom}, well below the whole board at \result{sqWholeBoard}. Two
+squares drawn at random from those actually \emph{occupied}, which matches the
+occupancy profile of a move's origin and destination, reach
+\result{sqTwoRandomOcc}, statistically indistinguishable from the whole board.
+The squares a move touches reach \result{sqMoveTouched}, with a game-clustered
+interval that does not overlap either control. The advantage is therefore about
+which squares are read, not how many, and it is not an artifact of averaging
+fewer variables.
+
+Splitting the pair, the origin square carries more of the signal than the
+destination, \result{sqSourceOnly} against \result{sqDestOnly}. That ordering is
+what one would expect if the dominant failure is proposing a move from a square
+the model has misremembered as occupied.
 
 \subsection{The errors are coherent}
 \label{sec:belief}
@@ -454,10 +535,14 @@ against a believed position decoded elsewhere at equal depth is legal
 \result{belMisAttn} of the time, so the effect is specific to this belief at this
 position rather than to plausible boards generally. An arbitrary illegal move
 scored against the model's own believed position is legal \result{belRandAttn} of
-the time, so the believed board is not permissive. The ceiling on what this test
-can detect is \result{belLegAttn}, the rate at which genuinely legal moves are
-recovered as legal in the believed board, which is below one because probe
-decoding is lossy.
+the time, so the believed board is not permissive. For reference, genuinely legal moves are recovered as legal in the believed board
+\result{belLegAttn} of the time, which is below one because probe decoding is
+lossy. We call this a legal-move recovery reference rather than a decoding
+ceiling, and we do not divide by it to estimate an unobserved true rate: that
+would assume probe sensitivity is the same on legal and illegal cases, which we
+have not established. What the comparison licenses is that a substantial
+identified subset of illegal moves is consistent with the decoded state, not that
+most of them are.
 
 Against that ceiling, roughly half of the model's illegal moves are coherent
 actions in a misremembered world, and the enrichment over the matched control is
@@ -530,8 +615,10 @@ squares, the median loss still grows with depth, from
 \result{epsMed20to30tol4} at ply 20 to 30 to \result{epsMed30to40tol4} at ply 30
 to 40. Judgement given intact state is not depth-invariant.
 
-We take the honest reading. Memory is the dominant component and the better
-characterised one, and it is not the only one. Our original framing of H4, a
+We take the honest reading. The identified state-consistent component is
+substantial, stricter state conditioning reduces measured planning loss, and a
+residual depth-dependent planning component remains. Calling memory dominant
+would overstate what a lossy probe and small conditioned samples support. Our original framing of H4, a
 clean separation in which an intervention moves one term and leaves the other
 untouched, was too tidy for what the measurement supports. The decomposition
 still earns its place, because it converts one uninterpretable curve into two
@@ -805,23 +892,27 @@ An external monitor therefore adds something the model does not self-report, and
 it adds less than we hoped.
 
 The gap to the bound is the interesting part. Ranking by oracle-verified
-action-relevant state reaches \result{abOracle50} at the same coverage, less than
+move-touched state reaches \result{abOracle50} at the same coverage, less than
 half the base rate of \result{abBase}. Most of the benefit an ideal state monitor
 would deliver is not captured by the probe's own certainty, which says the
 limitation is the quality of the state read-out rather than the premise. Better
 read-outs, not a different signal, are the lever.
 
-\subsection{A horizon that does not depend on behaviour}
+\subsection{A policy-conditioned state-fidelity horizon}
 \label{sec:hfid}
 
 Both horizons used so far are read off behaviour, and the read-out ablation
 showed why that is fragile: a model can lower its illegal-move rate by hedging
 toward the legal-move prior, without knowing the position any better. A horizon
-defined on the representation largely avoids this, because it does not depend on
-the confidence of the output. It is not wholly independent of the model's
-behaviour, since the squares it scores are those the chosen move touches, but it
-reads no probability mass and so a model that spreads its mass more evenly gains
-nothing from doing so.
+defined on the representation is less exposed, because it does not read the
+confidence of the output: a model that spreads its mass more evenly gains nothing
+from doing so. It is not policy-independent, and we do not claim it is. The
+squares it scores are those the selected move touches, and that move comes from
+the output distribution, so a policy change can alter which squares are scored
+even with the state representation unchanged. It is a policy-conditioned
+state-fidelity horizon. A genuinely policy-independent comparison would score a
+fixed set of components, for instance the recorded continuation move, every
+oracle-legal move averaged uniformly, or a candidate set shared across models.
 
 We define $H_{\mathrm{fid}}$ as the depth at which the probability that the probe
 is wrong on the squares the model's chosen move touches first crosses one half.
@@ -833,7 +924,7 @@ Read this way the ladder is orderly. The smallest model reaches
 \result{hfidRung1} ply, the baseline \result{hfidAttn}, and the largest
 \result{hfidRung6}. The behavioural horizon orders the same models the same way,
 \result{hintRung1}, \result{hintAttn} and \result{hintRung6} ply, on a shorter
-scale because it asks a harder question of the model. Action-relevant error at
+scale because it asks a harder question of the model. Move-touched error at
 the shallowest depth runs from \result{actErrFirstRung1} in the smallest model to
 \result{actErrFirstRung6} in the largest. We report both horizons throughout, and
 prefer this one where the comparison is between architectures rather than between
@@ -841,10 +932,13 @@ depths, since that is where hedging is most likely to confound a behavioural
 reading.
 
 \subsection{A degenerate metric, declared}
-Our horizon was pre-registered on exact-position fidelity. That quantity reaches
-zero by roughly ply \result{exactPly} in every condition, so it cannot
-discriminate between them, and conditioning on it is impossible because exact
-states essentially do not occur past the opening. We therefore report horizons on
+Our horizon was pre-registered on exact-position fidelity, the probability that
+all sixty-four squares are simultaneously recovered. That criterion is already
+below its threshold in the very first bucket, so the pre-registered horizon
+evaluates to zero ply for every condition and cannot discriminate between them.
+The underlying quantity falls to \result{exactFirst} in the opening and to
+\result{exactMid} by ply 20 to 30, after which exact states essentially do not
+occur, which is also why conditioning on them yields no samples at depth. We therefore report horizons on
 occupied-square accuracy and on the illegal-move rate. The revision was made
 after inspecting baseline data and before evaluating any intervention, and every
 definition is applied unchanged across conditions. We flag it rather than
@@ -911,7 +1005,9 @@ for long-horizon reliability should condition on the state the action uses.
 The belief-consistency result reframes the failure. A model that plays a coherent
 move in a misremembered position is not behaving erratically, and treatments that
 assume erratic behaviour are aimed at the wrong target. Sampling several chains
-and voting will not help if every chain is drawn from the same drifted state. A
+and voting may offer limited benefit when independently sampled continuations
+share the same state distortion, though we did not test repeated sampling or how
+far drift is correlated across samples. A
 verifier that scores outputs is well placed to catch the error and badly placed
 to prevent it, and it will pay that cost on every query for as long as the system
 runs.
@@ -986,11 +1082,11 @@ benchmarks, such as program execution or ledger reconciliation, where an oracle
 exists but the data is not constructed.
 \item[FR3] Run the natural-language transfer test with matched pre-training, the
 experiment that decides whether this line of work reaches practice.
-\item[FR4] Move from observation to intervention, editing action-relevant state
+\item[FR4] Move from observation to intervention, editing move-touched state
 directions and measuring whether the induced action follows the induced belief.
 \item[FR5] Develop state supervision that does not require an oracle, for example
 from execution traces or agreement between sampled continuations.
-\item[FR6] Use action-relevant fidelity as a live confidence signal, abstaining or
+\item[FR6] Use move-touched fidelity as a live confidence signal, abstaining or
 escalating when the state an action depends on is poorly determined.
 \item[FR7] Pre-register horizon metrics on pilot data, so metric selection is
 settled before confirmatory runs rather than declared afterwards.

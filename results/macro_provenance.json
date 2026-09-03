@@ -204,27 +204,27 @@
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "occ40AlsbZero": {
-  "value": "0.558",
+  "value": "0.556",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "occ40AlsbZeroSD": {
-  "value": "0.002",
-  "source": "results/alsb_l0_8L256_s*.json"
- },
- "occ40AlsbZeroN": {
-  "value": "2",
-  "source": "results/alsb_l0_8L256_s*.json"
- },
- "ill40AlsbZero": {
-  "value": "0.170",
-  "source": "results/alsb_l0_8L256_s*.json"
- },
- "ill40AlsbZeroSD": {
   "value": "0.003",
   "source": "results/alsb_l0_8L256_s*.json"
  },
+ "occ40AlsbZeroN": {
+  "value": "3",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "ill40AlsbZero": {
+  "value": "0.169",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
+ "ill40AlsbZeroSD": {
+  "value": "0.002",
+  "source": "results/alsb_l0_8L256_s*.json"
+ },
  "ill40AlsbZeroN": {
-  "value": "2",
+  "value": "3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hill05AlsbZero": {
@@ -236,35 +236,35 @@
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hill05AlsbZeroN": {
-  "value": "2",
+  "value": "3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hintAlsbZero": {
-  "value": "26.1",
+  "value": "26.2",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hintAlsbZeroSD": {
-  "value": "0.1",
+  "value": "0.3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hintAlsbZeroN": {
-  "value": "2",
+  "value": "3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hill10AlsbZero": {
-  "value": "35",
+  "value": "37",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hill10AlsbZeroSD": {
-  "value": "7",
+  "value": "6",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "hill10AlsbZeroN": {
-  "value": "2",
+  "value": "3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "valAlsbZero": {
-  "value": "3.014",
+  "value": "3.012",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "valAlsbZeroSD": {
@@ -272,7 +272,7 @@
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "valAlsbZeroN": {
-  "value": "2",
+  "value": "3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "bestLayerAlsbZero": {
@@ -284,7 +284,7 @@
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "bestLayerAlsbZeroN": {
-  "value": "2",
+  "value": "3",
   "source": "results/alsb_l0_8L256_s*.json"
  },
  "paramsAlsbOne": {
@@ -2286,5 +2286,85 @@
  "abBetaProbe": {
   "value": "0.367",
   "source": "results/attn_8L256_s0_abstain.json"
+ },
+ "sqWholeBoard": {
+  "value": "0.629",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqWholeBoardLo": {
+  "value": "0.623",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqWholeBoardHi": {
+  "value": "0.633",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqTwoRandom": {
+  "value": "0.539",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqTwoRandomLo": {
+  "value": "0.534",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqTwoRandomHi": {
+  "value": "0.542",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqTwoRandomOcc": {
+  "value": "0.631",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqTwoRandomOccLo": {
+  "value": "0.627",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqTwoRandomOccHi": {
+  "value": "0.636",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqSourceOnly": {
+  "value": "0.664",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqSourceOnlyLo": {
+  "value": "0.660",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqSourceOnlyHi": {
+  "value": "0.668",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqDestOnly": {
+  "value": "0.637",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqDestOnlyLo": {
+  "value": "0.633",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqDestOnlyHi": {
+  "value": "0.642",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqMoveTouched": {
+  "value": "0.696",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqMoveTouchedLo": {
+  "value": "0.693",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "sqMoveTouchedHi": {
+  "value": "0.700",
+  "source": "results/attn_8L256_s0_sqcontrol.json"
+ },
+ "exactFirst": {
+  "value": "0.379",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "exactMid": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0.json"
  }
 }

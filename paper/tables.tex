@@ -67,7 +67,7 @@ Model & Params & seeds & occ.\ acc.\ @40--50 & illegal @40--50 & $H_{\mathrm{ill
 \midrule
 Attention-only & 7{,}345{,}920 & 3 & 0.555\,$\pm$\,0.003 & 0.176\,$\pm$\,0.002 & 26.1\,$\pm$\,0.0 \\
 Attention-only, parameter-matched & 7{,}505{,}976 & 3 & 0.554\,$\pm$\,0.002 & 0.172\,$\pm$\,0.003 & 26.0\,$\pm$\,0.1 \\
-Recurrent channel ($\lambda{=}0$) & 7{,}508{,}416 & 2 & 0.558\,$\pm$\,0.002 & 0.170\,$\pm$\,0.003 & 26.1\,$\pm$\,0.1 \\
+Recurrent channel ($\lambda{=}0$) & 7{,}508{,}416 & 3 & 0.556\,$\pm$\,0.003 & 0.169\,$\pm$\,0.002 & 26.2\,$\pm$\,0.3 \\
 Recurrent channel ($\lambda{=}1$) & 7{,}508{,}416 & 3 & 0.632\,$\pm$\,0.003 & 0.166\,$\pm$\,0.002 & 26.5\,$\pm$\,0.2 \\
 \midrule
 \quad read-out ablated at test & n/a & 3 & 0.559\,$\pm$\,0.005 & 0.149\,$\pm$\,0.005 & 27.2\,$\pm$\,0.4 \\
@@ -229,6 +229,30 @@ Coverage & model conf. & entropy & probe cert. & combined & oracle bound \\
 70\% & 0.1626 & 0.1548 & 0.1755 & 0.1555 & 0.1372 \\
 60\% & 0.1523 & 0.1422 & 0.1655 & 0.1404 & 0.1150 \\
 50\% & 0.1415 & 0.1307 & 0.1550 & 0.1238 & 0.0928 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{Which squares carry the signal. Each row scores probe error
+over a different set of squares as a predictor of an illegal top-1 move,
+on identical samples. Intervals are bootstrapped over games rather than
+positions, since positions within a game are not independent. Two random
+occupied squares match the occupancy profile of a move's endpoints and
+perform like the whole board; the squares the move actually touches do
+not, so the advantage is about which squares rather than how many.}
+\label{tab:sqcontrol}
+\begin{tabular}{lc}
+\toprule
+Squares scored & AUC [95\% CI] \\
+\midrule
+whole board, 64 squares & 0.629 [0.623, 0.633] \\
+two random squares & 0.539 [0.534, 0.542] \\
+two random occupied squares & 0.631 [0.627, 0.636] \\
+origin square only & 0.664 [0.660, 0.668] \\
+destination square only & 0.637 [0.633, 0.642] \\
+move-touched, origin and destination & \textbf{0.696} [0.693, 0.700] \\
 \bottomrule
 \end{tabular}
 \end{table}
