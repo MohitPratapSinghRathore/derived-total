@@ -1,6 +1,6 @@
 \begin{table}[t]
 \centering\small
-\caption{Aggregate and action-relevant state error compared like for
+\caption{Aggregate and move-touched state error compared like for
 like, as predictors of the same binary outcome on the same samples:
 whether the model's top-1 move is illegal. AUC is computed within each
 depth bucket so neither predictor can simply be tracking depth. The
@@ -10,7 +10,7 @@ the two, and the gap widens with depth.}
 \label{tab:auc}
 \begin{tabular}{lccccr}
 \toprule
-Ply & AUC aggregate & AUC action-relevant & $\beta$ aggregate & $\beta$ action-relevant & $n$ \\
+Ply & AUC aggregate & AUC move-touched & $\beta$ aggregate & $\beta$ move-touched & $n$ \\
 \midrule
 10--20 & 0.671 & \textbf{0.687} & +0.065 & \textbf{+0.153} & 15{,}000 \\
 20--30 & 0.627 & \textbf{0.681} & +0.120 & \textbf{+0.332} & 15{,}000 \\

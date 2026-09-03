@@ -108,18 +108,18 @@ def mechanism_table():
     L = ["\\begin{table}[t]", "\\centering\\small",
          "\\caption{Does state loss explain behaviour? The aggregate column is the",
          "within-depth AUC of whole-board probe error as a predictor of an illegal",
-         "move, reported as a range over depth buckets. Action-relevant error is the",
-         "probability the probe is wrong",
-         "on the squares the move uses. Belief consistency is the share of illegal",
-         "moves that are legal in the model's own decoded board, beside the same",
+         "move, reported as a range over depth buckets. Move-touched error is the",
+         "probability the probe is wrong on the origin or destination square.",
+         "Belief consistency is the share of illegal",
+         "moves admissible under the model's own decoded board, beside the same",
          "move under another position's belief, an arbitrary illegal move, and the",
-         "decoding ceiling given by genuinely legal moves.}",
+         "legal-move recovery reference.}",
          "\\label{tab:mechanism}",
          "\\begin{tabular}{lrccccccc}", "\\toprule",
-         "& & aggregate & \\multicolumn{2}{c}{action-relevant}"
+         "& & aggregate & \\multicolumn{2}{c}{move-touched}"
          " & \\multicolumn{4}{c}{belief consistency} \\\\",
          "\\cmidrule(lr){4-5}\\cmidrule(lr){6-9}",
-         "Model & Params & AUC & illegal & legal & own & mismatch & random & ceiling \\\\",
+         "Model & Params & AUC & illegal & legal & own & mismatch & random & recovery \\\\",
          "\\midrule"]
     for (lab, prm, cor, li, ll, bi, bm, br, bc) in rows:
         bm_s = "n/a" if bm is None else f"{bm:.3f}"
@@ -234,11 +234,11 @@ def scale_table():
          "$H_{\\mathrm{fid}}$ is read off the representation, the depth at which the",
          "probe first fails on the squares the chosen move touches more than half the",
          "time, and so cannot be moved by hedging. Belief consistency is normalised by",
-         "each model's own decoding ceiling, because the ceiling itself rises with",
+         "each model's own legal-move recovery reference, because that reference rises with",
          "size. Mean\\,$\\pm$\\,s.d.\\ over seeds.}",
          "\\label{tab:scale}", "\\begin{tabular}{lrccccc}", "\\toprule",
          "Model & Params & seeds & $H_{\\mathrm{ill}}(.05)$ & $H_{\\mathrm{fid}}(.5)$ "
-         "& belief\\,/\\,ceiling & mismatch \\\\", "\\midrule"]
+         "& belief\\,/\\,reference & mismatch \\\\", "\\midrule"]
     for lab, st in rows:
         L.append(f"{lab} & {fnum(st['params'])} & {st['n']} & "
                  f"{lfmt(st['h_ill'], 1)} & {lfmt(st['h_fid'], 1)} & "
@@ -253,7 +253,7 @@ def auc_table():
     if not d:
         return []
     L = ["\\begin{table}[t]", "\\centering\\small",
-         "\\caption{Aggregate and action-relevant state error compared like for",
+         "\\caption{Aggregate and move-touched state error compared like for",
          "like, as predictors of the same binary outcome on the same samples:",
          "whether the model's top-1 move is illegal. AUC is computed within each",
          "depth bucket so neither predictor can simply be tracking depth. The",
@@ -261,8 +261,8 @@ def auc_table():
          "predictors. The aggregate measure is informative and it is the weaker of",
          "the two, and the gap widens with depth.}",
          "\\label{tab:auc}", "\\begin{tabular}{lccccr}", "\\toprule",
-         "Ply & AUC aggregate & AUC action-relevant & $\\beta$ aggregate "
-         "& $\\beta$ action-relevant & $n$ \\\\", "\\midrule"]
+         "Ply & AUC aggregate & AUC move-touched & $\\beta$ aggregate "
+         "& $\\beta$ move-touched & $n$ \\\\", "\\midrule"]
     for k, v in d["per_bucket"].items():
         lo, hi = k.split("-")
         L.append(f"{lo}--{hi} & {v['auc_aggregate']:.3f} & "
@@ -348,6 +348,39 @@ def boxes_table():
 
 
 
+
+def drift_table():
+    """Train-depth by test-depth transfer for depth-local linear probes."""
+    d = load("attn_8L256_s0_drift")
+    if not d:
+        return []
+    B = d["buckets"]; M = d["transfer"]
+    L = ["\\begin{table}[t]", "\\centering\\small",
+         "\\caption{Is the state lost, or is the representation rotating? Each row",
+         "is a linear probe fitted inside one depth bucket and evaluated on every",
+         "bucket; the pooled row is a probe fitted across all depths, as used",
+         "elsewhere in the paper. Depth-local probes do not hold up at depth either,",
+         "so the decline is not explained by a fixed decoder failing to transfer.",
+         "Local probes see roughly a sixth of the pooled training data, which makes",
+         "this a conservative test of the drift account.}",
+         "\\label{tab:drift}",
+         "\\begin{tabular}{l" + "c" * len(B) + "}", "\\toprule",
+         "Probe fitted at & " + " & ".join(f"ply {lo}" for lo, _ in B) + " \\\\",
+         "\\midrule"]
+    for i, (lo, _) in enumerate(B):
+        cells = []
+        for j in range(len(B)):
+            v = M[i][j]
+            cells.append("n/a" if v is None else
+                         (f"\\textbf{{{v:.3f}}}" if i == j else f"{v:.3f}"))
+        L.append(f"ply {lo} & " + " & ".join(cells) + " \\\\")
+    L += ["\\midrule",
+          "pooled across depths & " + " & ".join(f"{v:.3f}" for v in d["global_probe"])
+          + " \\\\",
+          "\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
+    return L
+
+
 def stats_table():
     """Game-clustered intervals and out-of-sample model comparison."""
     d = load("attn_8L256_s0_stats")
@@ -426,8 +459,10 @@ def sqcontrol_table():
          "over a different set of squares as a predictor of an illegal top-1 move,",
          "on identical samples. Intervals are bootstrapped over games rather than",
          "positions, since positions within a game are not independent. Two random",
-         "occupied squares match the occupancy profile of a move's endpoints and",
-         "perform like the whole board; the squares the move actually touches do",
+         "occupied squares are a partial match to a move's endpoints, the origin being",
+         "occupied by the mover while the destination is usually empty or held by the",
+         "opponent, so this control equalises count and occupancy only in part. It",
+         "performs like the whole board; the squares the move actually touches do",
          "not, so the advantage is about which squares rather than how many.}",
          "\\label{tab:sqcontrol}", "\\begin{tabular}{lc}", "\\toprule",
          "Squares scored & AUC [95\\% CI] \\\\", "\\midrule"]
@@ -477,7 +512,8 @@ def main():
              ("abstain", abstain_table),
              ("sqcontrol", sqcontrol_table),
              ("cycles", cycles_table),
-             ("stats", stats_table)]
+             ("stats", stats_table),
+             ("drift", drift_table)]
     L = ["% AUTO-GENERATED by code/make_tables.py. Do not edit by hand.", ""]
     outdir = os.path.dirname(OUT)
     for name, fn in parts:

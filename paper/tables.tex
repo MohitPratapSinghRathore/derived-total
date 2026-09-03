@@ -29,20 +29,20 @@ Ply & model & majority & label perm. & random weights & illegal rate \\
 \centering\small
 \caption{Does state loss explain behaviour? The aggregate column is the
 within-depth AUC of whole-board probe error as a predictor of an illegal
-move, reported as a range over depth buckets. Action-relevant error is the
-probability the probe is wrong
-on the squares the move uses. Belief consistency is the share of illegal
-moves that are legal in the model's own decoded board, beside the same
+move, reported as a range over depth buckets. Move-touched error is the
+probability the probe is wrong on the origin or destination square.
+Belief consistency is the share of illegal
+moves admissible under the model's own decoded board, beside the same
 move under another position's belief, an arbitrary illegal move, and the
-decoding ceiling given by genuinely legal moves.}
+legal-move recovery reference.}
 \label{tab:mechanism}
 \begin{tabular}{lrccccccc}
 \toprule
-& & aggregate & \multicolumn{2}{c}{action-relevant} & \multicolumn{4}{c}{belief consistency} \\
+& & aggregate & \multicolumn{2}{c}{move-touched} & \multicolumn{4}{c}{belief consistency} \\
 \cmidrule(lr){4-5}\cmidrule(lr){6-9}
-Model & Params & AUC & illegal & legal & own & mismatch & random & ceiling \\
+Model & Params & AUC & illegal & legal & own & mismatch & random & recovery \\
 \midrule
-Attention-only & 7{,}345{,}920 & 0.54 to 0.67 & 0.806 & 0.384 & \textbf{0.356} & 0.050 & 0.008 & 0.657 \\
+Attention-only & 7{,}345{,}920 & 0.54 to 0.67 & 0.806 & 0.384 & \textbf{0.355} & 0.050 & 0.007 & 0.654 \\
 Attention-only, parameter-matched & 7{,}505{,}976 & n/a & 0.804 & 0.391 & \textbf{0.350} & 0.051 & 0.007 & 0.650 \\
 Recurrent channel ($\lambda{=}0$) & 7{,}508{,}416 & n/a & 0.801 & 0.384 & \textbf{0.358} & 0.053 & 0.007 & 0.658 \\
 Recurrent channel ($\lambda{=}1$) & 7{,}508{,}416 & n/a & 0.806 & 0.399 & \textbf{0.366} & 0.093 & 0.021 & 0.656 \\
@@ -126,15 +126,15 @@ off behaviour, the ply at which the illegal-move rate crosses five percent.
 $H_{\mathrm{fid}}$ is read off the representation, the depth at which the
 probe first fails on the squares the chosen move touches more than half the
 time, and so cannot be moved by hedging. Belief consistency is normalised by
-each model's own decoding ceiling, because the ceiling itself rises with
+each model's own legal-move recovery reference, because that reference rises with
 size. Mean\,$\pm$\,s.d.\ over seeds.}
 \label{tab:scale}
 \begin{tabular}{lrccccc}
 \toprule
-Model & Params & seeds & $H_{\mathrm{ill}}(.05)$ & $H_{\mathrm{fid}}(.5)$ & belief\,/\,ceiling & mismatch \\
+Model & Params & seeds & $H_{\mathrm{ill}}(.05)$ & $H_{\mathrm{fid}}(.5)$ & belief\,/\,reference & mismatch \\
 \midrule
 6L/192 & 3{,}440{,}064 & 3 & 21.4\,$\pm$\,0.1 & 33.8\,$\pm$\,0.2 & 0.476\,$\pm$\,0.017 & 0.051\,$\pm$\,0.002 \\
-8L/256 & 7{,}345{,}920 & 3 & 26.1\,$\pm$\,0.0 & 40.8\,$\pm$\,0.5 & 0.534\,$\pm$\,0.008 & 0.052\,$\pm$\,0.001 \\
+8L/256 & 7{,}345{,}920 & 3 & 26.1\,$\pm$\,0.0 & 40.8\,$\pm$\,0.5 & 0.534\,$\pm$\,0.008 & 0.052\,$\pm$\,0.002 \\
 12L/256 & 10{,}504{,}960 & 3 & 27.8\,$\pm$\,0.2 & 42.1\,$\pm$\,0.3 & 0.552\,$\pm$\,0.007 & 0.051\,$\pm$\,0.002 \\
 8L/384 & 15{,}737{,}472 & 3 & 29.5\,$\pm$\,0.2 & 50.0\,$\pm$\,0.4 & 0.568\,$\pm$\,0.008 & 0.053\,$\pm$\,0.001 \\
 12L/384 & 22{,}835{,}328 & 3 & 31.7\,$\pm$\,0.3 & 52.5\,$\pm$\,0.5 & 0.577\,$\pm$\,0.005 & 0.053\,$\pm$\,0.003 \\
@@ -145,7 +145,7 @@ Model & Params & seeds & $H_{\mathrm{ill}}(.05)$ & $H_{\mathrm{fid}}(.5)$ & beli
 
 \begin{table}[t]
 \centering\small
-\caption{Aggregate and action-relevant state error compared like for
+\caption{Aggregate and move-touched state error compared like for
 like, as predictors of the same binary outcome on the same samples:
 whether the model's top-1 move is illegal. AUC is computed within each
 depth bucket so neither predictor can simply be tracking depth. The
@@ -155,7 +155,7 @@ the two, and the gap widens with depth.}
 \label{tab:auc}
 \begin{tabular}{lccccr}
 \toprule
-Ply & AUC aggregate & AUC action-relevant & $\beta$ aggregate & $\beta$ action-relevant & $n$ \\
+Ply & AUC aggregate & AUC move-touched & $\beta$ aggregate & $\beta$ move-touched & $n$ \\
 \midrule
 10--20 & 0.671 & \textbf{0.687} & +0.065 & \textbf{+0.153} & 15{,}000 \\
 20--30 & 0.627 & \textbf{0.681} & +0.120 & \textbf{+0.332} & 15{,}000 \\
@@ -240,8 +240,10 @@ Coverage & model conf. & entropy & probe cert. & combined & oracle bound \\
 over a different set of squares as a predictor of an illegal top-1 move,
 on identical samples. Intervals are bootstrapped over games rather than
 positions, since positions within a game are not independent. Two random
-occupied squares match the occupancy profile of a move's endpoints and
-perform like the whole board; the squares the move actually touches do
+occupied squares are a partial match to a move's endpoints, the origin being
+occupied by the mover while the destination is usually empty or held by the
+opponent, so this control equalises count and occupancy only in part. It
+performs like the whole board; the squares the move actually touches do
 not, so the advantage is about which squares rather than how many.}
 \label{tab:sqcontrol}
 \begin{tabular}{lc}
@@ -302,6 +304,32 @@ depth only & 0.3630 & \\
 \quad $+$ move-touched & 0.3451 & \\
 \quad $+$ both & 0.3439 & \\
 \quad $+$ both and confidence & 0.3340 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{Is the state lost, or is the representation rotating? Each row
+is a linear probe fitted inside one depth bucket and evaluated on every
+bucket; the pooled row is a probe fitted across all depths, as used
+elsewhere in the paper. Depth-local probes do not hold up at depth either,
+so the decline is not explained by a fixed decoder failing to transfer.
+Local probes see roughly a sixth of the pooled training data, which makes
+this a conservative test of the drift account.}
+\label{tab:drift}
+\begin{tabular}{lcccccc}
+\toprule
+Probe fitted at & ply 10 & ply 20 & ply 30 & ply 40 & ply 50 & ply 60 \\
+\midrule
+ply 10 & \textbf{0.910} & 0.776 & 0.521 & 0.307 & 0.203 & 0.151 \\
+ply 20 & 0.835 & \textbf{0.789} & 0.695 & 0.540 & 0.348 & 0.201 \\
+ply 30 & 0.640 & 0.736 & \textbf{0.671} & 0.610 & 0.546 & 0.412 \\
+ply 40 & 0.253 & 0.591 & 0.636 & \textbf{0.553} & 0.486 & 0.416 \\
+ply 50 & 0.106 & 0.341 & 0.527 & 0.514 & \textbf{0.430} & 0.346 \\
+ply 60 & 0.097 & 0.241 & 0.415 & 0.497 & 0.447 & \textbf{0.340} \\
+\midrule
+pooled across depths & 0.907 & 0.804 & 0.694 & 0.591 & 0.506 & 0.409 \\
 \bottomrule
 \end{tabular}
 \end{table}

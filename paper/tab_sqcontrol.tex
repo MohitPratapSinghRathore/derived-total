@@ -4,8 +4,10 @@
 over a different set of squares as a predictor of an illegal top-1 move,
 on identical samples. Intervals are bootstrapped over games rather than
 positions, since positions within a game are not independent. Two random
-occupied squares match the occupancy profile of a move's endpoints and
-perform like the whole board; the squares the move actually touches do
+occupied squares are a partial match to a move's endpoints, the origin being
+occupied by the mover while the destination is usually empty or held by the
+opponent, so this control equalises count and occupancy only in part. It
+performs like the whole board; the squares the move actually touches do
 not, so the advantage is about which squares rather than how many.}
 \label{tab:sqcontrol}
 \begin{tabular}{lc}

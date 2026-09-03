@@ -96,6 +96,7 @@ def main():
     mis_n = np.zeros(nb); mis_believed_ok = np.zeros(nb)
     belief_bank = {b: [] for b in range(nb)}
     per_case = []          # (bucket, is_illegal, believed_ok) for bootstrap CIs
+    clus = {"game": [], "own": [], "mis": [], "rnd": []}   # game-clustered records
 
     bs = 32
     with torch.no_grad():
@@ -132,19 +133,28 @@ def main():
                             else:
                                 ill_n[b] += 1; ill_believed_ok[b] += ok
                                 # control: an arbitrary illegal move at this position
+                                cand = None
                                 for _ in range(6):
-                                    cand = chess.Move.from_uci(
+                                    _c = chess.Move.from_uci(
                                         all_moves[int(rng.integers(len(all_moves)))])
-                                    if cand not in board.legal_moves:
+                                    if _c not in board.legal_moves:
+                                        cand = _c
                                         rand_n[b] += 1
                                         rand_believed_ok[b] += pseudo_ok(bb, cand)
                                         break
+                                if cand is None:
+                                    cand = chess.Move.null()
                                 # same move, someone else's belief at similar depth
                                 if belief_bank[b]:
                                     other = belief_bank[b][int(rng.integers(len(belief_bank[b])))]
                                     ob = believed_board(other, board.turn == chess.WHITE)
                                     mis_n[b] += 1
-                                    mis_believed_ok[b] += pseudo_ok(ob, mv)
+                                    _mo = pseudo_ok(ob, mv)
+                                    mis_believed_ok[b] += _mo
+                                    clus["game"].append(int(gi))
+                                    clus["own"].append(int(ok))
+                                    clus["mis"].append(int(_mo))
+                                    clus["rnd"].append(int(pseudo_ok(bb, cand)))
                     board.push_uci(itos[int(toks[gi, t + 1])])
 
     out = {
@@ -162,6 +172,26 @@ def main():
             "mismatched_belief_legal": float(mis_believed_ok.sum() / max(mis_n.sum(), 1)),
         },
     }
+    # Game-clustered intervals on exactly the population the headline numbers
+    # use, so the point estimates are unchanged and only the interval is added.
+    if clus["game"]:
+        _g = np.array(clus["game"]); _uniq = np.unique(_g)
+        _by = {u: np.where(_g == u)[0] for u in _uniq}
+        _rng = np.random.default_rng(0)
+        _draws = {k: [] for k in ("own", "mis", "rnd")}
+        for _ in range(400):
+            _pick = _rng.choice(_uniq, len(_uniq), replace=True)
+            _sel = np.concatenate([_by[u] for u in _pick])
+            for k in _draws:
+                _draws[k].append(float(np.array(clus[k])[_sel].mean()))
+        out["clustered"] = {
+            k: {"mean": float(np.mean(clus[k])),
+                "ci_lo": float(np.percentile(_draws[k], 2.5)),
+                "ci_hi": float(np.percentile(_draws[k], 97.5))}
+            for k in _draws}
+        out["clustered"]["n_games"] = int(len(_uniq))
+        out["clustered"]["n"] = int(len(_g))
+
     # bootstrap CI over cases for the headline contrast
     pc = np.array(per_case)
     if len(pc):

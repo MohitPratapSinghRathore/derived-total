@@ -996,15 +996,15 @@
   "source": "results/attn_8L256_s0_coupling.json"
  },
  "belIllAttn": {
-  "value": "0.356",
+  "value": "0.355",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belLegAttn": {
-  "value": "0.657",
+  "value": "0.654",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belRandAttn": {
-  "value": "0.008",
+  "value": "0.007",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belMisAttn": {
@@ -1012,19 +1012,19 @@
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belRatioAttn": {
-  "value": "44",
+  "value": "50",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belRatioMisAttn": {
-  "value": "7.0",
+  "value": "7.2",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belIllLoAttn": {
-  "value": "0.348",
+  "value": "0.346",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "belIllHiAttn": {
-  "value": "0.364",
+  "value": "0.362",
   "source": "results/attn_8L256_s0_belief.json"
  },
  "locIllAttnPM": {
@@ -2750,5 +2750,69 @@
  "hoBase": {
   "value": "0.141",
   "source": "results/attn_8L256_s0_stats.json"
+ },
+ "pcBel": {
+  "value": "0.355",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelLo": {
+  "value": "0.346",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelHi": {
+  "value": "0.364",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelMis": {
+  "value": "0.050",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelMisLo": {
+  "value": "0.046",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelMisHi": {
+  "value": "0.053",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelRand": {
+  "value": "0.007",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelRandLo": {
+  "value": "0.006",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcBelRandHi": {
+  "value": "0.009",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcGames": {
+  "value": "1,155",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "pcN": {
+  "value": "13,802",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "drDiagFirst": {
+  "value": "0.910",
+  "source": "results/attn_8L256_s0_drift.json"
+ },
+ "drDiagLast": {
+  "value": "0.340",
+  "source": "results/attn_8L256_s0_drift.json"
+ },
+ "drPoolFirst": {
+  "value": "0.907",
+  "source": "results/attn_8L256_s0_drift.json"
+ },
+ "drPoolLast": {
+  "value": "0.409",
+  "source": "results/attn_8L256_s0_drift.json"
+ },
+ "drFarOff": {
+  "value": "0.151",
+  "source": "results/attn_8L256_s0_drift.json"
  }
 }

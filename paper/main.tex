@@ -65,8 +65,9 @@ diagnostics, chess, long-horizon reasoning
 
 \section{Introduction}
 
-A model that reasons over many steps has to keep track of something. A
-Transformer stores nothing between positions. Each token's representation is
+A model that reasons over many steps has to keep track of something. An
+attention-only decoder has no explicit bounded mutable state in which to keep
+it. Each token's representation is
 rebuilt from the whole prefix through attention \citep{vaswani2017attention}, so
 any quantity the task requires, a board position, the value of a variable, which
 sub-goal remains open, exists only because the network re-derives it, at every
@@ -126,9 +127,10 @@ weight of \result{betaAct} against \result{betaAgg}.
 The first two are the ones we would defend hardest, and they belong together:
 the errors are coherent with a decayed state, and that state is causally
 load-bearing rather than an epiphenomenon. Failure here is not noise breaking
-through as the context grows. It is competent play in a world that has drifted,
-which is a claim about memory rather than about reasoning, and it explains why
-fluency outlives correctness: the model does the right thing, in the wrong place.
+through as the context grows. A substantial share of it is action admissible under a
+world that has drifted, which is a claim about state rather than about reasoning
+for that share, and it suggests why fluency outlives correctness: the model acts
+coherently with respect to a position it no longer holds.
 
 \paragraph{Why chess.}
 Chess presented purely as move notation, with no tree search at inference, gives
@@ -156,9 +158,10 @@ accuracy predicts whether the next action will be valid, and the same measuremen
 restricted to the state that action consumes predicts it better, with the gap
 widening as reasoning deepens. We define a horizon on that fidelity directly,
 which avoids a failure mode of behavioural horizons that we document.
-\item \textbf{A per-token decomposition} of long-horizon error into
-state-tracking and planning components, against an exact oracle rather than a
-learned verifier, with the conditioning analysis needed to keep the two apart.
+\item \textbf{A per-token diagnostic stratification} into state mismatch,
+belief-consistent error, conditional planning loss, and unresolved failure,
+measured against an exact oracle rather than a learned verifier, with the
+conditioning analysis that shows how far the strata can be told apart.
 \item \textbf{An account of what failed}, including a degenerate metric, a
 prediction that ran backwards, an intervention that improved the measurement more
 than the behaviour, and seven task designs before a second domain became
@@ -284,8 +287,16 @@ production-scale models, which our compute does not license.
 
 Let a task be a token sequence $x_{1:L}$ generated left to right, and
 $s_t = \Phi(x_{1:t})$ the exact state after the prefix, from an external oracle
-$\Phi$. For chess this is piece placement, side to move, castling rights, and the
-en-passant target. The state space is large, but the description length of any
+$\Phi$. For chess $s_t = (b_t, \tau_t, c_t, e_t)$: piece placement, side to move,
+castling rights, and the en-passant target.
+
+Our probe decodes only the first component. Write
+$\hat{b}_t^{(\ell)} = g^{(\ell)}(h_t^{(\ell)})$ for decoded piece placement, and
+let the pseudo-state used by the belief test be
+$\tilde{s}_t = (\hat{b}_t, \tau_t, \varnothing, \varnothing)$, with side to move
+taken from ply parity and castling and en-passant disabled so that nothing is
+licensed by an assumption we did not decode. Claims below concern
+$\hat{b}_t$ and $\tilde{s}_t$, not $s_t$. The state space is large, but the description length of any
 $s_t$ is constant in $t$: a position occupies a few hundred bits however many
 plies produced it.
 
@@ -294,15 +305,17 @@ $\ell$, and $g^{(\ell)}$ a linear decoder trained to recover $s_t$ from it. Writ
 $\hat{s}_t^{(\ell)} = g^{(\ell)}(h_t^{(\ell)})$ for the decoded, or believed,
 state.
 
-\begin{definition}[State fidelity]
-$F^{(\ell)}(t) = \Pr[\hat{s}_t^{(\ell)} = s_t]$, the probability the exact state
-is linearly decodable at depth $t$.
+\begin{definition}[Board-placement fidelity]
+$F^{(\ell)}(t) = \Pr[\hat{b}_t^{(\ell)} = b_t]$, the probability that piece
+placement is linearly decodable at depth $t$. We name it for placement rather
+than for state because side to move, castling rights and the en-passant target
+are not decoded.
 \end{definition}
 
 \begin{definition}[Move-touched fidelity]
 The probability that $\hat{s}_t$ and $s_t$ agree on the origin and destination
-squares of the selected move. We name it for what it measures rather than calling
-it move-touched, because it is a deliberately local proxy. The state an action
+squares of the selected move. We name it for what it measures rather than calling it action-relevant, because
+it is a deliberately local proxy. The state an action
 actually depends on is larger: legality can turn on intermediate path squares for
 sliding pieces, the king's square and post-move attack status, pins and
 discovered attacks, castling rights and transit squares, the en-passant target,
@@ -350,10 +363,13 @@ failures. We do not call them planning errors.
 \label{sec:bottleneck}
 
 \begin{proposition}[Cost mismatch]
-For an attention-only decoder, computing $h_t^{(\ell)}$ attends over $t$ prior
-positions, so maintaining state costs $O(t)$ reads and $O(t)$ key-value memory
-while the state has description length $O(1)$. Nothing amortises it: $s_t$ and
-$s_{t+1}$ differ by one move and are computed independently.
+Under full attention each new token reads an $O(t)$ key-value history and
+retains $O(t)$ cached memory, while the task state has description length
+$O(1)$. A key-value cache does amortise the computation of earlier activations,
+so the cost is not recomputation from scratch; what the architecture lacks is a
+bounded mutable state that could carry $s_t$ forward and be updated in place. We
+offer this as a motivating cost mismatch, not as a proof that fidelity must
+decay.
 \end{proposition}
 
 Two consequences were testable and we tested both. Fidelity should fall with
@@ -413,7 +429,14 @@ probability mass on legal continuations, both read against the oracle.
 \subsection{State and behaviour both decay with depth}
 \label{sec:decay}
 
-\input{tables}
+\input{tab_controls}
+\input{tab_auc}
+\input{tab_mechanism}
+\input{tab_patch}
+\input{tab_horizon}
+\input{tab_scale}
+\input{tab_strictness}
+\input{tab_boxes}
 
 \begin{figure}[t]
 \centering
@@ -434,7 +457,10 @@ is well clear of every trivial explanation, reaching \result{occ40Attn} against
 \result{ctlMaj40} for the majority predictor and lower still for the
 label-permutation and randomised-weight controls, which
 Table~\ref{tab:controls} reports in full at every depth. There is a real state
-representation, and it is really being lost.
+representation, and it becomes progressively less recoverable by a linear
+decoder. Section~
+ef{sec:drift} tests whether that reflects loss or a moving
+basis.
 
 \subsection{Aggregate fidelity is the weaker signal}
 \label{sec:coupling}
@@ -482,6 +508,41 @@ ranking, the probe is wrong on the squares a move touches for
 The relevant question is not how much of the world the model has lost, but
 whether it has lost the part it is about to use.
 
+\subsection{Lost, or merely moved? Depth-local probes}
+\label{sec:drift}
+
+Every fidelity number so far comes from one decoder fitted across all depths, and
+a falling number has been read as the state becoming less available. A single
+global decoder cannot distinguish that from an alternative: the state might stay
+equally present while its linear basis moves with depth, so that one fixed
+decoder simply transfers badly. The reversible-cycle experiment holds the
+position fixed but still uses the global probe, so it inherits the same
+ambiguity.
+
+We fit a separate linear probe inside each depth bucket and evaluate every probe
+on every bucket.
+
+\input{tab_drift}
+
+The diagonal answers the question. A probe fitted for the deepest bucket and
+tested there reaches \result{drDiagLast}, against \result{drDiagFirst} for the
+shallowest bucket tested on itself. Depth-local probes collapse in almost the
+same way the global probe does, \result{drPoolFirst} to \result{drPoolLast}, so
+the decline is not an artifact of a fixed decoder failing to keep up. If the
+representation merely rotated, a probe fitted at the relevant depth would recover
+what a global probe misses, and it does not.
+
+Basis change is nonetheless present in the off-diagonal. A probe fitted on the
+shallowest positions reaches only \result{drFarOff} on the deepest ones, far
+below what a probe fitted there achieves, so the encoding does move with depth.
+It moves and it also thins, and the thinning is what the paper's curves track.
+
+One caveat cuts in our favour rather than against. Each depth-local probe sees
+roughly a sixth of the data the pooled probe sees, which is why the pooled probe
+edges the diagonal at depth. More data would help the local probes, so this is a
+conservative test of the drift account: it would have to overturn a gap that
+already runs the wrong way for it.
+
 \subsection{Which squares, not how many}
 \label{sec:sqcontrol}
 
@@ -494,13 +555,16 @@ that separates those explanations is a random pair.
 
 Two randomly chosen squares predict an illegal move at an AUC of
 \result{sqTwoRandom}, well below the whole board at \result{sqWholeBoard}. Two
-squares drawn at random from those actually \emph{occupied}, which matches the
-occupancy profile of a move's origin and destination, reach
+squares drawn at random from those actually \emph{occupied} reach
 \result{sqTwoRandomOcc}, statistically indistinguishable from the whole board.
 The squares a move touches reach \result{sqMoveTouched}, with a game-clustered
 interval that does not overlap either control. The advantage is therefore about
 which squares are read, not how many, and it is not an artifact of averaging
-fewer variables.
+fewer variables. That control equalises count and occupancy only in part: a
+move's origin is occupied by the side to move, while its destination is usually
+empty or held by the opponent, so a pair of occupied squares does not reproduce
+the endpoint profile exactly. A fully matched control would draw one square
+occupied by the mover and one matching the destination's true class.
 
 Splitting the pair, the origin square carries more of the signal than the
 destination, \result{sqSourceOnly} against \result{sqDestOnly}. That ordering is
@@ -523,32 +587,37 @@ a decoded board may lack a king.
 at least thirty illegal cases. (b) Pooled: an illegal move is far more likely to
 be legal in the model's own believed board than under another position's belief
 at equal depth, or than an arbitrary illegal move is under the model's own
-belief. The dashed line is the ceiling this test can detect, set by how often
+belief. The dashed line is the recovery reference for this test, set by how often
 genuinely legal moves are recovered as legal.}
 \label{fig:belief}
 \end{figure}
 
-Of the illegal moves the model plays, \result{belIllAttn} are legal in its own
-believed position, with a bootstrap interval of [\result{belIllLoAttn},
-\result{belIllHiAttn}]. Two controls bound the alternatives. The same move scored
+Of the illegal moves the model plays, \result{pcBel} are legal in its own
+believed position, with a game-clustered interval of [\result{pcBelLo},
+\result{pcBelHi}] over \result{pcN} illegal moves from \result{pcGames} games.
+Positions within a game are not independent, so the interval resamples whole
+games. Two controls bound the alternatives. The same move scored
 against a believed position decoded elsewhere at equal depth is legal
-\result{belMisAttn} of the time, so the effect is specific to this belief at this
-position rather than to plausible boards generally. An arbitrary illegal move
-scored against the model's own believed position is legal \result{belRandAttn} of
-the time, so the believed board is not permissive. For reference, genuinely legal moves are recovered as legal in the believed board
+\result{pcBelMis} [\result{pcBelMisLo}, \result{pcBelMisHi}] of the time, so the
+effect is specific to this belief at this position rather than to plausible
+boards generally. An arbitrary illegal move scored against the model's own
+believed position is legal \result{pcBelRand} [\result{pcBelRandLo},
+\result{pcBelRandHi}] of the time, so the believed board is not permissive. For reference, genuinely legal moves are recovered as legal in the believed board
 \result{belLegAttn} of the time, which is below one because probe decoding is
 lossy. We call this a legal-move recovery reference rather than a decoding
-ceiling, and we do not divide by it to estimate an unobserved true rate: that
+reference, and we do not divide by it to estimate an unobserved true rate: that
 would assume probe sensitivity is the same on legal and illegal cases, which we
 have not established. What the comparison licenses is that a substantial
 identified subset of illegal moves is consistent with the decoded state, not that
 most of them are.
 
-Against that ceiling, roughly half of the model's illegal moves are coherent
-actions in a misremembered world, and the enrichment over the matched control is
-a factor of \result{belRatioMisAttn}. This is what we mean by coherent error, and
-it is the clearest statement we can make that long-horizon degradation here is a
-memory failure rather than a reasoning failure.
+We do not divide by that reference. Doing so would estimate an unobserved true
+rate only under an assumption we have not tested, that the probe is equally
+sensitive on legal and illegal cases. What the comparison licenses is narrower
+and still substantial: a large identified subset of illegal moves is admissible
+under the board this model appears to hold at this position, at
+\result{belRatioMisAttn} times the rate of the matched control. It identifies
+state-consistent failure. It does not assign the remainder.
 
 \subsection{Inducing a false belief changes the action}
 \label{sec:causal}
@@ -652,12 +721,14 @@ The question that matters more for the reach of this paper is not whether the
 horizon moves with scale, which it does, but whether the mechanism does.
 Figure~\ref{fig:scale}(b) and Table~\ref{tab:scale} report belief consistency at
 every rung, three seeds each. The raw rate rises with size, but so does each
-model's decoding ceiling, so the honest quantity is the ratio of the two.
+model's legal-move recovery reference, so the honest quantity is the ratio of the two.
 Normalised that way the coherence of errors still rises monotonically, from
 \result{belRatioNRung1} at \result{paramsSmall} parameters to
 \result{belRatioNRung6} at \result{paramsLarge}, with seed spreads of a few parts
 in a thousand, while the mismatched control stays flat near
-\result{beliefMisBoxAttn}. What we have characterised strengthens with scale over
+\result{pcBelMis} and the random-move control near \result{pcBelRand}. We show
+the ratio as a descriptive normalisation, since the reference itself rises with
+size, and not as an estimate of a hidden true proportion. What we have characterised strengthens with scale over
 the range we can reach rather than washing out, which is evidence against its
 being an artifact of the smallest models.
 
@@ -819,10 +890,13 @@ rather than estimated: a wrong answer either is or is not the box the model's ow
 probe says holds that object.
 
 Two further design choices were forced on us, and both are worth recording. Our
-first attempt used five objects. That makes the state an element of $S_5$, the
-smallest non-solvable symmetric group, which is precisely the case bounded-depth
-sequence models are known to be unable to track \citep{merrill2024illusion}; we
-had chosen the hardest available instance by accident. Four objects give $S_4$,
+first attempt used five objects. That makes the state an element of $S_5$, a
+permutation-composition problem that is theoretically hard for the relevant
+fixed-depth model classes under asymptotic expressivity assumptions
+\citep{merrill2024illusion}. That may have contributed, but a theorem about
+asymptotic expressivity does not establish why one finite model failed to
+optimise on one bounded-length dataset, and we do not claim group structure as
+the cause. Four objects give $S_4$,
 which is solvable. Our second attempt queried only occasionally, which left the
 task all-or-nothing: with uniformly random updates and sparse queries a model
 either tracks the permutation exactly or sits at chance, a structure that is hard
@@ -910,9 +984,13 @@ read-outs, not a different signal, are the lever.
 Positions within a game are not independent: they share an opening, a player, and
 an accumulating history. Intervals computed over positions therefore understate
 uncertainty, and every interval in this section resamples whole games instead.
-The analysis covers \result{stN} positions from \result{stGames} games, of which
-\result{stIll} carry an illegal top-1 move, over ply 10 to 80 where the depth
-buckets are defined.
+Section~\ref{sec:belief} already reports game-clustered intervals for belief
+consistency on the full evaluation population. This section is a restricted
+sensitivity analysis on a different population, \result{stN} positions from
+\result{stGames} games of which \result{stIll} carry an illegal top-1 move, over
+ply 10 to 80 where the depth buckets used by the predictor comparison are
+defined. Estimates therefore differ slightly from the primary ones, and both are
+reported rather than reconciled by choosing whichever is larger.
 
 \input{tab_stats}
 
@@ -1186,7 +1264,7 @@ wanted is not available there. The central findings rest on one instrument and
 should be read that way.
 \item[L3] \textbf{Probe decoding is lossy.} The believed board is an
 approximation, which is why we report the legal-move recovery rate as an explicit
-ceiling rather than treating the decoded state as ground truth.
+recovery reference rather than treating the decoded state as ground truth.
 \item[L4] \textbf{Pseudo-legality.} Belief consistency is tested with
 pseudo-legal moves, since a decoded board may lack a king and make check tests
 ill-defined. This is a permissive criterion, which the random-move control is
@@ -1226,17 +1304,29 @@ settled before confirmatory runs rather than declared afterwards.
 
 \section{Conclusion}
 
-Long-horizon failure in Transformers is normally measured as one number and
-treated with more inference-time compute. Measured against an exact oracle it
-separates into two, and in the setting we can measure cleanly, the memory
-component dominates and behaves in a specific way. Aggregate world-model accuracy
-is a weak guide to what a model will do next. The same measurement, restricted to
-the state an action depends on, says a great deal. And the failures themselves
-are coherent: the model plays a reasonable move in a board it has misremembered.
-The people who stand to gain from measuring this are not primarily the builders
-of frontier systems. They are the readers who cannot check step twenty-eight, and
-the organisations that must decide, with evidence, how far to let a model reason
-before a person looks.
+Long-horizon behavioural failure can arise from degradation of the task state,
+from poor action selection given the state that is available, or from failures
+that remain unresolved under a lossy decoder. These are not cleanly separable
+with the instruments we have, and we have not separated them.
+
+What we can report is narrower and, we think, still worth having. In search-free
+chess models, whole-board probe fidelity is a weaker predictor of an invalid next
+action than fidelity on the endpoints of the move actually selected, and the gap
+widens with depth. A substantial identified subset of invalid actions is
+admissible under the board that model appears to hold at that position, at many
+times the rate of a mismatched-belief control and of an arbitrary invalid move.
+Targeted suppression and transfer edits show that the corresponding occupancy
+representation influences the policy rather than merely accompanying it. The
+identified share grows across the range of model sizes we can train, and survives
+a shift to uniformly random legal play.
+
+These measurements identify state-consistent failure. They do not partition all
+failures, and the errors they leave unidentified are unresolved rather than
+attributed to reasoning. The practical consequence is a change in what to
+measure: a world model reported as an aggregate accuracy tells a practitioner
+less than the same representation scored on the state the next action will
+consume, and the difference matters most exactly where long-horizon behaviour is
+hardest to check.
 
 \section*{Declarations}
 

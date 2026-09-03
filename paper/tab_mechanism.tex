@@ -2,20 +2,20 @@
 \centering\small
 \caption{Does state loss explain behaviour? The aggregate column is the
 within-depth AUC of whole-board probe error as a predictor of an illegal
-move, reported as a range over depth buckets. Action-relevant error is the
-probability the probe is wrong
-on the squares the move uses. Belief consistency is the share of illegal
-moves that are legal in the model's own decoded board, beside the same
+move, reported as a range over depth buckets. Move-touched error is the
+probability the probe is wrong on the origin or destination square.
+Belief consistency is the share of illegal
+moves admissible under the model's own decoded board, beside the same
 move under another position's belief, an arbitrary illegal move, and the
-decoding ceiling given by genuinely legal moves.}
+legal-move recovery reference.}
 \label{tab:mechanism}
 \begin{tabular}{lrccccccc}
 \toprule
-& & aggregate & \multicolumn{2}{c}{action-relevant} & \multicolumn{4}{c}{belief consistency} \\
+& & aggregate & \multicolumn{2}{c}{move-touched} & \multicolumn{4}{c}{belief consistency} \\
 \cmidrule(lr){4-5}\cmidrule(lr){6-9}
-Model & Params & AUC & illegal & legal & own & mismatch & random & ceiling \\
+Model & Params & AUC & illegal & legal & own & mismatch & random & recovery \\
 \midrule
-Attention-only & 7{,}345{,}920 & 0.54 to 0.67 & 0.806 & 0.384 & \textbf{0.356} & 0.050 & 0.008 & 0.657 \\
+Attention-only & 7{,}345{,}920 & 0.54 to 0.67 & 0.806 & 0.384 & \textbf{0.355} & 0.050 & 0.007 & 0.654 \\
 Attention-only, parameter-matched & 7{,}505{,}976 & n/a & 0.804 & 0.391 & \textbf{0.350} & 0.051 & 0.007 & 0.650 \\
 Recurrent channel ($\lambda{=}0$) & 7{,}508{,}416 & n/a & 0.801 & 0.384 & \textbf{0.358} & 0.053 & 0.007 & 0.658 \\
 Recurrent channel ($\lambda{=}1$) & 7{,}508{,}416 & n/a & 0.806 & 0.399 & \textbf{0.366} & 0.093 & 0.021 & 0.656 \\
