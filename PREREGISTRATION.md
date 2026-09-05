@@ -206,6 +206,45 @@ Balogh and is publishable on its own. S5 is not attempted.
 
 ## 7. Amendments
 
+### A3 (2026-09-05) — RETRACTION of A2's conclusion
+
+A2 concluded that the unresolved bucket is a real class rather than an artefact
+of partial repair, on the grounds that installing true occupancy at every
+divergent square moved memory plus mixed only from 0.1143 to 0.1271.
+
+**That conclusion is withdrawn. The whole-board arm never installed a correct
+board, so it could not test what it was used to test.**
+
+Measured directly on 400 to 600 natural failures. Whole-board repair leaves
+decode accuracy at the squares it targets at 0.30 [0.26, 0.35], and drives
+accuracy on occupied squares DOWN from 0.3263 to 0.1850. The edit degrades the
+representation rather than correcting it.
+
+Budget splitting is not the cause, which was the obvious first hypothesis and is
+wrong. Giving every square the full calibrated magnitude restores 0.2791 of
+targets, worse than splitting the budget. Splitting as 1/sqrt(k) gives 0.3043. A
+k=2 edit restores 0.6775. The channel is limited to roughly two squares and fails
+beyond that, whatever the magnitude.
+
+Consequences, stated plainly:
+
+- The whole-board arm of S2 is withdrawn from the results, not reinterpreted.
+- Whether the unresolved bucket is genuine failure or simply beyond the reach of
+  a two-square edit is **undetermined** by this instrument, and the artefact
+  explanation is now the more likely of the two, since natural failures carry a
+  median of 14 divergent squares, exactly the regime where the channel fails.
+- The induced control at 0.7333 recovery is consistent with this: it corrupts a
+  single square, which is inside the channel capability, so it bounds the channel
+  at k=1 and says nothing about k=14.
+- S1 is unaffected. Its claim is a contrast between conditions at matched edit
+  magnitude, so collateral damage is common to every arm and does not bias the
+  comparison.
+
+The honest headline is now narrower. Repairing the two action-relevant squares
+fixes about a tenth of natural failures while the same channel recovers about
+three quarters of single-square corruptions. Attributing the residual to policy
+or computation requires a multi-square edit this instrument cannot deliver.
+
 ### A2 (2026-09-05) — the S2 prior was mis-specified
 
 Section 2 froze the prior that memory plus mixed should land near 0.34, taken
