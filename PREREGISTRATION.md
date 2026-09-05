@@ -206,4 +206,29 @@ Balogh and is publishable on its own. S5 is not attempted.
 
 ## 7. Amendments
 
-None.
+### A1 (2026-09-05) — entropy matching procedure
+
+Section 1.4 as frozen specified: bin pre-edit entropy into deciles, compute the
+effect within each decile, aggregate as the sample-weighted mean across deciles.
+
+**That procedure is a no-op and is replaced.** Weighting each stratum by its own
+count reconstructs the overall mean regardless of the stratifying variable, so
+the "matched" estimate was algebraically identical to the raw one. It is also
+stratifying on the wrong variable: every condition is evaluated at the same
+positions, so their pre-edit entropy distributions are identical by construction.
+What threatens the result is POST-edit flattening, which does differ by
+condition.
+
+Replaced by two controls that change which positions are counted:
+
+1. **No-flattening subset.** The effect restricted to positions where the edit
+   did not increase entropy (delta entropy <= 0). Reported with its own n.
+2. **Matched contrast.** For a condition pair, restrict to positions where the
+   two edits changed entropy comparably (absolute difference at or below its
+   median), and take the paired difference there.
+
+This amendment was made after seeing S1 point estimates, which is disclosed
+rather than hidden. It does not change the direction of any result and it
+*reduces* the headline effect: correct minus wrong-target is +0.0814 raw and
++0.0314 matched. The amendment was adopted because the frozen procedure was
+mathematically vacuous, not because it was unfavourable.
