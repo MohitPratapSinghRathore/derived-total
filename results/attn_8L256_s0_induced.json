@@ -1,0 +1,32 @@
+{
+ "name": "attn_8L256_s0",
+ "alpha": 0.5,
+ "n_recovery": 600,
+ "n_games": 92,
+ "corruption_took_decode": 1.0,
+ "corruption_caused_illegal": 0.2768804799261652,
+ "natural_comparison": {
+  "memory_plus_mixed_partial": 0.1143,
+  "memory_plus_mixed_full": 0.1271
+ },
+ "recovered": {
+  "mean": 0.7333333333333333,
+  "ci_lo": 0.6991967629324024,
+  "ci_hi": 0.7696626902509255
+ },
+ "recovered_rand": {
+  "mean": 0.25333333333333335,
+  "ci_lo": 0.21595521106390672,
+  "ci_hi": 0.2895681189331398
+ },
+ "repair_decode_ok": {
+  "mean": 0.6793055555555555,
+  "ci_lo": 0.6540325515478733,
+  "ci_hi": 0.7016954339694381
+ },
+ "recovered_minus_random": {
+  "mean": 0.48,
+  "ci_lo": 0.42448406180143017,
+  "ci_hi": 0.5330699441726736
+ }
+}
