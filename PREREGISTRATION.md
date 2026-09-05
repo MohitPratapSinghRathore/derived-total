@@ -206,6 +206,41 @@ Balogh and is publishable on its own. S5 is not attempted.
 
 ## 7. Amendments
 
+### A2 (2026-09-05) — the S2 prior was mis-specified
+
+Section 2 froze the prior that memory plus mixed should land near 0.34, taken
+from belief consistency. **That prior was wrong, and it was wrong by
+conflation.** Belief consistency asks whether the model's illegal move is
+*explicable* by its wrong belief. The memory bucket asks whether repairing the
+belief is *sufficient to change behaviour*. The second is strictly stronger and
+there is no reason the two should coincide.
+
+The observed split is memory 0.0541, mixed 0.0604, policy 0.1840, unresolved
+0.7015, on 700 illegal top-1 moves from 58 games.
+
+The prior for **policy** was not mis-specified and is met: 0.1840 [0.1524,
+0.2149] against a prior of 0.20.
+
+Section 2 requires a split outside the envelope to be treated as implementation
+error before it is treated as a finding, so the competing artefact explanation
+was tested rather than argued. If repair fails because it only corrects the two
+squares the move touches, while a median of 14 squares are wrong, then unresolved
+is an artefact of partial repair. Installing true occupancy at **every** divergent
+square moves memory plus mixed only from 0.1143 to 0.1271, with overlapping
+intervals, and unresolved from 0.7015 to 0.6877.
+
+Unresolved is therefore a real class, not an artefact. Handing the model its
+entire correct board does not restore legal behaviour in roughly seven failures
+in ten.
+
+**Consequence for the programme, recorded now rather than at write-up.** S2 as
+designed does not deliver a clean two-way decomposition. It supports bounds --
+memory-attributable at least 0.11, policy at least 0.18 -- and leaves the
+majority unpartitioned by this instrument. S5's headline metric was to be the
+memory fraction, which is measurable but small, so S5's power to distinguish
+training arms through it is correspondingly lower than assumed when the timeline
+was written.
+
 ### A1 (2026-09-05) — entropy matching procedure
 
 Section 1.4 as frozen specified: bin pre-edit entropy into deciles, compute the
