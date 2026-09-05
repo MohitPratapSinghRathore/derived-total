@@ -21,7 +21,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from probes import load_split, build
-from scr import StateConsistency
+from scr import StateConsistency, MultiStepConsistency
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data", "proc")
 RUNS = os.path.join(os.path.dirname(__file__), "..", "runs")
@@ -36,6 +36,8 @@ def main():
     ap.add_argument("--dim", type=int, default=64)
     ap.add_argument("--layer", type=int, default=-1)
     ap.add_argument("--lr", type=float, default=1e-3)
+    ap.add_argument("--multistep", type=int, default=0,
+                   help="if >0, train consistency over rollouts up to this many steps")
     args = ap.parse_args()
 
     model, a, ck = build(os.path.join(RUNS, f"{args.name}.pt"))
@@ -47,7 +49,9 @@ def main():
     d = np.load(os.path.join(DATA, "train_probe.npz"))
     toks, lens = d["toks"].astype(np.int64), d["lens"].astype(np.int64)
 
-    scr = StateConsistency(a["width"], d_state=args.dim, vocab=len(stoi)).cuda()
+    cls = MultiStepConsistency if args.multistep > 0 else StateConsistency
+    kw = {"max_k": args.multistep} if args.multistep > 0 else {}
+    scr = cls(a["width"], d_state=args.dim, vocab=len(stoi), **kw).cuda()
     opt = torch.optim.AdamW(scr.parameters(), lr=args.lr, weight_decay=0.01)
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=args.lr,
                                                 total_steps=args.steps,
@@ -76,7 +80,8 @@ def main():
             print(f"  step {step} consistency loss {float(loss):.4f} "
                   f"acc {float(acc):.3f} [{time.time()-t0:.0f}s]", flush=True)
 
-    out = os.path.join(RUNS, f"{args.name}_trans.pt")
+    tag = f"_trans{args.multistep}" if args.multistep > 0 else "_trans"
+    out = os.path.join(RUNS, f"{args.name}{tag}.pt")
     torch.save({"scr": scr.state_dict(), "args": vars(args), "log": log}, out)
     print("saved", os.path.basename(out), flush=True)
 

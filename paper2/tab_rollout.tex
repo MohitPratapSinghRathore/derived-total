@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering\small
+\caption{Is a rolled-forward state better than the model's current
+one? Board accuracy on occupied squares, decoded from the state
+subspace at the same positions. The one-step operator compounds error
+and lands below even the unrolled stale state. Training on rollouts
+recovers most of that, and still does not exceed the state it was
+meant to repair.}
+\label{tab:rollout}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{3}{c}{one-step operator} & \multicolumn{3}{c}{multi-step operator} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Ply & current & rolled & stale & current & rolled & stale \\
+\midrule
+20--30 & \textbf{0.499} & 0.408 & 0.427 & \textbf{0.530} & 0.510 & 0.427 \\
+30--40 & \textbf{0.466} & 0.369 & 0.425 & \textbf{0.484} & 0.461 & 0.444 \\
+40--50 & \textbf{0.445} & 0.336 & 0.416 & \textbf{0.452} & 0.436 & 0.423 \\
+50--60 & \textbf{0.407} & 0.302 & 0.386 & \textbf{0.416} & 0.395 & 0.395 \\
+60--80 & \textbf{0.351} & 0.286 & 0.334 & \textbf{0.362} & 0.346 & 0.340 \\
+\bottomrule
+\end{tabular}
+\end{table}

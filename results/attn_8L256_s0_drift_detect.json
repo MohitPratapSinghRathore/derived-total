@@ -1,0 +1,58 @@
+{
+ "name": "attn_8L256_s0",
+ "trans": "_trans12",
+ "n": 60056,
+ "n_games": 1044,
+ "base_rate": 0.19326961502597576,
+ "auc": {
+  "model_confidence": {
+   "auc": 0.6329083721096653,
+   "ci_lo": 0.6269601376253674,
+   "ci_hi": 0.6390072934351354
+  },
+  "consistency_error": {
+   "auc": 0.5795291355972013,
+   "ci_lo": 0.5713282886954049,
+   "ci_hi": 0.5871997269195414
+  }
+ },
+ "coverage": {
+  "1.0": {
+   "model_confidence": 0.19891400709219859,
+   "consistency_error": 0.19891400709219859,
+   "combined": 0.19891400709219859
+  },
+  "0.9": {
+   "model_confidence": 0.18247860616881117,
+   "consistency_error": 0.1885735393708059,
+   "combined": 0.1841408606784461
+  },
+  "0.8": {
+   "model_confidence": 0.1741238398670176,
+   "consistency_error": 0.17876437179664773,
+   "combined": 0.17232303643163874
+  },
+  "0.7": {
+   "model_confidence": 0.1630649885221246,
+   "consistency_error": 0.17398875959787857,
+   "combined": 0.15823636507559566
+  },
+  "0.6": {
+   "model_confidence": 0.15432212781677132,
+   "consistency_error": 0.16651274473586997,
+   "combined": 0.14471739933505726
+  },
+  "0.5": {
+   "model_confidence": 0.1422872340425532,
+   "consistency_error": 0.16035017730496454,
+   "combined": 0.1283244680851064
+  }
+ },
+ "combined": {
+  "beta_confidence": 0.584738358294059,
+  "beta_consistency": 0.21223799759289935,
+  "auc_heldout": 0.648179146127232,
+  "auc_conf_heldout": 0.6299159297644777,
+  "auc_cons_heldout": 0.5860210017605505
+ }
+}

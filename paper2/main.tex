@@ -1,0 +1,286 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}\setlength{\emergencystretch}{3em}
+\usepackage{amsmath,amssymb,booktabs,graphicx,array,enumitem,caption}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\input{results_macros.tex}
+
+\newif\ifanon
+\ifdefined\ANON\anontrue\else\anonfalse\fi
+
+\title{\bf Context Rot Is a Computation Failure, Not a Storage Failure}
+
+\ifanon
+  \author{\normalsize\itshape Author names removed for double-anonymous peer review}
+\else
+  \author{Mohit Pratap Singh Rathore \and Gunveer Sinh Kalsi \and Sriharsha Meduri\\
+  \small Oviqo Private Limited}
+\fi
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A search-free chess transformer loses track of the board as a game lengthens, and
+its illegal moves are largely admissible under the board it appears to believe.
+Since that belief is causally read by the policy, writing a better one should fix
+the behaviour. We test whether it can be written without an oracle, which is the
+only version of the question that matters outside domains with a rules engine.
+
+It cannot, and the reason is structural rather than incidental. We learn a
+transition operator on frozen activations, supervised only by the requirement
+that the model's own state evolve consistently under the moves it reads. The
+operator learns its task well, reaching \result{opAccMulti} accuracy on held-out
+rollouts. Rolling an earlier state forward nonetheless yields a board that
+decodes \emph{worse} than the model's current state at every depth,
+\result{rollRolledFirstMulti} against \result{rollNowFirstMulti} in the opening
+and \result{rollRolledLastMulti} against \result{rollNowLastMulti} at depth, and
+test-time injection changes the illegal-move rate by nothing measurable against
+no-op, stale and norm-matched random controls. The explanation is that a model at
+position $t$ already attends to the entire prefix, so its earlier state is a
+lossy function of the same tokens and reconstruction adds no information. The
+tokens are not lost. The computation over them is.
+
+Training the consistency objective jointly with the language model is worse than
+useless: it raises validation loss from \result{valBase} to
+\result{valJointHigh} while leaving the consistency task equally learnable.
+
+One positive result survives. The disagreement between the model's current state
+and its rolled-forward earlier state is computable at inference with no oracle at
+any stage, and it carries information the model's own confidence does not: held
+out, combining the two reaches AUC \result{aucHoComb} against
+\result{aucHoConf} for confidence alone, cutting the illegal-move rate among
+retained positions from \result{covConf05} to \result{covComb05} at half
+coverage. Detection is available where repair is not.
+\end{abstract}
+
+\noindent\textbf{Keywords:} context rot, state tracking, self-supervision,
+world models, selective prediction
+
+\section{Introduction}
+
+A companion study of search-free chess transformers established three facts that
+together make a repair look feasible. Board state is linearly decodable and
+decays with depth, from \result{p1OccFirst} occupied-square accuracy in the
+opening to \result{p1OccLast} at the end of a long game. Illegal moves are
+largely coherent with the decayed state: \result{p1Belief} of them are admissible
+under the board the model appears to hold, against \result{p1BeliefMis} for a
+mismatched belief. And editing the state representation changes the emitted move,
+so the policy reads it.
+
+If a wrong action follows a wrong belief, and the belief can be written, then
+writing a better belief should produce a better action. The obstacle is knowing
+what to write. An oracle would say, and an oracle is exactly what a deployed
+system lacks. A method that needs a rules engine is confined to domains that have
+one, which excludes every setting where context rot actually costs anything.
+
+This paper asks whether the state can be repaired using only what the model
+already has: its own activations, and the tokens already in its context. The
+answer is no, and the reason turns out to be more interesting than the attempt.
+
+\paragraph{Contributions.}
+\begin{enumerate}[nosep]
+\item \textbf{A negative result with a mechanism.} Oracle-free state repair does
+not work, because a model at position $t$ already attends to the whole prefix.
+Its earlier state is a lossy function of those same tokens, so rolling it forward
+cannot supply information the model does not have. Context rot in this setting is
+a failure to compute with available information, not a failure to retain it.
+\item \textbf{Evidence that separates the two ways this could fail.} A learned
+transition operator, fitted with no oracle, reaches \result{opAccMulti} on its own
+task while producing rollouts that decode worse than the state they were meant to
+repair. The method is refuted rather than merely untested.
+\item \textbf{A cost of the obvious alternative.} Training the consistency
+objective jointly with the language model degrades it,
+\result{valBase} to \result{valJointHigh} in validation loss, reproducing the
+pattern by which auxiliary state objectives buy representation quality at the
+expense of the task.
+\item \textbf{A signal that does work.} State inconsistency is computable at
+inference with no oracle at any stage, and adds information beyond the model's own
+confidence.
+\end{enumerate}
+
+\section{Method}
+
+\paragraph{The consistency condition.} A correct state satisfies a requirement
+that needs no external supervision: the state after reading token $x_{t+1}$ must
+be a function of the state before it and of $x_{t+1}$. We learn a projection
+$z_t = \mathrm{normalise}(P h_t)$ into a state subspace and a transition
+$\hat{z}_{t+1} = \mathrm{normalise}(T[z_t; e(x_{t+1})])$, trained so the model's
+own representation satisfies it.
+
+\paragraph{Why the objective is contrastive, and against what.} A regression
+target invites collapse: a constant $z$ satisfies consistency perfectly and
+carries nothing. We therefore use InfoNCE, and the choice of negatives is what
+makes the task non-trivial. Two designs failed before the one we use, and both
+scored highly while representing nothing of interest.
+
+Pooling negatives across the batch lets the model win by encoding \emph{which
+game} it is in; accuracy passed 0.97 within a thousand steps. Drawing negatives
+from the same sequence instead lets it win by encoding \emph{position}, since the
+residual stream carries positional embeddings and the transition need only add
+one; accuracy reached 0.99. We draw negatives from the \emph{same timestep in
+other sequences}. Every candidate then shares the position exactly, so a
+component depending only on position is identical across candidates and cannot
+discriminate, and game identity is no longer sufficient because the target must
+be matched at a specific moment.
+
+A third attempt, subtracting the per-position batch mean to remove positional
+information explicitly, was both unnecessary and wrong: unnecessary because the
+negatives already neutralise position, and wrong because it leaves the
+representation undefined for a single sequence. At inference the mean is taken
+over a batch of one and the projection returns zeros. We record this because it
+briefly produced an encouraging result that was an artifact of comparing move
+embeddings against a vanished state.
+
+\paragraph{Frozen rather than joint.} We fit the operator on a frozen model.
+Training it jointly with the language model degrades the language model
+(Section~\ref{sec:joint}), and freezing also makes the method more useful: it
+applies to a model that already exists, and the repair becomes an inference-time
+intervention rather than a training recipe. Only a projection, a move embedding
+and a linear transition are learned.
+
+\paragraph{Repair.} Fidelity is higher early than late, so an earlier state is
+the more trustworthy one. We take the model's belief $k$ steps back, roll it
+forward under the moves that actually occurred, and inject the difference:
+\[
+z_{\mathrm{rep}} = T(\cdots T(z_{t-k}, x_{t-k+1})\cdots, x_t), \qquad
+h_t \leftarrow h_t + \eta W (z_{\mathrm{rep}} - z_t).
+\]
+No step reads the board.
+
+\section{Results}
+
+\subsection{Joint training degrades the model}
+\label{sec:joint}
+
+Trained jointly with the language model, the consistency objective raises
+validation loss from \result{valBase} for the baseline to \result{valJointLow} at
+weight $0.1$ and \result{valJointHigh} at weight $0.5$. The consistency task
+itself is learned equally well at both weights, \result{consAccJointHigh}, so the
+larger weight buys damage and nothing else. This is the pattern reported for
+oracle-supervised state channels: the auxiliary objective improves the
+representation it targets while competing with the task. Everything below
+therefore uses a frozen model.
+
+\subsection{The operator learns its task}
+
+Fitted on frozen activations, the one-step operator reaches \result{opAccOne}
+accuracy and the multi-step operator \result{opAccMulti}. Neither sees the board
+at any point. By the measure the objective defines, both succeed.
+
+\subsection{The rollout is worse than doing nothing}
+
+\input{tab_rollout}
+
+To ask whether a rollout is a better state than the model's current one, we fit a
+read-out from the state subspace to board occupancy and compare three states at
+the same position. The read-out is a measuring instrument only; it is fitted on a
+disjoint split and never influences what is injected, so the repair stays
+oracle-free.
+
+With the one-step operator the rollout is far worse than the model's current
+state, \result{rollRolledFirstOne} against \result{rollNowFirstOne} in the
+opening, and worse even than the unrolled stale state at
+\result{rollStaleFirstOne}. Applied twelve times, an operator with high one-step
+accuracy compounds its errors until the board is destroyed. One-step consistency
+constrains a single application and says nothing about composition.
+
+Training the operator on rollouts directly closes most of that gap. The
+multi-step rollout reaches \result{rollRolledFirstMulti} against
+\result{rollStaleFirstMulti} for the stale state, so it is genuinely carrying
+state forward rather than decaying to it. It still never exceeds the model's own
+current state, \result{rollNowFirstMulti} in the opening and
+\result{rollNowLastMulti} at depth.
+
+\subsection{Repair therefore does nothing}
+
+\input{tab_repair}
+
+Injecting the repaired state changes the illegal-move rate by nothing
+distinguishable from no-op across \result{repairN} scored positions, and the
+stale and norm-matched random controls are equally inert. The injection is small
+relative to the residual stream, at \result{deltaFracMulti} of its norm, but a
+larger one would not help: what is being written is worse than what is already
+there.
+
+\subsection{Why no such method can work}
+
+The result is not a tuning failure. A model at position $t$ attends over the
+entire prefix, so every token that determined the current board is still visible
+to it. Its state at $t-k$ is a lossy function of a strict subset of those same
+tokens. Rolling that state forward reconstructs, at best, a degraded version of
+something the model could already compute, and the reconstruction is performed by
+a linear operator far weaker than the network that produced the original.
+
+Context rot in this setting is therefore not a storage failure. The information
+has not fallen out of the window; it is present and attendable throughout. What
+degrades is the computation performed over it. That distinction has a practical
+consequence: interventions that re-present or re-encode information the model can
+already see should not be expected to help, and the useful direction is to change
+what computation is available at depth rather than what information is.
+
+\subsection{Detection succeeds where repair fails}
+
+\input{tab_detect}
+
+The same machinery yields something usable. If the representation has drifted,
+the model's current state and its rolled-forward earlier state disagree, and that
+disagreement is computable at inference from activations and tokens alone. No
+oracle is used at any stage, including for training the operator, which
+distinguishes it from probe-based monitors that need supervised state labels to
+fit.
+
+Over \result{detN} positions from \result{detGames} games, consistency error
+predicts an illegal next move at AUC \result{aucDetCons}
+[\result{aucDetConsLo}, \result{aucDetConsHi}], below the model's own confidence
+at \result{aucDetConf} [\result{aucDetConfLo}, \result{aucDetConfHi}]. It is the
+weaker signal alone and it is not redundant: fitted on training games and
+evaluated on held-out games, the two together reach \result{aucHoComb} against
+\result{aucHoConf} for confidence alone, with standardised weights of
+\result{betaDetConf} and \result{betaDetCons}. Used to abstain, the combination
+lowers the illegal rate among retained positions from \result{covConf05} to
+\result{covComb05} at half coverage, from a base rate of \result{detBase}.
+
+The gain is modest. Its interest is that it costs no oracle at any point, so it
+transfers to settings where no rules engine exists to supervise a probe.
+
+\section{Limitations}
+
+\begin{description}[nosep]
+\item[L1] One model family, one domain, and a parameter range far below any
+deployed system. The mechanism argument in Section~2 is general, but the
+measurements are not.
+\item[L2] The negative result concerns repair from the model's \emph{own}
+representations. It does not rule out repair from an external memory, from a
+re-encoded context, or from a second model.
+\item[L3] The transition operator is linear. A stronger operator might roll
+forward better, though the information argument suggests the ceiling is the
+model's own current state rather than something above it.
+\item[L4] The read-out used to evaluate rollout quality is supervised, and is a
+measuring instrument only. The repair and detection procedures themselves use no
+oracle.
+\item[L5] Detection is evaluated on one model and one operator; the interval is
+clustered on games but not across seeds.
+\end{description}
+
+\section{Conclusion}
+
+Repairing a decayed state from a model's own earlier representation does not
+work, and the reason is that there is nothing there to recover. The tokens remain
+in view; the earlier state is a lossy summary of them; and a small operator
+rolling that summary forward cannot outperform the network's own current
+computation over the full prefix. Context rot, at least here, is a failure to
+compute rather than a failure to store.
+
+That leaves a narrower but usable result. The mismatch between what the model
+currently believes and what its earlier belief implies is measurable at inference
+without any oracle, and it tells you something about when to distrust the next
+action that the model's own confidence does not.
+
+\bibliographystyle{apalike}
+\bibliography{refs}
+
+\end{document}

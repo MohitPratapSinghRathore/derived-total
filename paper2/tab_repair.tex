@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering\small
+\caption{Test-time injection of the repaired state. Illegal top-1
+move rate by depth, with no-op giving the base rate, stale injecting
+the earlier state without rolling it forward, and random a
+norm-matched direction. Nothing separates them.}
+\label{tab:repair}
+\begin{tabular}{lcccc}
+\toprule
+Ply & no-op & repair & stale & random \\
+\midrule
+20--30 & 0.0386 & 0.0386 & 0.0378 & 0.0409 \\
+30--40 & 0.0885 & 0.0894 & 0.0780 & 0.0853 \\
+40--50 & 0.1667 & 0.1693 & 0.1631 & 0.1675 \\
+50--60 & 0.2227 & 0.2217 & 0.2237 & 0.2267 \\
+60--80 & 0.2965 & 0.2950 & 0.2972 & 0.2957 \\
+\bottomrule
+\end{tabular}
+\end{table}

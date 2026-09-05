@@ -1,0 +1,254 @@
+% Every entry below was web-verified against the publisher, proceedings, or
+% arXiv record before being added. Two entries carried by an earlier draft were
+% wrong and are corrected here: Ruoss et al. was retitled on publication and
+% appeared at NeurIPS 2024 (not ICML 2024), and Mamba was published at COLM 2024
+% rather than remaining a preprint.
+
+% ---------------------------------------------------------------- foundations
+@inproceedings{vaswani2017attention,
+  title     = {Attention is All you Need},
+  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NIPS 2017)},
+  year      = {2017}
+}
+
+% ------------------------------------------- inference-time search and prompting
+@inproceedings{wei2022chain,
+  title     = {Chain-of-Thought Prompting Elicits Reasoning in Large Language Models},
+  author    = {Wei, Jason and Wang, Xuezhi and Schuurmans, Dale and Bosma, Maarten and Ichter, Brian and Xia, Fei and Chi, Ed H. and Le, Quoc V. and Zhou, Denny},
+  booktitle = {Advances in Neural Information Processing Systems 35 (NeurIPS 2022)},
+  year      = {2022}
+}
+
+@inproceedings{yao2023tree,
+  title     = {Tree of Thoughts: Deliberate Problem Solving with Large Language Models},
+  author    = {Yao, Shunyu and Yu, Dian and Zhao, Jeffrey and Shafran, Izhak and Griffiths, Thomas L. and Cao, Yuan and Narasimhan, Karthik},
+  booktitle = {Advances in Neural Information Processing Systems 36 (NeurIPS 2023)},
+  year      = {2023}
+}
+
+@inproceedings{wang2023selfconsistency,
+  title     = {Self-Consistency Improves Chain of Thought Reasoning in Language Models},
+  author    = {Wang, Xuezhi and Wei, Jason and Schuurmans, Dale and Le, Quoc and Chi, Ed H. and Narang, Sharan and Chowdhery, Aakanksha and Zhou, Denny},
+  booktitle = {The Eleventh International Conference on Learning Representations (ICLR)},
+  year      = {2023}
+}
+
+@inproceedings{lightman2024lets,
+  title     = {Let's Verify Step by Step},
+  author    = {Lightman, Hunter and Kosaraju, Vineet and Burda, Yuri and Edwards, Harrison and Baker, Bowen and Lee, Teddy and Leike, Jan and Schulman, John and Sutskever, Ilya and Cobbe, Karl},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024}
+}
+
+% ------------------------------------------------ long context and its measurement
+@article{liu2024lost,
+  title   = {Lost in the Middle: How Language Models Use Long Contexts},
+  author  = {Liu, Nelson F. and Lin, Kevin and Hewitt, John and Paranjape, Ashwin and Bevilacqua, Michele and Petroni, Fabio and Liang, Percy},
+  journal = {Transactions of the Association for Computational Linguistics},
+  volume  = {12},
+  pages   = {157--173},
+  year    = {2024},
+  doi     = {10.1162/tacl_a_00638}
+}
+
+@inproceedings{hsieh2024ruler,
+  title     = {{RULER}: What's the Real Context Size of Your Long-Context Language Models?},
+  author    = {Hsieh, Cheng-Ping and Sun, Simeng and Kriman, Samuel and Acharya, Shantanu and Rekesh, Dima and Jia, Fei and Zhang, Yang and Ginsburg, Boris},
+  booktitle = {First Conference on Language Modeling (COLM)},
+  year      = {2024}
+}
+
+% ------------------------------------------------ state tracking, probing, editing
+@inproceedings{li2023emergent,
+  title     = {Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task},
+  author    = {Li, Kenneth and Hopkins, Aspen K. and Bau, David and Vi{\'e}gas, Fernanda and Pfister, Hanspeter and Wattenberg, Martin},
+  booktitle = {The Eleventh International Conference on Learning Representations (ICLR)},
+  year      = {2023}
+}
+
+@inproceedings{nanda2023emergent,
+  title     = {Emergent Linear Representations in World Models of Self-Supervised Sequence Models},
+  author    = {Nanda, Neel and Lee, Andrew and Wattenberg, Martin},
+  booktitle = {Proceedings of the 6th BlackboxNLP Workshop: Analyzing and Interpreting Neural Networks for NLP},
+  pages     = {16--30},
+  publisher = {Association for Computational Linguistics},
+  year      = {2023},
+  doi       = {10.18653/v1/2023.blackboxnlp-1.2}
+}
+
+@inproceedings{toshniwal2022chess,
+  title     = {Chess as a Testbed for Language Model State Tracking},
+  author    = {Toshniwal, Shubham and Wiseman, Sam and Livescu, Karen and Gimpel, Kevin},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {36},
+  number    = {10},
+  pages     = {11385--11393},
+  year      = {2022},
+  doi       = {10.1609/aaai.v36i10.21390}
+}
+
+@inproceedings{meng2022locating,
+  title     = {Locating and Editing Factual Associations in {GPT}},
+  author    = {Meng, Kevin and Bau, David and Andonian, Alex and Belinkov, Yonatan},
+  booktitle = {Advances in Neural Information Processing Systems 35 (NeurIPS 2022)},
+  year      = {2022}
+}
+
+@inproceedings{hewitt2019designing,
+  title     = {Designing and Interpreting Probes with Control Tasks},
+  author    = {Hewitt, John and Liang, Percy},
+  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)},
+  pages     = {2733--2743},
+  publisher = {Association for Computational Linguistics},
+  year      = {2019},
+  doi       = {10.18653/v1/D19-1275}
+}
+
+% ------------------------------------------------------- expressivity of state
+@inproceedings{merrill2024illusion,
+  title     = {The Illusion of State in State-Space Models},
+  author    = {Merrill, William and Petty, Jackson and Sabharwal, Ashish},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning (ICML)},
+  volume    = {235},
+  pages     = {35492--35506},
+  year      = {2024}
+}
+
+@inproceedings{merrill2024expressive,
+  title     = {The Expressive Power of Transformers with Chain of Thought},
+  author    = {Merrill, William and Sabharwal, Ashish},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024}
+}
+
+% ------------------------------------------------- recurrence and state spaces
+@inproceedings{gu2024mamba,
+  title     = {Mamba: Linear-Time Sequence Modeling with Selective State Spaces},
+  author    = {Gu, Albert and Dao, Tri},
+  booktitle = {First Conference on Language Modeling (COLM)},
+  year      = {2024}
+}
+
+@inproceedings{gu2022efficiently,
+  title     = {Efficiently Modeling Long Sequences with Structured State Spaces},
+  author    = {Gu, Albert and Goel, Karan and R{\'e}, Christopher},
+  booktitle = {The Tenth International Conference on Learning Representations (ICLR)},
+  year      = {2022}
+}
+
+% ------------------------------------------------------------- search-free chess
+@inproceedings{ruoss2024amortized,
+  title     = {Amortized Planning with Large-Scale Transformers: A Case Study on Chess},
+  author    = {Ruoss, Anian and Del{\'e}tang, Gr{\'e}goire and Medapati, Sourabh and Grau-Moya, Jordi and Wenliang, Li Kevin and Catt, Elliot and Reid, John and Lewis, Cannada A. and Veness, Joel and Genewein, Tim},
+  booktitle = {Advances in Neural Information Processing Systems 37 (NeurIPS 2024)},
+  year      = {2024}
+}
+
+% ------------------------------------------------------- mathematical reasoning
+@article{cobbe2021training,
+  title   = {Training Verifiers to Solve Math Word Problems},
+  author  = {Cobbe, Karl and Kosaraju, Vineet and Bavarian, Mohammad and Chen, Mark and Jun, Heewoo and Kaiser, Lukasz and Plappert, Matthias and Tworek, Jerry and Hilton, Jacob and Nakano, Reiichiro and Hesse, Christopher and Schulman, John},
+  journal = {arXiv preprint arXiv:2110.14168},
+  year    = {2021}
+}
+
+@inproceedings{hendrycks2021measuring,
+  title     = {Measuring Mathematical Problem Solving With the {MATH} Dataset},
+  author    = {Hendrycks, Dan and Burns, Collin and Kadavath, Saurav and Arora, Akul and Basart, Steven and Tang, Eric and Song, Dawn and Steinhardt, Jacob},
+  booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},
+  year      = {2021}
+}
+
+% ------------------------------------------------------------- design science
+@article{hevner2004design,
+  title   = {Design Science in Information Systems Research},
+  author  = {Hevner, Alan R. and March, Salvatore T. and Park, Jinsoo and Ram, Sudha},
+  journal = {MIS Quarterly},
+  volume  = {28},
+  number  = {1},
+  pages   = {75--105},
+  year    = {2004},
+  doi     = {10.2307/25148625}
+}
+
+@article{peffers2007design,
+  title   = {A Design Science Research Methodology for Information Systems Research},
+  author  = {Peffers, Ken and Tuunanen, Tuure and Rothenberger, Marcus A. and Chatterjee, Samir},
+  journal = {Journal of Management Information Systems},
+  volume  = {24},
+  number  = {3},
+  pages   = {45--77},
+  year    = {2007},
+  doi     = {10.2753/MIS0742-1222240302}
+}
+
+@article{gregor2013positioning,
+  title   = {Positioning and Presenting Design Science Research for Maximum Impact},
+  author  = {Gregor, Shirley and Hevner, Alan R.},
+  journal = {MIS Quarterly},
+  volume  = {37},
+  number  = {2},
+  pages   = {337--355},
+  year    = {2013},
+  doi     = {10.25300/MISQ/2013/37.2.01}
+}
+
+% ------------------------------------------------- board-state probing in chess
+@inproceedings{karvonen2024emergent,
+  title     = {Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models},
+  author    = {Karvonen, Adam},
+  booktitle = {First Conference on Language Modeling (COLM)},
+  year      = {2024}
+}
+
+@inproceedings{karvonen2024measuring,
+  title     = {Measuring Progress in Dictionary Learning for Language Model Interpretability with Board Game Models},
+  author    = {Karvonen, Adam and Wright, Benjamin and Rager, Can and Angell, Rico and Brinkmann, Jannik and Smith, Logan and Verdun, Claudio Mayrink and Bau, David and Marks, Samuel},
+  booktitle = {Advances in Neural Information Processing Systems 37 (NeurIPS 2024)},
+  year      = {2024}
+}
+
+% ------------------------------------------------- 2025-2026 state tracking
+@inproceedings{balogh2026verification,
+  title     = {Verification of the Implicit World Model in a Generative Model via Adversarial Sequences},
+  author    = {Balogh, Andr{\'a}s and Jelasity, M{\'a}rk},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2026}
+}
+
+@misc{li2026tracking,
+  title  = {Tracking vs. Deciding: The Dual-Capability Bottleneck in Searchless Chess Transformers},
+  author = {Li, Quanhao and Jiang, Wei},
+  year   = {2026},
+  note   = {arXiv:2603.29761}
+}
+
+@misc{pereira2026transformers,
+  title  = {Transformers Struggle to Use Their Emergent World Models: Revisiting the Tower of Hanoi, and the Illusion of Thinking},
+  author = {Pereira, Devin and Zuidema, Willem},
+  year   = {2026},
+  note   = {arXiv:2608.07077}
+}
+
+@misc{walker2026chess,
+  title  = {Chess-World-Model: A 10M-Game Benchmark for Exact State Tracking from Chess Move Sequences},
+  author = {Walker, Benjamin and Lyons, Terry},
+  year   = {2026},
+  note   = {arXiv:2605.30100}
+}
+
+@inproceedings{harang2025tracking,
+  title     = {Tracking World States with Language Models: State-Based Evaluation Using Chess},
+  author    = {Harang, Romain and Naradowsky, Jason and Gujju, Sai Vamsi and Miyao, Yusuke},
+  booktitle = {ICML Workshop on Assessing World Models},
+  year      = {2025},
+  note      = {Spotlight; arXiv:2508.19851}
+}
+
+@misc{mozer2026topological,
+  title  = {The Topological Trouble With Transformers},
+  author = {Mozer, Michael C. and Siddiqui, Shoaib Ahmed and Liu, Bo},
+  year   = {2026},
+  note   = {arXiv:2604.17121}
+}

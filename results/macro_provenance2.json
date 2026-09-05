@@ -1,0 +1,234 @@
+{
+ "valBase": {
+  "value": "3.0287",
+  "source": "runs/attn_8L256_s0.pt"
+ },
+ "valJointLow": {
+  "value": "3.1538",
+  "source": "runs/scr01_8L256_s0.pt"
+ },
+ "consAccJointLow": {
+  "value": "0.975",
+  "source": "runs/scr01_8L256_s0.pt"
+ },
+ "valJointHigh": {
+  "value": "3.4250",
+  "source": "runs/scr05_8L256_s0.pt"
+ },
+ "consAccJointHigh": {
+  "value": "0.975",
+  "source": "runs/scr05_8L256_s0.pt"
+ },
+ "opAccOne": {
+  "value": "0.975",
+  "source": "runs/attn_8L256_s0_trans.pt"
+ },
+ "opLossOne": {
+  "value": "0.119",
+  "source": "runs/attn_8L256_s0_trans.pt"
+ },
+ "opAccMulti": {
+  "value": "0.996",
+  "source": "runs/attn_8L256_s0_trans12.pt"
+ },
+ "opLossMulti": {
+  "value": "0.094",
+  "source": "runs/attn_8L256_s0_trans12.pt"
+ },
+ "rollNowFirstOne": {
+  "value": "0.499",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "rollNowLastOne": {
+  "value": "0.351",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "rollRolledFirstOne": {
+  "value": "0.408",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "rollRolledLastOne": {
+  "value": "0.286",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "rollStaleFirstOne": {
+  "value": "0.427",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "rollStaleLastOne": {
+  "value": "0.334",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "deltaFracOne": {
+  "value": "0.049",
+  "source": "results/attn_8L256_s0_trans_rollout.json"
+ },
+ "rollNowFirstMulti": {
+  "value": "0.530",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "rollNowLastMulti": {
+  "value": "0.362",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "rollRolledFirstMulti": {
+  "value": "0.510",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "rollRolledLastMulti": {
+  "value": "0.346",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "rollStaleFirstMulti": {
+  "value": "0.427",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "rollStaleLastMulti": {
+  "value": "0.340",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "deltaFracMulti": {
+  "value": "0.037",
+  "source": "results/attn_8L256_s0_trans12_rollout.json"
+ },
+ "repairN": {
+  "value": "6,033",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repNoopMid": {
+  "value": "0.167",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repNoopDeep": {
+  "value": "0.296",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repRepairMid": {
+  "value": "0.169",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repRepairDeep": {
+  "value": "0.295",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repStaleMid": {
+  "value": "0.163",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repStaleDeep": {
+  "value": "0.297",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repRandomMid": {
+  "value": "0.168",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "repRandomDeep": {
+  "value": "0.296",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "detN": {
+  "value": "60,056",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "detGames": {
+  "value": "1,044",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "detBase": {
+  "value": "0.193",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucDetConf": {
+  "value": "0.6329",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucDetConfLo": {
+  "value": "0.6270",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucDetConfHi": {
+  "value": "0.6390",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucDetCons": {
+  "value": "0.5795",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucDetConsLo": {
+  "value": "0.5713",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucDetConsHi": {
+  "value": "0.5872",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucHoConf": {
+  "value": "0.6299",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucHoCons": {
+  "value": "0.5860",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "aucHoComb": {
+  "value": "0.6482",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "betaDetConf": {
+  "value": "+0.585",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "betaDetCons": {
+  "value": "+0.212",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "covConf05": {
+  "value": "0.1423",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "covCons05": {
+  "value": "0.1604",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "covComb05": {
+  "value": "0.1283",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "covConf07": {
+  "value": "0.1631",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "covCons07": {
+  "value": "0.1740",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "covComb07": {
+  "value": "0.1582",
+  "source": "results/attn_8L256_s0_drift_detect.json"
+ },
+ "p1Belief": {
+  "value": "0.355",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "p1BeliefMis": {
+  "value": "0.050",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "p1OccFirst": {
+  "value": "0.975",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "p1OccLast": {
+  "value": "0.066",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "p1IllFirst": {
+  "value": "0.0004",
+  "source": "results/attn_8L256_s0.json"
+ },
+ "p1IllLast": {
+  "value": "0.319",
+  "source": "results/attn_8L256_s0.json"
+ }
+}

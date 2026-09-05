@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering\small
+\caption{Oracle-free drift detection. Illegal-move rate among
+positions retained at each coverage, on held-out games, with the
+combination fitted on training games only. Consistency error is the
+weaker signal alone and is not redundant with the model's own
+confidence.}
+\label{tab:detect}
+\begin{tabular}{lccc}
+\toprule
+Coverage & model confidence & consistency error & combined \\
+\midrule
+100\% & 0.1989 & 0.1989 & \textbf{0.1989} \\
+90\% & 0.1825 & 0.1886 & \textbf{0.1841} \\
+80\% & 0.1741 & 0.1788 & \textbf{0.1723} \\
+70\% & 0.1631 & 0.1740 & \textbf{0.1582} \\
+60\% & 0.1543 & 0.1665 & \textbf{0.1447} \\
+50\% & 0.1423 & 0.1604 & \textbf{0.1283} \\
+\bottomrule
+\end{tabular}
+\end{table}
