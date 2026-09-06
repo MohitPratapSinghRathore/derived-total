@@ -29,6 +29,7 @@ import numpy as np
 import torch
 import chess
 from chessgpt import load, encode, ITOS, STOI
+from chessgpt_nano import convert as nano_convert
 from chessgpt_data import build, load_games
 from san_classify import classify_san, CLASSES as SAN_CLASSES
 
@@ -53,23 +54,41 @@ def boot(labels, games, keys, n_boot=500, seed=0):
 
 
 @torch.no_grad()
-def decode_at(model, ids, upto, max_chars=8, device="cuda"):
-    """Greedy-decode a move continuing from ids[:upto+1], using a KV cache."""
-    ctx = torch.tensor([ids[:upto + 1][-1000:]], dtype=torch.long, device=device)
-    out = model(ctx, use_cache=True)
-    past = out.past_key_values
-    nxt = int(out.logits[0, -1].argmax())
-    chars = []
-    for _ in range(max_chars):
-        ch = ITOS.get(nxt, "")
-        if ch in (" ", ";"):
-            break
-        chars.append(ch)
-        step = model(torch.tensor([[nxt]], dtype=torch.long, device=device),
-                     past_key_values=past, use_cache=True)
-        past = step.past_key_values
-        nxt = int(step.logits[0, -1].argmax())
-    return "".join(chars)
+def decode_game(model, ids, site_idx, max_chars=8, device="cuda"):
+    """Greedy-decode a move at every site, encoding the game only once.
+
+    The naive version re-ran the whole prefix for each site, which is O(sites x
+    length) forwards and made the larger models unaffordable. Here the game is
+    encoded once and the sites are visited in DESCENDING order so the shared KV
+    cache can simply be cropped back between them: crop removes from the end, and
+    each successive site is earlier, so no copying is needed. The first predicted
+    character also comes free from the single full-sequence forward.
+
+    Returns {site_index: san}.
+    """
+    ids = ids[:1023]
+    x = torch.tensor([ids], dtype=torch.long, device=device)
+    out = model(x, use_cache=True)
+    cache = out.past_key_values
+    full_logits = out.logits[0]
+    res = {}
+    for idx in sorted([i for i in site_idx if i < len(ids)], reverse=True):
+        extra = cache.get_seq_length() - (idx + 1)
+        if extra > 0:
+            cache.crop(cache.get_seq_length() - extra)
+        nxt = int(full_logits[idx].argmax())
+        chars = []
+        for _ in range(max_chars):
+            ch = ITOS.get(nxt, "")
+            if ch in (" ", ";"):
+                break
+            chars.append(ch)
+            step = model(torch.tensor([[nxt]], dtype=torch.long, device=device),
+                         past_key_values=cache, use_cache=True)
+            cache = step.past_key_values
+            nxt = int(step.logits[0, -1].argmax())
+        res[idx] = "".join(chars)
+    return res
 
 
 def main():
@@ -78,9 +97,23 @@ def main():
     ap.add_argument("--minply", type=int, default=20)
     ap.add_argument("--maxply", type=int, default=120)
     ap.add_argument("--tag", default="chessgpt2")
+    ap.add_argument("--nano", default=None,
+                    help="filename of a nanoGPT checkpoint in data/ext to use "
+                         "instead of the HF model, for Karvonen's own ladder")
+    ap.add_argument("--label", default=None)
     args = ap.parse_args()
 
-    model, cfg, _ = load(args.tag if args.tag != "chessgpt2" else "chessgpt2")
+    if args.nano:
+        import os as _os
+        model, cfg, _ = nano_convert(
+            _os.path.join(_os.path.dirname(__file__), "..", "data", "ext",
+                          args.nano))
+    else:
+        model, cfg, _ = load(args.tag)
+    n_params = sum(q.numel() for q in model.parameters())
+    label = args.label or (args.nano or args.tag)
+    print(f"model: {label}  {cfg.n_layer}L d={cfg.n_embd}  "
+          f"{n_params:,} params", flush=True)
     games = load_games("eval", args.games)
     labels, gids, plies = [], [], []
     n_pos = 0
@@ -89,10 +122,14 @@ def main():
     for gi, g in enumerate(games):
         text, sites = build(g, max_plies=args.maxply)
         ids = encode(text)
+        want = [s["char_index"] for s in sites if s["ply"] >= args.minply]
+        if not want:
+            continue
+        sans = decode_game(model, ids, want)
         for s in sites:
-            if s["ply"] < args.minply:
+            if s["ply"] < args.minply or s["char_index"] not in sans:
                 continue
-            san = decode_at(model, ids, s["char_index"])
+            san = sans[s["char_index"]]
             b = chess.Board(s["fen"])
             n_pos += 1
             try:
@@ -115,7 +152,8 @@ def main():
     ill = len(labels) / max(n_pos, 1)
     sh = boot(labels, gids, CLASSES)
 
-    out = {"model": "Karvonen 8L ChessGPT2", "params": 25_760_256,
+    out = {"model": label, "params": int(n_params),
+           "n_layer": int(cfg.n_layer), "n_embd": int(cfg.n_embd),
            "n_positions": int(n_pos), "n_failures": int(len(labels)),
            "n_games": int(len(np.unique(gids))), "illegal_rate": float(ill),
            "shares": {k: {"mean": sh[k][0], "ci_lo": sh[k][1],
@@ -143,8 +181,9 @@ def main():
               + " ".join(f"{float((labels[m]==c).mean()):12.4f}"
                          for c in CLASSES))
 
-    json.dump(out, open(os.path.join(RES, "chessgpt_structure.json"), "w"),
-              indent=1)
+    safe = label.replace(".pt", "").replace("/", "_")
+    json.dump(out, open(os.path.join(RES, f"chessgpt_structure_{safe}.json"),
+                        "w"), indent=1)
     print(f"\nours at comparable scale (12L384, 22.8M): illegal 0.1453, "
           f"leaves_check share 0.4146")
 
