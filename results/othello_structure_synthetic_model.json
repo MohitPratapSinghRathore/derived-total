@@ -1,0 +1,41 @@
+{
+ "model": "synthetic_model.pth",
+ "n_positions": 211815,
+ "n_failures": 161,
+ "illegal_rate": 0.0007600972546797913,
+ "counts": {
+  "occupied": 0,
+  "no_flank": 160,
+  "pass_token": 1,
+  "other": 0
+ },
+ "shares": {
+  "occupied": 0.0,
+  "no_flank": 0.9937888198757764,
+  "pass_token": 0.006211180124223602,
+  "other": 0.0
+ },
+ "strata": {
+  "5-20": {
+   "n": 6,
+   "occupied": 0.0,
+   "no_flank": 0.8333333333333334,
+   "pass_token": 0.16666666666666666,
+   "other": 0.0
+  },
+  "20-40": {
+   "n": 32,
+   "occupied": 0.0,
+   "no_flank": 1.0,
+   "pass_token": 0.0,
+   "other": 0.0
+  },
+  "40-59": {
+   "n": 123,
+   "occupied": 0.0,
+   "no_flank": 1.0,
+   "pass_token": 0.0,
+   "other": 0.0
+  }
+ }
+}
