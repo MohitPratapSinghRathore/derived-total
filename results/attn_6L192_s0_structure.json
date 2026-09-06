@@ -1,0 +1,96 @@
+{
+ "name": "attn_6L192_s0",
+ "n": 900,
+ "n_games": 55,
+ "overall": {
+  "from_empty": {
+   "mean": 0.22643604103403345,
+   "ci_lo": 0.1958431824204738,
+   "ci_hi": 0.25768016875885974,
+   "share_when_belief_ok": 0.35507246376811596,
+   "share_when_belief_wrong": 0.20341207349081364
+  },
+  "from_opponent": {
+   "mean": 0.03234042559957837,
+   "ci_lo": 0.020596702317290553,
+   "ci_hi": 0.043245681802458295,
+   "share_when_belief_ok": 0.028985507246376812,
+   "share_when_belief_wrong": 0.03280839895013123
+  },
+  "to_own": {
+   "mean": 0.13792623737340665,
+   "ci_lo": 0.10923658956692914,
+   "ci_hi": 0.16411473258300951,
+   "share_when_belief_ok": 0.08695652173913043,
+   "share_when_belief_wrong": 0.14698162729658792
+  },
+  "geometry": {
+   "mean": 0.2843957348748639,
+   "ci_lo": 0.24502160945871512,
+   "ci_hi": 0.322897549467319,
+   "share_when_belief_ok": 0.2898550724637681,
+   "share_when_belief_wrong": 0.2821522309711286
+  },
+  "leaves_check": {
+   "mean": 0.3189015611181175,
+   "ci_lo": 0.2694460839182204,
+   "ci_hi": 0.36757404664938914,
+   "share_when_belief_ok": 0.2391304347826087,
+   "share_when_belief_wrong": 0.3346456692913386
+  },
+  "other": {
+   "mean": 0.0,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0,
+   "share_when_belief_ok": 0.0,
+   "share_when_belief_wrong": 0.0
+  }
+ },
+ "legal_recently": 0.2644444444444444,
+ "legal_other_side": 0.01,
+ "policy_share": 0.15333333333333332,
+ "flags_by_bucket": {
+  "belief correct at action squares": {
+   "n": 138,
+   "legal_recently": 0.38405797101449274,
+   "legal_other_side": 0.007246376811594203
+  },
+  "belief wrong at action squares": {
+   "n": 762,
+   "legal_recently": 0.24278215223097113,
+   "legal_other_side": 0.010498687664041995
+  }
+ },
+ "strata": {
+  "20-40": {
+   "n": 108,
+   "from_empty": 0.2222222222222222,
+   "from_opponent": 0.046296296296296294,
+   "to_own": 0.12962962962962962,
+   "geometry": 0.5185185185185185,
+   "leaves_check": 0.08333333333333333,
+   "other": 0.0,
+   "legal_recently": 0.4537037037037037
+  },
+  "40-60": {
+   "n": 229,
+   "from_empty": 0.3056768558951965,
+   "from_opponent": 0.017467248908296942,
+   "to_own": 0.1572052401746725,
+   "geometry": 0.35807860262008734,
+   "leaves_check": 0.1615720524017467,
+   "other": 0.0,
+   "legal_recently": 0.2925764192139738
+  },
+  "60-120": {
+   "n": 517,
+   "from_empty": 0.19922630560928434,
+   "from_opponent": 0.03868471953578337,
+   "to_own": 0.1276595744680851,
+   "geometry": 0.2127659574468085,
+   "leaves_check": 0.42166344294003866,
+   "other": 0.0,
+   "legal_recently": 0.21470019342359767
+  }
+ }
+}
