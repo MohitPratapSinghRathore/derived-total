@@ -74,6 +74,12 @@ def main():
     ap.add_argument("--nano", default=None)
     ap.add_argument("--tag", default="chessgpt2")
     ap.add_argument("--label", default=None)
+    ap.add_argument("--per_game", type=int, default=3,
+                    help="maximum edit sites per game. Intervals are clustered "
+                         "on games, so filling the sample from a handful of "
+                         "games leaves only a handful of clusters and the "
+                         "interval means nothing. Spreading the same n across "
+                         "many games is what makes the clustering informative.")
     args = ap.parse_args()
 
     if args.nano:
@@ -136,8 +142,9 @@ def main():
                 break
             text, sites = build(g, max_plies=args.maxply)
             ids = encode(text)[:1023]
+            taken = 0
             for s in sites:
-                if n_done >= args.n:
+                if n_done >= args.n or taken >= args.per_game:
                     break
                 if s["ply"] < args.minply or s["char_index"] >= len(ids):
                     continue
@@ -181,6 +188,7 @@ def main():
                     sweep[mlt]["d"].append(float(pm[cand].sum()) - m0)
                     sweep[mlt]["g"].append(gi)
                 n_done += 1
+                taken += 1
 
     out = {"model": label, "distribution": args.dist, "n": n_done,
            "alpha": args.alpha, "layer": bl,
