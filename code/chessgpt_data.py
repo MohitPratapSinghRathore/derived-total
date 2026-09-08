@@ -118,6 +118,37 @@ def load_games(split="eval", n=200):
     return out
 
 
+def random_legal_games(n, rng, max_plies=120, min_plies=30):
+    """Uniformly-random legal play.
+
+    Chess-GPT plays human games almost perfectly -- roughly one illegal move in
+    a thousand positions -- so an illegal-move population large enough to measure
+    belief consistency on does not fall out of held-out human games at any
+    affordable scale. Random legal play walks the model into positions unlike its
+    training distribution and lifts the illegal rate by orders of magnitude.
+
+    This mirrors the uniformly-random-legal-play reference used in the main
+    paper, where the coherence rate was shown not to shift between the human and
+    random distributions. Both distributions are reported here for the same
+    reason: the shift in illegal RATE is the point, and the claim is that the
+    conditional structure given a failure is what stays put.
+    """
+    out = []
+    for _ in range(n):
+        b = chess.Board()
+        moves = []
+        while len(moves) < max_plies:
+            lm = list(b.legal_moves)
+            if not lm:
+                break
+            mv = lm[int(rng.integers(len(lm)))]
+            moves.append(mv.uci())
+            b.push(mv)
+        if len(moves) >= min_plies:
+            out.append(moves)
+    return out
+
+
 def main():
     games = load_games("eval", 60)
     print(f"checking alignment on {len(games)} games\n")
