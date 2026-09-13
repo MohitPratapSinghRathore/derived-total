@@ -276,9 +276,27 @@ Karvonen's lichess checkpoints \citep{karvonen2024emergent} differ from ours in
 every respect we could change without training: character-level PGN rather than
 one token per move, standard algebraic notation rather than UCI, roughly 16M
 training games rather than ours, and different training code. We use its
-\result{kParamsSix}, \result{kParamsEight}, and \result{kParamsSixteen} checkpoints,
-converted and verified by legal play before any measurement, and read the model's
-move by greedy character decoding at verified move boundaries.
+\result{kParamsSix}, \result{kParamsEight}, and \result{kParamsSixteen} checkpoints
+and read the model's move by greedy character decoding at move boundaries.
+
+\paragraph{Verifying the adapters.}
+Every step between an external model and our measurements fails silently rather
+than with an error: a wrong vocabulary, a misaligned board, or a missed weight
+transpose all yield plausible output. Each was therefore checked before use and
+the checks rerun and recorded. The released weights ship without a tokenizer, so
+the \result{acVocab}-character vocabulary was reconstructed and accepted only after
+the model continued \result{acOpenLegal} of \result{acOpenTotal} standard openings
+legally. Board state was aligned to the character before each move and verified
+three ways at \result{acAlignSites} sites, by independent replay, by re-parsing
+the text prefix, and by the boundary character, with \result{acAlignProblems}
+disagreements. Checkpoints stored in a different weight layout were converted, and
+\result{acAllNano} trained checkpoints then played \result{acNanoLegal} of
+\result{acNanoTotal} moves legally from the opening, while the randomly initialised
+control failed at its first move, as it should. A cached decoder used for speed
+matched the uncached one at all \result{acCacheSites} sites tested, the
+algebraic-notation classifier passed \result{acSanCorrect} of \result{acSanCases}
+hand-written cases, and our OthelloGPT forward pass chose a legal move at
+\result{acOthLegal} of \result{acOthTotal} positions.
 
 Algebraic notation changes the taxonomy in an instructive way. It never names a
 source square, so the empty-source class cannot occur: a model that does not name

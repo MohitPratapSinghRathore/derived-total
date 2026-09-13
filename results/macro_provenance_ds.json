@@ -1078,5 +1078,69 @@
  "preregHash": {
   "value": "28b68e5200dc0dba",
   "source": "PREREGISTRATION.sha256"
+ },
+ "acOpenLegal": {
+  "value": "3",
+  "source": "results/adapter_checks.json"
+ },
+ "acOpenTotal": {
+  "value": "3",
+  "source": "results/adapter_checks.json"
+ },
+ "acVocab": {
+  "value": "32",
+  "source": "results/adapter_checks.json"
+ },
+ "acAlignSites": {
+  "value": "4,081",
+  "source": "results/adapter_checks.json"
+ },
+ "acAlignProblems": {
+  "value": "0",
+  "source": "results/adapter_checks.json"
+ },
+ "acNanoLegal": {
+  "value": "20",
+  "source": "results/adapter_checks.json"
+ },
+ "acNanoTotal": {
+  "value": "20",
+  "source": "results/adapter_checks.json"
+ },
+ "acRandLegal": {
+  "value": "0",
+  "source": "results/adapter_checks.json"
+ },
+ "acRandTotal": {
+  "value": "1",
+  "source": "results/adapter_checks.json"
+ },
+ "acCacheSites": {
+  "value": "364",
+  "source": "results/adapter_checks.json"
+ },
+ "acCacheMismatch": {
+  "value": "0",
+  "source": "results/adapter_checks.json"
+ },
+ "acSanCases": {
+  "value": "8",
+  "source": "results/adapter_checks.json"
+ },
+ "acSanCorrect": {
+  "value": "8",
+  "source": "results/adapter_checks.json"
+ },
+ "acOthLegal": {
+  "value": "672",
+  "source": "results/adapter_checks.json"
+ },
+ "acOthTotal": {
+  "value": "672",
+  "source": "results/adapter_checks.json"
+ },
+ "acAllNano": {
+  "value": "all three",
+  "source": "results/adapter_checks.json"
  }
 }

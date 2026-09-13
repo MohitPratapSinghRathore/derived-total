@@ -269,9 +269,27 @@ Karvonen's lichess checkpoints \citep{karvonen2024emergent} differ from ours in
 every respect we could change without training: character-level PGN rather than
 one token per move, standard algebraic notation rather than UCI, roughly 16M
 training games rather than ours, and different training code. We use its
-1.3M, 25.8M, and 51.0M checkpoints,
-converted and verified by legal play before any measurement, and read the model's
-move by greedy character decoding at verified move boundaries.
+1.3M, 25.8M, and 51.0M checkpoints
+and read the model's move by greedy character decoding at move boundaries.
+
+\paragraph{Verifying the adapters.}
+Every step between an external model and our measurements fails silently rather
+than with an error: a wrong vocabulary, a misaligned board, or a missed weight
+transpose all yield plausible output. Each was therefore checked before use and
+the checks rerun and recorded. The released weights ship without a tokenizer, so
+the 32-character vocabulary was reconstructed and accepted only after
+the model continued 3 of 3 standard openings
+legally. Board state was aligned to the character before each move and verified
+three ways at 4,081 sites, by independent replay, by re-parsing
+the text prefix, and by the boundary character, with 0
+disagreements. Checkpoints stored in a different weight layout were converted, and
+all three trained checkpoints then played 20 of
+20 moves legally from the opening, while the randomly initialised
+control failed at its first move, as it should. A cached decoder used for speed
+matched the uncached one at all 364 sites tested, the
+algebraic-notation classifier passed 8 of 8
+hand-written cases, and our OthelloGPT forward pass chose a legal move at
+672 of 672 positions.
 
 Algebraic notation changes the taxonomy in an instructive way. It never names a
 source square, so the empty-source class cannot occur: a model that does not name
