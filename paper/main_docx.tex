@@ -48,9 +48,9 @@ coherent. Reconstructing the position the model appears to believe,
 encoding an occupied square removes 0.934 of the probability mass
 on moves from it, a norm-matched random edit 0.077, so the
 representation is read and not merely present. Belief consistency rises
-monotonically across six model sizes; the causal edit is not measured at every
-size. A substantial identified subset of long-horizon errors is coherent with a
-degraded state representation that the policy demonstrably reads.
+monotonically across six model sizes, though the causal edit is not measured at
+every size. A substantial identified subset of long-horizon error is coherent
+with a degraded state the policy demonstrably reads.
 
 We report failures too: a backwards layer profile, a degenerate pre-registered
 metric, an auxiliary objective improving the measurement of state more than its
@@ -62,35 +62,32 @@ diagnostics, chess, long-horizon reasoning
 
 \section{Introduction}
 
-A model that reasons over many steps has to keep track of something. An
-attention-only decoder has no explicit bounded mutable state in which to keep
-it. Each token's representation is
-rebuilt from the whole prefix through attention (Vaswani et~al. 2017), so
-any quantity the task requires, a board position, the value of a variable, which
-sub-goal remains open, exists only because the network re-derives it, at every
-layer and every position, from the beginning. That re-derivation is dependable
-over short spans and unreliable over long ones. Anyone who has watched a model
-reason for forty steps knows the symptom: it stays fluent and quietly stops being
-right about its own earlier commitments.
+A model that reasons over many steps has to keep track of something, and an
+attention-only decoder has no explicit bounded mutable state in which to keep it.
+Each token's representation is rebuilt from the whole prefix through attention
+(Vaswani et~al. 2017), so any quantity the task requires, a board
+position, the value of a variable, which sub-goal remains open, exists only
+because the network re-derives it at every layer and position. That re-derivation
+is dependable over short spans and unreliable over long ones. Anyone who has
+watched a model reason for forty steps knows the symptom: it stays fluent and
+quietly stops being right about its own earlier commitments.
 
-The usual remedies sit outside the model. Tree search grafts deliberation onto
-the policy (Yao et~al. 2023). Process reward models supervise intermediate
-steps with a learned verifier (Lightman et~al. 2024). Self-consistency samples
-several chains and votes (Wang et~al. 2023). Each raises end-task
-accuracy, and each leaves the original question untouched: what fails inside the
-network as the chain lengthens? The question matters commercially as well as
-scientifically, because the two candidate failures recommend opposite purchases.
-If the model has forgotten the world, a verifier that rescores its outputs is
-paying repeatedly to repair something the architecture gave away. If the model
-remembers the world and reasons badly over it, a verifier is exactly right.
+The usual remedies sit outside the model: tree search grafts deliberation onto
+the policy (Yao et~al. 2023), process reward models supervise intermediate
+steps (Lightman et~al. 2024), and self-consistency samples several chains and
+votes (Wang et~al. 2023). Each raises end-task accuracy and leaves
+the original question untouched: what fails inside the network as the chain
+lengthens? The two candidate failures recommend opposite purchases. If the model
+has forgotten the world, a verifier that rescores outputs pays repeatedly to
+repair something the architecture gave away. If it remembers the world and
+reasons badly over it, a verifier is exactly right.
 
-Answering the question requires reading an intermediate representation against a
+Answering that requires reading an intermediate representation against a
 known-correct intermediate state, and on open-ended text no such state exists.
 The intermediate ``state'' of an argument in prose is not well defined, which is
-why evaluation in this area is noisy and why claims about it are hard to falsify.
-Our response is to move the measurement to a domain where the state is exact,
-cheap, and external, establish what can be learned there, and be explicit about
-what that does and does not license.
+why claims about it are hard to falsify. We move the measurement to a domain
+where the state is exact, cheap, and external, and are explicit about what that
+does and does not license.
 
 \paragraph{What we find.}
 Working with search-free autoregressive models trained only on chess move
@@ -125,45 +122,31 @@ The first two are the ones we would defend hardest, and they belong together:
 the errors are coherent with a decayed state, and that state is causally
 load-bearing rather than an epiphenomenon. Failure here is not noise breaking
 through as the context grows. A substantial share of it is action admissible under a
-world that has drifted, which is a claim about state rather than about reasoning
-for that share, and it suggests why fluency outlives correctness: the model acts
-coherently with respect to a position it no longer holds.
+world that has drifted, which suggests why fluency outlives correctness: the
+model acts coherently with respect to a position it no longer holds.
 
 \paragraph{Why chess.}
 Chess presented purely as move notation, with no tree search at inference, gives
 what prose does not. The true state after any prefix is computable by a rules
-engine, so probing has a per-token label. Legality is decidable, so a
+engine, so probing has a per-token label; legality is decidable, so a
 state-tracking failure has an unambiguous observable rather than a judgement
-call. Move quality is separately scoreable by an engine, so the second failure
-mode can be measured conditional on the first being absent. Depth is uniformly
-scaled, unlike ``number of reasoning steps'' in prose. And the domain is
+call; move quality is separately scoreable by an engine, so the second failure
+mode can be measured conditional on the first being absent; depth is uniformly
+scaled, unlike ``number of reasoning steps'' in prose; and the domain is
 combinatorial, so surface heuristics do not substitute for computation. Chess is
-our instrument, not our subject, and we are explicit in
-Section~9 about the reach that buys.
+our instrument, not our subject, and Section~9 is explicit about
+the reach that buys.
 
 \paragraph{Contributions.}
-\begin{enumerate}[nosep]
-\item \textbf{A substantial identified subset of long-horizon errors is
-coherent.} Invalid actions are valid in the position the model appears to believe
-far more often than matched controls allow, and the identified share rises across
-the range of model sizes we train.
-\item \textbf{The state representation is read, not merely present.} Inducing a
-false belief by editing a single probe direction changes the action accordingly,
-at a calibrated edit strength and against a norm-matched control.
-\item \textbf{Where a world model is measured matters.} Whole-board probe
-accuracy predicts whether the next action will be valid, and the same measurement
-restricted to the state that action consumes predicts it better, with the gap
-widening as reasoning deepens. We define a horizon on that fidelity directly,
-which avoids a failure mode of behavioural horizons that we document.
-\item \textbf{A per-token diagnostic stratification} into state mismatch,
+Alongside those results we contribute a per-token diagnostic stratification into state mismatch,
 belief-consistent error, conditional planning loss, and unresolved failure,
 measured against an exact oracle rather than a learned verifier, with the
-conditioning analysis that shows how far the strata can be told apart.
-\item \textbf{An account of what failed}, including a degenerate metric, a
-prediction that ran backwards, an intervention that improved the measurement more
-than the behaviour, and seven task designs before a second domain became
-measurable. Each changed a decision and none is usually reported.
-\end{enumerate}
+conditioning analysis that shows how far the strata can be told apart; a horizon
+defined on state fidelity directly, which avoids a failure mode of behavioural
+horizons that we document; and an account of what failed, including a degenerate
+metric, a prediction that ran backwards, an intervention that improved the
+measurement more than the behaviour, and seven task designs before a second
+domain became measurable. Each changed a decision.
 
 \section{Related Work}
 
@@ -171,11 +154,11 @@ measurable. Each changed a decision and none is usually reported.
 Deliberation over candidates (Yao et~al. 2023), process supervision
 (Lightman et~al. 2024), and sampling with a vote
 (Wang et~al. 2023), built on chain-of-thought prompting
-(Wei et~al. 2022), all buy accuracy with inference compute and take the base
-policy as given. Our concern is the base policy. A verifier that spends its
-budget repairing state-tracking errors is compensating for a representational
-defect at a recurring cost. What we do differently is diagnose which defect is
-present before recommending a remedy.
+(Wei et~al. 2022), buy accuracy with inference compute and take the base
+policy as given. Our concern is the base policy: a verifier that spends its
+budget repairing state-tracking errors compensates for a representational defect
+at a recurring cost. We diagnose which defect is present before recommending a
+remedy.
 
 \paragraph{Long-context evaluation.}
 Position-dependent retrieval failure (Liu et~al. 2024) and effective-context
@@ -183,42 +166,35 @@ measurement (Hsieh et~al. 2024) show usable context is shorter than advertised
 context. Both measure retrieval of material present in the prefix. Long-horizon
 reasoning failure is different: the needed quantity was never written down, only
 implied, and has to be maintained through composition. A model can attend to
-every token of a sixty-ply game and still not know where the pieces are. What we
-do differently is measure maintenance rather than retrieval.
+every token of a sixty-ply game and still not know where the pieces are.
 
 \paragraph{World models and probing.}
-Linear probes recovering board state from game transcripts
-(Li et~al. 2023), the linear structure of those representations
-(Nanda et~al. 2023), chess as a state-tracking testbed
-(Toshniwal et~al. 2022), and causal editing of internal associations
-(Meng et~al. 2022) together establish that sequence models form internal
-world models and that intervening on them changes behaviour. Closest to our
-setting, Karvonen (2024) probes board state and estimated player
-skill in a chess-playing language model and intervenes on those representations,
-and the same board-state probes are later used as ground truth for evaluating
-dictionary learning (Karvonen et~al. 2024). That work establishes the
-representation exists and is manipulable in this exact domain, which is our
-premise rather than our result. That literature
-answers whether a world model exists. We take its existence as given and ask a
-different question: how the fidelity of that world model varies with reasoning
-depth, and whether its failures explain the model's behavioural failures at the
-level of individual actions. Probe design
-follows the control-task discipline of Hewitt and Liang (2019).
+Linear probes recover board state from game transcripts (Li et~al. 2023)
+with linear structure (Nanda et~al. 2023); chess serves as a state-tracking
+testbed (Toshniwal et~al. 2022); and causal editing of internal associations
+changes behaviour (Meng et~al. 2022). Closest to our setting,
+Karvonen (2024) probes board state and estimated player skill in a
+chess-playing language model and intervenes on those representations, and the
+same probes are later used as ground truth for evaluating dictionary learning
+(Karvonen et~al. 2024). That the representation exists and is manipulable
+in this domain is our premise rather than our result. We ask instead how its
+fidelity varies with reasoning depth, and whether its failures explain
+behavioural failures at the level of individual actions. Probe design follows the
+control-task discipline of Hewitt and Liang (2019).
 
 \paragraph{Concurrent work, and what is actually new here.}
 The measurement at the centre of this paper is not new.
 Balogh and Jelasity (2026) report the fraction of illegal chess moves that
-are legal on a probe-reconstructed board, and reach a conclusion close to the
-opposite of ours: for models trained on large datasets that fraction is small, and
-the gradient of their board-state probe is nearly orthogonal to that of the
+are legal on a probe-reconstructed board and reach a conclusion close to the
+opposite of ours: for models trained on large datasets that fraction is small,
+and the gradient of their board-state probe is nearly orthogonal to that of the
 next-token head, which they read as the probe lacking a causal role in
 generation. Li and Jiang (2026) separate state tracking from decision quality
-in searchless chess transformers, treating illegal moves as direct evidence of
-tracking failure. Walker and Lyons (2026) benchmark exact state tracking across
-architectures over a parameter range close to ours, and
+in searchless chess transformers; Walker and Lyons (2026) benchmark exact state
+tracking across architectures over a parameter range close to ours;
 Pereira and Zuidema (2026) show world-state representations decaying during
-generation in frontier reasoning models, with a causal restoration experiment.
-Harang et~al. (2025) document loss of coherent internal state over long
+generation in frontier reasoning models, with a causal restoration experiment;
+and Harang et~al. (2025) document loss of coherent internal state over long
 sequences. State decay with depth, chess state tracking, and scaling this
 measurement are therefore not novel contributions of ours, and we do not claim
 them.
@@ -227,56 +203,28 @@ What differs is the conditions and the conclusion. Their illegal moves are
 adversarially induced; ours arise on ordinary held-out trajectories, which is a
 different population and may have a different mechanism. We add same-depth
 mismatched-belief and random-move controls, which bound how much of the effect a
-merely plausible board would produce. We compare aggregate against
-action-conditioned predictors on equal footing rather than assuming the aggregate
-is the right one. And where their gradient-orthogonality analysis finds the probe
-weakly coupled to generation, our calibrated residual-stream intervention finds a
-strong effect on the action. Those two results are not strictly contradictory,
-since a direction can be causally load-bearing at one layer while its gradient is
-near-orthogonal to the output head, but the tension is real and we flag it as the
-most useful open question this paper raises.
+merely plausible board would produce; we compare aggregate against
+action-conditioned predictors on equal footing; and where their
+gradient-orthogonality analysis finds the probe weakly coupled to generation, our
+calibrated residual-stream intervention finds a strong effect on the action.
+Those results are not strictly contradictory, since a direction can be causally
+load-bearing at one layer while its gradient is near-orthogonal to the output
+head, but the tension is real and we flag it as the most useful open question
+this paper raises.
 
-\paragraph{Expressivity of state.}
+\paragraph{Expressivity, recurrence, and search-free play.}
 Theory bounds what these architectures can track: state-space models are weaker
 than their recurrent form suggests (Merrill et~al. 2024), and intermediate
 tokens change what a Transformer can express (Merrill and Sabharwal 2024). That
-work asks what is representable in principle. We ask what a trained model
-actually maintains, and where it stops.
-
-\paragraph{Recurrence and state-space models.}
-Structured state-space models (Gu et~al. 2022) and selective variants
-(Gu and Dao 2024) give constant per-token state, usually motivated by
-throughput and context length. We use a small supervised recurrent channel not as
-a contribution in itself but as a test case for whether the diagnostic
-discriminates between architectures.
-
-\paragraph{Search-free chess models.}
-Policies that reach strong play by distilling engine evaluations without a tree
-(Ruoss et~al. 2024) show the task is learnable without search. Their
-objective is strength; ours is measurement, so we deliberately study models weak
-enough to fail. A model that never loses the position teaches nothing about
-losing it.
-
-\section{Design Problem and Requirements}
-
-Stated plainly: long-horizon failure is reported as a single number, so it cannot
-be acted on. A practitioner watching accuracy fall at step thirty cannot tell
-whether to buy a larger model, add a verifier, or change the architecture,
-because the measurement does not distinguish the causes.
-
-The procedure rests on four commitments, each ruling out a way of fooling
-oneself. The diagnostic is grounded in an external oracle rather than model
-self-report. The two failure modes are separated before any effect is attributed.
-Every decodability number is reported against trivial predictors that could
-produce it without a world model. And the representation is tested by
-intervention, not only by correlation.
-
-\paragraph{In scope.} Search-free autoregressive decoders; domains with an exact,
-cheaply computable state oracle; state of bounded description length.
-
-\paragraph{Out of scope.} Inference-time search, which we neither use nor
-evaluate; tasks whose state grows without bound; and claims about
-production-scale models, which our compute does not license.
+work asks what is representable in principle; we ask what a trained model
+actually maintains, and where it stops. Structured state-space models
+(Gu et~al. 2022; Gu and Dao 2024) give constant per-token state, usually
+motivated by throughput and context length; we use a small supervised recurrent
+channel not as a contribution in itself but as a test case for whether the
+diagnostic discriminates between architectures. Policies that reach strong play
+by distilling engine evaluations without a tree (Ruoss et~al. 2024) show
+the task is learnable without search. Their objective is strength; ours is
+measurement, so we deliberately study models weak enough to fail.
 
 \section{Problem Formalisation}
 
@@ -359,24 +307,21 @@ failures. We do not call them planning errors.
 \begin{proposition}[Cost mismatch]
 Under full attention each new token reads an $O(t)$ key-value history and
 retains $O(t)$ cached memory, while the task state has description length
-$O(1)$. A key-value cache does amortise the computation of earlier activations,
-so the cost is not recomputation from scratch; what the architecture lacks is a
-bounded mutable state that could carry $s_t$ forward and be updated in place. We
-offer this as a motivating cost mismatch, not as a proof that fidelity must
-decay.
+$O(1)$. A key-value cache amortises the computation of earlier activations, so
+the cost is not recomputation from scratch; what the architecture lacks is a
+bounded mutable state that could carry $s_t$ forward and be updated in place.
+This is a motivating cost mismatch, not a proof that fidelity must decay.
 \end{proposition}
 
-Two consequences were testable and we tested both. Fidelity should fall with
-depth even well inside the context window, because the re-derivation circuit must
-compose more updates within a fixed layer budget. It does
-(Section~7.1).
-
-We also predicted fidelity would peak at intermediate layers and fall toward the
-output, the state being a means rather than an end. \textbf{That prediction is
-wrong.} Decodability rises through the stack and is maximal at the final block,
-from 0.323 at the first layer to 0.543 at the
-last. For this task the state sits close to the target: the next legal move is a
-direct function of the position, so a representation making the position linearly
+Two consequences were testable. Fidelity should fall with depth even well inside
+the context window, because the re-derivation circuit must compose more updates
+within a fixed layer budget; it does (Section~7.1). We also predicted
+fidelity would peak at intermediate layers and fall toward the output, the state
+being a means rather than an end. \textbf{That prediction is wrong.} Decodability
+rises through the stack and is maximal at the final block, from
+0.323 at the first layer to 0.543 at the last.
+For this task the state sits close to the target: the next legal move is a direct
+function of the position, so a representation making the position linearly
 available is also a good representation for the output head. We keep the failed
 prediction because it constrains where a state carrier should be inserted, and
 our spacing was chosen before we knew.
@@ -640,9 +585,8 @@ basis.
 
 \subsection{Aggregate fidelity is the weaker signal}
 
-The two curves fall together, and it would be easy to stop there and call them
-one phenomenon. The relationship is real but weaker than that, and measuring it
-carelessly overstates it.
+The two curves fall together, but the relationship is weaker than that suggests,
+and measuring it carelessly overstates it.
 
 An earlier version of this analysis compared a point-biserial correlation for the
 aggregate predictor against a conditional probability for the move-touched
@@ -855,7 +799,7 @@ same position, which separates belief from mere perturbation sensitivity.
 
 Edit strength has to be calibrated rather than chosen, because a large enough
 push degrades the forward pass and will move behaviour for reasons having nothing
-to do with state. Table~11 reports the sweep. Below a quarter of
+to do with state. Figure~5 reports the sweep. Below a quarter of
 the residual-stream magnitude the edit does not reliably flip the belief; above
 roughly one, the random control also starts destroying the output distribution,
 so any effect there is damage rather than belief. We report the intervention at
@@ -884,40 +828,35 @@ computation. It is read.
 
 The other half of the decomposition needs care, because the conditioning that
 would isolate it cleanly is unattainable. Requiring the probe to recover the
-exact board leaves no samples past the opening, for the reason already given.
-Requiring only the squares the move touches leaves samples everywhere but does
-not constrain the rest of the board, so state loss elsewhere is still counted as
-a failure of judgement.
+exact board leaves no samples past the opening; requiring only the squares the
+move touches leaves samples everywhere but does not constrain the rest of the
+board, so state loss elsewhere is still counted as a failure of judgement.
 
 We therefore vary the strictness and read the trend (Table~7).
-Tightening the conditioning lowers the loss substantially. At ply 30 to 40 the
+Tightening the conditioning lowers the loss substantially: at ply 30 to 40 the
 median centipawn loss falls from 91 with the board
 unconstrained to 38 when at most four other squares may be
 wrong, and the blunder rate from 0.473 to
 0.247. Roughly half of what a naive reading would call
-degraded judgement is misattributed memory failure.
+degraded judgement is misattributed memory failure. The strictest cells are
+thinly populated at depth however many games we scan, since a nearly intact board
+becomes rare exactly where we would most like to condition on one; cells with
+fewer than thirty scored positions are reported as n/a.
 
-A limit of this analysis is worth naming, because it is not a nuisance but the
-same fact the paper is about. The strictest cells are thinly populated at depth
-however many games we scan, since a nearly intact board becomes rare exactly
-where we would most like to condition on one. Cells with fewer than thirty scored
-positions are reported as n/a rather than given a number.
+The trend does not go to zero. Holding the conditioning at four wrong squares,
+the median loss still grows with depth, from 24 at ply 20
+to 30 to 38 at ply 30 to 40. Judgement given intact state
+is not depth-invariant.
 
-The trend does not go to zero. Holding the conditioning fixed at four wrong
-squares, the median loss still grows with depth, from
-24 at ply 20 to 30 to 38 at ply 30
-to 40. Judgement given intact state is not depth-invariant.
-
-We take the honest reading. The identified state-consistent component is
-substantial, stricter state conditioning reduces measured planning loss, and a
-residual depth-dependent planning component remains. Calling memory dominant
-would overstate what a lossy probe and small conditioned samples support. Our original framing of H4, a
-clean separation in which an intervention moves one term and leaves the other
-untouched, was too tidy for what the measurement supports. The decomposition
-still earns its place, because it converts one uninterpretable curve into two
-quantities with different remedies, but a practitioner should expect the terms to
-be entangled rather than orthogonal, and should report the conditioning they used
-when they quote either one.
+The honest reading is that the identified state-consistent component is
+substantial, stricter conditioning reduces measured planning loss, and a residual
+depth-dependent planning component remains. Calling memory dominant would
+overstate what a lossy probe and small conditioned samples support, and our
+original framing of H4, a clean separation in which an intervention moves one
+term and leaves the other untouched, was too tidy. The decomposition still earns
+its place, because it converts one uninterpretable curve into two quantities with
+different remedies, but the terms are entangled rather than orthogonal and the
+conditioning should be reported whenever either is quoted.
 
 \subsection{Scale}
 
@@ -925,7 +864,7 @@ The behavioural horizon is read off the illegal-move curve at the ply where it
 first crosses five percent, interpolated between bucket midpoints because the
 bucketed read-off returns the same bucket for every condition and so cannot
 discriminate between them. A second horizon defined on the representation is
-introduced in Section~7.16; both are tabulated together there.
+introduced in supplementary material, where both are tabulated together.
 
 Across the ladder the behavioural horizon grows with scale and grows slowly,
 from 21.4 ply at 3,440,064 parameters to
@@ -981,293 +920,53 @@ inference-time state is $O(1)$ per token, and an optional auxiliary loss
 $\lambda\mathcal{L}_{\mathrm{state}}$ supervising $z_t$ to be the state. We
 separate architecture ($\lambda=0$), supervision ($\lambda>0$), and read-out
 (zeroing $W_{\mathrm{out}}$ at test time), against a parameter-matched
-attention-only control whose feed-forward block absorbs the same parameter count.
-
-The recurrent channel gives a clean and slightly uncomfortable answer.
+attention-only control.
 
 With the auxiliary objective active, state decodability rises sharply, from
 0.555 for the attention-only baseline to 0.632 at
 matched parameters and matched tokens, a difference many times the seed spread.
 The architecture without the objective, 0.556, is
 indistinguishable from the baseline, as is the parameter-matched control at
-0.554. So the gain comes from supervising the channel, not from
+0.554. The gain comes from supervising the channel, not from
 adding it, and not from the parameters it costs.
 
-Behaviour barely follows. The illegal-move rate improves from
-0.176 to 0.166, and the horizon from
-26.1 to 26.5 ply. Set that beside the scale ladder:
-the attention-only model at 15,737,472 parameters reaches almost
-exactly the same state decodability, 0.632, and converts it into
-a much larger behavioural gain, 0.134 and
-29.5 ply.
-
-Two models with the same measured world model, then, and very different
-behaviour. This is the paper's thesis arriving from the other direction. In
+Behaviour barely follows. The illegal-move rate improves from 0.176
+to 0.166 and the horizon from 26.1 to
+26.5 ply, while the attention-only model at
+15,737,472 parameters reaches almost exactly the same decodability,
+0.632, and converts it into a much larger behavioural gain,
+0.134 and 29.5 ply. Two models with the same
+measured world model, then, and very different behaviour. In
 Section~7.2 aggregate decodability predicted behaviour weakly
 across positions within a model; here it fails to predict behaviour across
-models. An auxiliary loss that makes the state linearly available does exactly
-what it is asked to do, and being available is not the same as being used.
+models. An auxiliary loss makes the state linearly available, and being available
+is not the same as being used.
 
 \paragraph{An ablation that improves behaviour.}
 Zeroing the read-out at test time lowers the illegal-move rate, from
 0.166 to 0.149, and lengthens the horizon, from
 26.5 to 27.2 ply. Removing a component the model was
 trained with should not help, so we measured what else it does. Language-model
-loss rises when the read-out is removed, from 3.010 to
-3.199 across seeds, and the read-out is not vestigial: it injects a
-vector of 0.150 of the residual stream's own norm. The ablated model
-is worse at predicting the continuation and simultaneously better at staying
-legal, and the reason is visible in the distribution. It places more mass on
-legal moves than the intact model, 0.647 against
-0.615, while committing less confidently to any particular one.
+loss rises, from 3.010 to 3.199 across seeds, and the
+read-out is not vestigial: it injects a vector of 0.150 of the
+residual stream's own norm. The ablated model is worse at predicting the
+continuation and simultaneously better at staying legal, because it places more
+mass on legal moves, 0.647 against 0.615, while
+committing less confidently to any particular one.
 
 The lesson is about our own observable rather than about the artifact. A model
 can lower its illegal-move rate by hedging toward the legal-move prior, so the
-illegal rate is not a monotone proxy for the quality of state maintenance, and
+illegal rate is not a monotone proxy for the quality of state maintenance and
 should be read alongside a likelihood. This does not disturb the coupling,
 belief-consistency, or causal results, which are computed per position rather
-than from a rate, but it does qualify the intervention comparison and the horizon
-metric, and we flag it rather than leaving a reader to find it.
+than from a rate, but it qualifies the intervention comparison and the horizon
+metric. We therefore report H3 as supported only in its weakest form and H4 as
+not supported in the form we predicted: the intervention improves the measurement
+of state tracking far more than it improves state tracking's consequences.
+Anyone using auxiliary state supervision as a training signal, or probe accuracy
+as a progress metric, should treat that gap as the default expectation.
 
-We therefore report H3 as supported only in its weakest form and H4 as not
-supported in the form we predicted. We had expected an intervention that improved
-state tracking to improve behaviour through it. What we observe is an
-intervention that improves the measurement of state tracking far more than it
-improves state tracking's consequences. Anyone using auxiliary state supervision
-as a training signal, or probe accuracy as a progress metric, should treat that
-gap as the default expectation rather than the surprise.
-
-\begin{table}[t]
-\centering\small
-\caption{Calibrating the edit strength for the causal intervention. Strength is
-in units of the residual stream's own magnitude. The usable window is where the
-manipulation check succeeds while the norm-matched random control still behaves
-like a coin flip. Values from \texttt{results/attn\_8L256\_s0\_patch\_sweep.json}.}
-
-\begin{tabular}{cccccc}
-\toprule
-strength & belief flipped & state edit: mass after & state decreased
-& random: mass after & random decreased \\
-\midrule
-0.10 & 0.652 & 0.046 & 0.980 & 0.076 & 0.540 \\
-0.25 & 0.996 & 0.020 & 0.988 & 0.078 & 0.452 \\
-0.50 & 1.000 & 0.005 & 0.996 & 0.065 & 0.484 \\
-1.00 & 1.000 & 0.000 & 0.996 & 0.054 & 0.556 \\
-2.00 & 1.000 & 0.000 & 0.996 & 0.025 & 0.712 \\
-6.00 & 1.000 & 0.000 & 1.000 & 0.013 & 0.784 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{A second domain, and what it took to build one}
-
-We attempted a second oracle-bearing domain, a program updating integer variables
-with interleaved queries, to test whether these findings are properties of
-long-horizon state tracking or of chess. Four designs failed to leave chance, and
-we report the sequence because the diagnosis is more useful than the intention.
-
-The first placed a single query at the end of a sequence of random updates.
-Training loss settled at the token-type entropy of the generator, which is the
-value a model achieves by learning the format and nothing else, and the reason is
-arithmetic: the only learnable signal was one answer token in roughly one
-hundred and thirty, so state tracking carried under one percent of the gradient.
-Interleaving queries raised that share and did not move accuracy. Reducing the
-modulus and the number of variables did not move it either. A final version
-separated a pure read-out query from a computed one, so that state tracking could
-succeed without the arithmetic succeeding, and read-out accuracy still sat at
-chance.
-
-We draw two conclusions from the arithmetic attempts. The narrow one is that this task
-family asks a small model to learn modular arithmetic before any state tracking
-becomes observable, and that our compute did not reach it. The broader one is a
-warning for anyone building synthetic state-tracking benchmarks: a task can be
-perfectly well specified, carry an exact oracle, and still measure nothing,
-because the quantity of interest contributes almost none of the training signal.
-The loss curve diagnoses this cheaply. A model that has learned the format and no
-content sits at the generator's token-type entropy, which is computable in
-advance and worth computing before trusting such a benchmark. We report this in
-place of an easy cross-domain result.
-
-\paragraph{A domain that does work.}
-Abandoning arithmetic entirely, we built the second domain around an assignment
-instead. Four objects sit in four boxes. The sequence states the initial
-assignment, then applies operations that permute it, and after every operation
-asks where one object now is. A \textsc{swap} names two boxes and moves their
-contents without naming the objects, so the affected object's location cannot be
-retrieved by attending to its last mention and has to be maintained. A
-\textsc{move} names the object, which gives an anchor and keeps the task
-learnable. The state is the assignment of objects to boxes, exact at every
-token, and the answer is a single symbol, so belief consistency here is exact
-rather than estimated: a wrong answer either is or is not the box the model's own
-probe says holds that object.
-
-Two further design choices were forced on us, and both are worth recording. Our
-first attempt used five objects. That makes the state an element of $S_5$, a
-permutation-composition problem that is theoretically hard for the relevant
-fixed-depth model classes under asymptotic expressivity assumptions
-(Merrill et~al. 2024). That may have contributed, but a theorem about
-asymptotic expressivity does not establish why one finite model failed to
-optimise on one bounded-length dataset, and we do not claim group structure as
-the cause. Four objects give $S_4$,
-which is solvable. Our second attempt queried only occasionally, which left the
-task all-or-nothing: with uniformly random updates and sparse queries a model
-either tracks the permutation exactly or sits at chance, a structure that is hard
-to learn from endpoint supervision. Querying after every operation supplies
-partial credit, since a query one step after an operation is answerable directly,
-and that is the foothold from which the model extends. Chess has this property
-for free, because a plausible move needs only partial state.
-
-With those two changes the task became measurable, and the outcome follows.
-
-The outcome is not the clean replication we hoped for, and it is more
-informative than one would have been (Table~8).
-
-With the supervised recurrent channel the task is close to solved at every depth,
-0.989 at the deepest bucket against a chance rate of
-0.25, the probe recovers the queried object at
-0.983, and belief consistency is 0.701
-against a mismatched control of 0.254. The mechanism
-reproduces.
-
-The attention-only model behaves differently. It solves the task well above
-chance, 0.589 at depth, while the probe recovers its state at
-0.263, which is chance. Belief consistency is
-0.256 against a control of 0.249, which is
-no signal at all. The same probe procedure, on the same positions, recovers state
-at 0.983 in the other model, so this is a fact about the
-model and not a failure of the probe.
-
-The reading we prefer is that this task does not force the model to maintain
-state. Only one object is asked about at a time, so the answer can be resolved on
-demand by tracing that object's history, and an explicit assignment carried
-forward is unnecessary. Chess allows no such shortcut: predicting a legal move
-requires the whole position, so the state must be maintained eagerly.
-
-That gives a fourth lesson for anyone building these diagnostics, and it is the
-one we would put first. A task can carry an exact oracle, be learnable, and still
-fail to measure state maintenance, because it never obliges the model to
-maintain anything. Belief consistency is only defined where a belief exists to
-read, and whether one exists is a property of the task, not only of the
-architecture.
-
-\subsection{Is the measurement useful, or only diagnostic?}
-
-Everything so far is a claim about mechanism. A reader is entitled to ask whether
-the same measurement is worth anything operationally, and the only baseline that
-matters is the model's own confidence. If an external state monitor merely
-recovers what the model already knows about its own uncertainty, it is
-interesting and redundant.
-
-We test this as selective prediction. A system that wants to avoid acting on a
-decayed state abstains on the positions it trusts least, and the question is what
-to rank by. We compare the model's top-1 probability, the entropy of its
-next-move distribution, and the probe's certainty about the squares the chosen
-move touches. That last signal uses only the probe's own output, so it is
-computable at inference from activations, the probe having been fitted against an
-oracle offline.
-
-One version of this experiment is not admissible and we report it only as a
-bound. Ranking by whether the probe is \emph{wrong} on those squares requires the
-oracle at inference, which is the very thing an abstention rule exists to avoid.
-It is an upper bound on what a perfect state monitor could deliver, not a method.
-
-The honest result is modest. Probe certainty alone is a weaker signal than the
-model's own confidence, with an AUC of 0.593 against
-0.628. Combined with confidence it is better than either alone: at
-half coverage the illegal-move rate among retained positions falls to
-0.124 against 0.141 for confidence and
-0.131 for entropy, and in a joint fit both terms carry weight,
-0.554 for confidence and 0.367 for probe certainty.
-An external monitor therefore adds something the model does not self-report, and
-it adds less than we hoped.
-
-The gap to the bound is the interesting part. Ranking by oracle-verified
-move-touched state reaches 0.093 at the same coverage, less than
-half the base rate of 0.197. Most of the benefit an ideal state monitor
-would deliver is not captured by the probe's own certainty, which says the
-limitation is the quality of the state read-out rather than the premise. Better
-read-outs, not a different signal, are the lever.
-
-\subsection{Inference that respects the clustering}
-
-Positions within a game are not independent: they share an opening, a player, and
-an accumulating history. Intervals computed over positions therefore understate
-uncertainty, and every interval in this section resamples whole games instead.
-Section~7.5 already reports game-clustered intervals for belief
-consistency on the full evaluation population. This section is a restricted
-sensitivity analysis on a different population, 142,042 positions from
-2,500 games of which 19,896 carry an illegal top-1 move, over
-ply 10 to 80 where the depth buckets used by the predictor comparison are
-defined. Estimates therefore differ slightly from the primary ones, and both are
-reported rather than reconciled by choosing whichever is larger.
-
-\begin{table}[t]
-\centering\small
-\caption{Inference clustered on the game. Intervals resample whole
-games rather than positions, since positions within a game share an
-opening and a history. The lower block compares nested models by held-out
-log loss on a split by game, so each predictor's contribution is measured
-out of sample. Lower is better.}
-
-\begin{tabular}{lcc}
-\toprule
-Quantity & Estimate & 95\% CI (clustered) \\
-\midrule
-belief consistency & 0.3892 & [0.3822, 0.3976] \\
-\quad mismatched-belief control & 0.0654 & [0.0620, 0.0687] \\
-\quad random-move control & 0.0079 & [0.0068, 0.0093] \\
-AUC, whole board & 0.6287 & [0.6233, 0.6333] \\
-AUC, move-touched & 0.6961 & [0.6926, 0.6998] \\
-\quad difference & +0.0674 & [+0.0618, +0.0732] \\
-\midrule
-Held-out log loss & \multicolumn{2}{c}{} \\
-depth only & 0.3630 & \\
-\quad $+$ whole board & 0.3595 & \\
-\quad $+$ move-touched & 0.3451 & \\
-\quad $+$ both & 0.3439 & \\
-\quad $+$ both and confidence & 0.3340 & \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Belief consistency is 0.389 [0.382, 0.398], against
-0.065 [0.062, 0.069] for a mismatched
-belief and 0.008 [0.007, 0.009] for a
-random illegal move. The intervals are far apart, and the separation does not
-depend on treating positions as independent.
-
-The two predictors of an illegal move separate as well. Whole-board error reaches
-an AUC of 0.629 [0.623, 0.633] and
-move-touched error 0.696 [0.693,
-0.700]. Bootstrapping the difference as a paired quantity gives
-+0.0674 [+0.0618, +0.0732], which excludes
-zero.
-
-A population-averaged logistic fit, with game as the cluster and an exchangeable
-working correlation, gives coefficients with clustered standard errors on standardised
-predictors: +0.586 (clustered s.e.\ 0.011) for move-touched
-error against +0.161 (0.009) for the aggregate, with
-+0.573 for low model confidence and +0.633 for depth. The
-ordering survives clustered inference.
-
-\paragraph{Out of sample, not only in sample.} Coefficients can be significant and
-still add little. Splitting by game and fitting on seventy percent of games, the
-held-out log loss falls from 0.3630 with depth alone to
-0.3595 adding whole-board error, and to 0.3451
-adding move-touched error instead. Using both gives 0.3439, and
-adding the model's own confidence 0.3340. The
-move-touched predictor buys several times what the aggregate buys out of sample,
-and it buys most of it even when the aggregate is already present.
-
-\paragraph{A held-out abstention rule.} Fitting and evaluating a selective
-prediction rule on the same positions overstates it. Refitting on training games
-and evaluating on held-out games, the illegal rate among retained positions at
-half coverage is 0.054 for a rule combining the model's confidence
-with probe certainty, against 0.070 for confidence alone and
-0.083 for probe certainty alone, from a base rate of
-0.141. An oracle-verified state monitor would reach
-0.038, which remains the bound rather than a method: establishing it
-at inference needs the ground truth the rule exists to avoid.
+Positions within a game are not independent, so every interval in this paper is bootstrapped over games rather than positions, and the population-averaged fits behind the coupling claim are reported in supplementary material.
 
 \subsection{A constructive edit: moving a piece in the model's belief}
 
@@ -1302,107 +1001,31 @@ establishes this for occupancy and not for the whole position.
 
 Every measurement so far uses held-out human games, which are in distribution.
 Walker and Lyons (2026) report that a uniformly-random-legal-play split stays
-discriminative where in-distribution performance saturates, so it is a fair test
-of whether our findings lean on familiar opening theory and typical structure.
+discriminative where in-distribution performance saturates, making it a fair test
+of whether our findings lean on familiar opening theory.
 
 They do not. On 1,200 games of uniformly random legal play,
 occupied-square accuracy falls from 0.889 to 0.112 and
 the illegal rate rises from 0.013 to 0.350, both
 steeper than on human games as expected for an unfamiliar distribution. Belief
-consistency is 0.380 over 32,027 illegal moves, against a
-random-move control of 0.008. That is slightly higher than the
-in-distribution rate, not lower. Coherent error is not an artifact of the model
-being on familiar ground.
+consistency is 0.380 over 32,027 illegal moves against a
+random-move control of 0.008, slightly higher than the in-distribution
+rate rather than lower. Coherent error is not an artifact of familiar ground.
 
-\subsection{Transcript length against position difficulty}
-
-The decay curves are read throughout as loss caused by composing more updates.
-Depth is confounded with position difficulty: a position at ply 100 differs from
-one at ply 10 in material, phase, and legal-move count. The curves alone do not
-license the causal reading, and this test removes the confound.
-
-We insert a reversible cycle, a knight out and back for each side, which returns
-the position exactly while adding four plies of transcript. State is then read on
-an identical position at several transcript lengths.
-
-\begin{table}[t]
-\centering\small
-\caption{Transcript length with the position held fixed. A reversible
-cycle of legal moves returns the position exactly while adding four plies
-of history, so every row scores the same states at a different transcript
-length. Intervals are bootstrapped over games.}
-
-\begin{tabular}{lccc}
-\toprule
-Added plies & occupied-square acc. & 95\% CI & illegal rate \\
-\midrule
-0 & 0.736 & [0.722, 0.747] & 0.065 \\
-4 & 0.715 & [0.702, 0.727] & 0.050 \\
-8 & 0.706 & [0.692, 0.718] & 0.113 \\
-12 & 0.696 & [0.683, 0.707] & 0.177 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Fidelity falls monotonically, from 0.736 [0.722,
-0.747] with no insertion to 0.696 [0.683,
-0.707] after twelve added plies, on 400 positions whose
-state is unchanged. The intervals at the two ends do not overlap. Transcript
-length alone therefore causes measurable state loss.
-
-The size matters as much as the sign. Twelve plies of pure length cost about four
-points of accuracy, where the natural depth curve falls far further over its
-range. Both factors contribute, and we do not attribute the whole curve to
-composition depth. One caveat we cannot remove: the inserted moves are legal but
-unlike training data, so part of the drop may be distribution shift rather than
-length as such. The random-play result of Section~7.14 bounds
-that concern without eliminating it.
-
-\subsection{A policy-conditioned state-fidelity horizon}
-
-Both horizons used so far are read off behaviour, and the read-out ablation
-showed why that is fragile: a model can lower its illegal-move rate by hedging
-toward the legal-move prior, without knowing the position any better. A horizon
-defined on the representation is less exposed, because it does not read the
-confidence of the output: a model that spreads its mass more evenly gains nothing
-from doing so. It is not policy-independent, and we do not claim it is. The
-squares it scores are those the selected move touches, and that move comes from
-the output distribution, so a policy change can alter which squares are scored
-even with the state representation unchanged. It is a policy-conditioned
-state-fidelity horizon. A genuinely policy-independent comparison would score a
-fixed set of components, for instance the recorded continuation move, every
-oracle-legal move averaged uniformly, or a candidate set shared across models.
-
-We define $H_{\mathrm{fid}}$ as the depth at which the probability that the probe
-is wrong on the squares the model's chosen move touches first crosses one half.
-It uses the same probe and the same activations as everything else, and it is
-immune to hedging: a model that spreads mass over legal moves gains nothing,
-since the measure asks what it knows, not what it emits.
-
-Read this way the ladder is orderly. The smallest model reaches
-33.8 ply, the baseline 40.8, and the largest
-59.1. The behavioural horizon orders the same models the same way,
-21.4, 26.1 and 33.8 ply, on a shorter
-scale because it asks a harder question of the model. Move-touched error at
-the shallowest depth runs from 0.207 in the smallest model to
-0.078 in the largest. We report both horizons throughout, and
-prefer this one where the comparison is between architectures rather than between
-depths, since that is where hedging is most likely to confound a behavioural
-reading.
+A policy-conditioned horizon, defined on the state the action consumes rather than on the whole board, is reported in supplementary material.
 
 \subsection{A degenerate metric, declared}
 Our horizon was pre-registered on exact-position fidelity, the probability that
 all sixty-four squares are simultaneously recovered. That criterion is already
-below its threshold in the very first bucket, so the pre-registered horizon
-evaluates to zero ply for every condition and cannot discriminate between them.
-The underlying quantity falls to 0.379 in the opening and to
+below its threshold in the first bucket, so the pre-registered horizon evaluates
+to zero ply for every condition and cannot discriminate between them. The
+underlying quantity falls to 0.379 in the opening and to
 0.000 by ply 20 to 30, after which exact states essentially do not
-occur, which is also why conditioning on them yields no samples at depth. We therefore report horizons on
-occupied-square accuracy and on the illegal-move rate. The revision was made
-after inspecting baseline data and before evaluating any intervention, and every
-definition is applied unchanged across conditions. We flag it rather than
-presenting the revised metric as the original plan, and we note that anyone
-measuring state tracking with an all-or-nothing criterion will obtain an
+occur, which is also why conditioning on them yields no samples at depth. We
+therefore report horizons on occupied-square accuracy and on the illegal-move
+rate. The revision was made after inspecting baseline data and before evaluating
+any intervention, and every definition is applied unchanged across conditions.
+Anyone measuring state tracking with an all-or-nothing criterion will obtain an
 unusable number for the same reason.
 
 \subsection{What the predictions came to}
@@ -1413,8 +1036,7 @@ the ones that went against us.
 \textbf{H1, supported.}  State fidelity declines with depth, from
 0.975 to 0.066 occupied-square accuracy, clear of a
 majority predictor, a label-permutation control, and a randomised-weight model
-(Table~1, Figure~2). The behavioural horizon,
-26.1 ply, sits well inside the context window.
+(Table~1, Figure~2).
 
 \textbf{H2, supported.}  The horizon grows slowly with scale across six rungs at
 three seeds each, from 21.4 ply at 3,440,064 parameters
@@ -1422,20 +1044,20 @@ to 33.8 at 39,884,288 (Section~7.8).
 
 \textbf{H3, supported only weakly.}  The supervised recurrent channel raises state
 decodability substantially and the horizon by 26.5 against
-26.1 ply. The architecture without supervision changes neither.
+26.1 ply; the architecture without supervision changes neither.
 
 \textbf{H4, not supported as predicted.}  We expected an intervention that improved
-state tracking to improve behaviour through it. Instead the intervention improved
-the measurement far more than its consequences, matching a model twice its size
-on decodability while capturing a fraction of the behavioural gain
+state tracking to improve behaviour through it. Instead it improved the
+measurement far more than its consequences, matching a model twice its size on
+decodability while capturing a fraction of the behavioural gain
 (Section~7.9). We designed H4 to be able to fail and it failed, in a
 direction that supports the paper's main claim rather than undermining it.
 
 \textbf{H5, partially addressed.}  The natural-language transfer test our protocol
 specifies was not run and is absent rather than approximated
 (Section~9). A second oracle-bearing domain, reached only after
-several failed designs, tests the weaker claim
-(Section~7.10).
+several failed designs, tests the weaker claim and is reported in supplementary
+material.
 
 Three results were not predicted at all. The layer profile ran opposite to our
 expectation (Section~5). Ablating the recurrent read-out
@@ -1448,78 +1070,61 @@ state an action consumes, by a margin that grows with depth
 
 If we could keep only one result it would be belief consistency together with the
 causal edit, which say that these models act coherently on a state they are
-losing. The measurement-placement result is a practical corollary: it tells you
-where to look, and it matters most exactly where long-horizon behaviour is
-hardest.
+losing.
 
 \section{Discussion}
 
-The practical content of this paper is a change in what to measure. Reporting
-that a probe recovers a world model at some aggregate accuracy is weak evidence
-that the model is load-bearing: aggregate accuracy predicts the validity of the
-next action, and it predicts it poorly, and it gets worse with depth. Measuring
-the same representation on the components an action depends on is substantially
-more informative from the same activations. Any team instrumenting a system
-for long-horizon reliability should condition on the state the action uses.
+The practical content of this paper is a change in what to measure. That a probe
+recovers a world model at some aggregate accuracy is weak evidence that the model
+is load-bearing: aggregate accuracy predicts the validity of the next action
+poorly, and worse with depth. Measuring the same representation on the components
+an action depends on is substantially more informative from the same activations.
+Any team instrumenting a system for long-horizon reliability should condition on
+the state the action uses.
 
 The belief-consistency result reframes the failure. A model that plays a coherent
 move in a misremembered position is not behaving erratically, and treatments that
 assume erratic behaviour are aimed at the wrong target. Sampling several chains
 and voting may offer limited benefit when independently sampled continuations
 share the same state distortion, though we did not test repeated sampling or how
-far drift is correlated across samples. A
-verifier that scores outputs is well placed to catch the error and badly placed
-to prevent it, and it will pay that cost on every query for as long as the system
-runs.
+far drift is correlated across samples. A verifier that scores outputs is well
+placed to catch the error and badly placed to prevent it, at a cost paid on every
+query.
 
 The protocol generalises past chess. Anywhere an external checker can reconstruct
 the intended intermediate state, program execution traces, spreadsheet
 recalculation, structured database updates, ledger reconciliation, the same
-measurements are available. The requirement is not a game. It is an oracle.
+measurements are available. The requirement is not a game; it is an oracle.
 
 We also treat the negative results as part of the contribution. A predicted layer
-profile came out backwards. A pre-registered metric turned out to be degenerate.
-A first design of a second domain turned out to be unlearnable, for a reason that
-was diagnosable from the loss curve. Each changed a decision, and each is
-reported where it did so.
-
-\paragraph{What this implies for practice.}
-The decomposition tells a team which remedy fits the failure they have. Where
-state-tracking error dominates, an inference-time verifier is an expensive way to
-buy back something the architecture gave away, and it is a recurring per-query
-cost rather than a one-off. Where planning error dominates, a verifier is exactly
-right. Reporting only the sum leaves a practitioner unable to tell which world
-they are in, and the two worlds recommend opposite purchases. The measurement
-needed to tell them apart is a rules engine and a linear probe, not privileged
-access to a model at scale, so it can be run in-house on a system a team already
-depends on. For the reader of a long generated answer, who is rarely in a
-position to audit step twenty-eight, the practical value is a stated depth beyond
-which the output should not be trusted without checking.
+profile came out backwards, a pre-registered metric turned out to be degenerate,
+and a first design of a second domain turned out to be unlearnable for a reason
+diagnosable from the loss curve. Each changed a decision, and each is reported
+where it did so.
 
 \section{Limitations}
 
 \textbf{L1}  \textbf{Scale.} Our models are small and trained on a modest corpus,
 far below the chess-specific literature and any frontier system. Undertrained
-models are easier to study because they fail within a measurable range, which is
-what makes the instrument work, but the horizon values describe these models.
-Section~7.8 estimates the trend rather than assuming it away.
+models fail within a measurable range, which is what makes the instrument work,
+but the horizon values describe these models. Section~7.8 estimates
+the trend rather than assuming it away.
 
 \textbf{L2}  \textbf{One domain family.} Chess carries an exact oracle by
 construction, which is what makes it measurable and also what makes it
-unrepresentative of open-ended reasoning. The second domain we built does reach a
-measurable regime (Section~7.10), but only its supervised
-condition maintains a decodable state, so the attention-only replication we
-wanted is not available there. The central findings rest on one instrument and
-should be read that way.
+unrepresentative of open-ended reasoning. The second domain reaches a measurable
+regime (supplementary material), but only its supervised condition maintains a
+decodable state, so the attention-only replication we wanted is not available
+there. The central findings rest on one instrument.
 
 \textbf{L3}  \textbf{Probe decoding is lossy.} The believed board is an
 approximation, which is why we report the legal-move recovery rate as an explicit
-recovery reference rather than treating the decoded state as ground truth.
+reference rather than treating the decoded state as ground truth.
 
 \textbf{L4}  \textbf{Pseudo-legality.} Belief consistency is tested with
 pseudo-legal moves, since a decoded board may lack a king and make check tests
-ill-defined. This is a permissive criterion, which the random-move control is
-designed to bound.
+ill-defined. This is permissive, which the random-move control is designed to
+bound.
 
 \textbf{L5}  \textbf{Scope of the causal claim.} The intervention establishes that
 the decoded state direction is read by the policy at the layer tested. It does
@@ -1536,28 +1141,17 @@ approximated.
 
 \section{Avenues of Future Research}
 
-\textbf{FR1}  Extend the scale ladder far enough to estimate how horizon grows with
-parameters and data, and test whether the belief-consistency rate is
-scale-invariant even where the horizon moves.
-
-\textbf{FR2}  Replicate the decomposition in domains that were not designed as
-benchmarks, such as program execution or ledger reconciliation, where an oracle
-exists but the data is not constructed.
-
-\textbf{FR3}  Run the natural-language transfer test with matched pre-training, the
-experiment that decides whether this line of work reaches practice.
-
-\textbf{FR4}  Move from observation to intervention, editing move-touched state
-directions and measuring whether the induced action follows the induced belief.
-
-\textbf{FR5}  Develop state supervision that does not require an oracle, for example
-from execution traces or agreement between sampled continuations.
-
-\textbf{FR6}  Use move-touched fidelity as a live confidence signal, abstaining or
-escalating when the state an action depends on is poorly determined.
-
-\textbf{FR7}  Pre-register horizon metrics on pilot data, so metric selection is
-settled before confirmatory runs rather than declared afterwards.
+The most useful next steps are to extend the scale ladder far enough to estimate
+how the horizon grows with parameters and data, and to test whether the
+belief-consistency rate is scale-invariant where the horizon moves; to replicate
+the measurements in domains that were not designed as benchmarks, such as program
+execution or ledger reconciliation, where an oracle exists but the data is not
+constructed; to run the natural-language transfer test with matched pre-training,
+the experiment that decides whether this line of work reaches practice; and to
+develop state supervision that does not require an oracle, for example from
+execution traces or agreement between sampled continuations. Move-touched
+fidelity is also a candidate live confidence signal, for abstaining or escalating
+when the state an action depends on is poorly determined.
 
 \section{Conclusion}
 
@@ -1613,70 +1207,7 @@ produced entirely by the evaluation pipeline described in the paper.
 
 \section{Experimental detail}
 
-\paragraph{Data.} Public Lichess archives, standard chess only, both players rated
-at least 1600, games between 30 and 160 ply, deduplicated by a hash of the move
-sequence. Moves are tokenised one per move in UCI form, giving a vocabulary of
-1,926 including padding and a start symbol; there is no sub-move
-tokenisation and no board rendering in the input. Sequences are padded to 161
-tokens and truncated at 160 ply. Splits are by game: 96,000 for
-language-model training, 12,000 for probe fitting,
-12,000 held out for evaluation.
-
-\paragraph{Oracle.} Every game is replayed with a rules engine, recording after
-each token the occupancy of all 64 squares as one of 13 classes, the side to
-move, and castling rights. Replay completeness is verified before any model is
-measured.
-
-\paragraph{Models.} Pre-norm decoder-only Transformers with learned positional
-embeddings, GELU feed-forward of width four times the model dimension, and no
-dropout. The grid spans 6 to 12 layers and widths 192 to 512, with 6 or 8 heads.
-Training uses AdamW, $\beta = (0.9, 0.95)$, weight decay 0.01, a one-cycle
-schedule peaking at $3\times10^{-4}$ with 5 percent warmup, batch size 32, 12000
-steps, and mixed precision with gradient clipping at 1.0. The final checkpoint is
-used; no checkpoint selection is performed. Seeds 0, 1 and 2 control
-initialisation, batch order, and any auxiliary sampling.
-
-\paragraph{Probes.} One linear head per layer maps the residual stream to 64
-squares by 13 classes, trained with cross-entropy on the probe split only, AdamW
-at $10^{-3}$, two epochs, batch size 48. The reported layer is the one with the
-highest occupied-square accuracy, selected on the probe split rather than on the
-evaluation split. Controls are a per-square per-depth majority predictor, a
-label-permutation control pairing activations with another game's state at equal
-depth, and a randomised-weight model of identical architecture whose probes are
-fitted the same way.
-
-\paragraph{Believed boards.} A decoded board is built by placing the argmax class
-at each square, setting side to move from ply parity, and clearing castling
-rights so that castling cannot be licensed by an assumption we did not decode.
-Legality is tested as pseudo-legality, since a decoded board may lack a king and
-make check tests ill-defined. Moves that fail to parse are counted as illegal.
-
-\paragraph{Engine scoring.} Stockfish 17 at fixed depth 10. Loss is the drop from
-the best available score to the score after the played move, both from the
-mover's point of view, with mate scores mapped to 10000. The blunder threshold is
-100 centipawns, fixed in advance.
-
-\paragraph{Interventions.} Edits are added to the residual stream at the output of
-the probed block, at the final position only. The direction is the difference of
-probe decoder rows for the target and current classes, normalised and scaled to
-$\alpha$ times the residual stream's own root-mean-square magnitude times the
-square root of the model dimension. The reported $\alpha$ is 0.50,
-chosen from the sweep in Table~11 as the smallest value that
-reliably flips the decoded belief while leaving a norm-matched random edit at
-chance. Random controls are drawn isotropically and rescaled to the same norm.
-
-\paragraph{Recurrent channel.} A gated diagonal recurrence of width 64 inserted
-after every fourth block, with the read-out matrix zero-initialised so the module
-begins as the identity. The auxiliary objective, when active, is cross-entropy
-from the channel to the oracle state with weight 1.0. The parameter-matched
-control widens the feed-forward multiplier to 4.156 to absorb the same parameter
-count.
-
-\paragraph{Second domain.} Four objects in four boxes, an explicit initial
-assignment, then 24 operations drawn evenly between a swap of two named boxes and
-a move of a named object to a named box, with a query after every operation
-asking where one object is. Answers are weighted five times in the loss. Details
-of the six designs that failed before this one are in Section~7.10.
+Model configurations, probe fitting, engine scoring, intervention hyper-parameters, and the second-domain setup are reported in supplementary material.
 
 \section{Deviations from the pre-registration}
 
@@ -1699,51 +1230,6 @@ are now scored as predictors of the same outcome.
 \item The layer-profile prediction was falsified and is retained as such.
 \item The second domain required seven designs. All are reported.
 \end{enumerate}
-
-\section{Research questions, design principles, and implications}
-
-This work began as a design-science exercise, and the framing is recorded here
-rather than in the body, where an empirical narrative reads better without it.
-
-\paragraph{Research questions and objectives.}
-\textbf{RQ1}, can long-horizon accuracy loss be separated into state tracking and
-planning, is addressed by \textbf{RO1}, defining both and giving an estimator for
-each (Sections~4 and 6). \textbf{RQ2}, does internal
-state loss explain behavioural failure or merely accompany it, is addressed by
-\textbf{RO2}, testing the link per token at the level of the state an action
-consumes (Sections~7.2 and 7.5). \textbf{RQ3}, how far
-does a search-free model reason before its state stops being recoverable and how
-does that respond to scale, is addressed by \textbf{RO3}, measuring horizons
-across a seeded ladder against trivial baselines (Section~7.8).
-\textbf{RQ4}, does the diagnostic discriminate between architectural
-interventions, is addressed by \textbf{RO4}, evaluating a recurrent state channel
-with parameter-matched and ablated controls (Section~7.9).
-
-\paragraph{Design principles.}
-\textbf{DP1}, ground the diagnostic in an external oracle rather than model
-self-report, realised by rules-engine labels at every token. \textbf{DP2},
-separate the failure modes before attributing any effect, realised by scoring
-planning only where the move is legal and the relevant state is independently
-verified. \textbf{DP3}, establish what a trivial predictor achieves first,
-realised by majority, label-permutation and randomised-weight controls on every
-decodability number. \textbf{DP4}, measure the state the action depends on rather
-than the state in aggregate, realised by move-touched fidelity and its
-random-pair controls. \textbf{DP5}, test coherence by intervention and not only
-by correlation, realised by the calibrated suppression and transfer edits.
-
-\paragraph{Implications for individuals, organisations, and society.}
-For the reader of a long generated answer, who is rarely placed to audit step
-twenty-eight, the practical value is a stated depth beyond which output should
-not be trusted unchecked, and the uncomfortable finding that failure arrives
-fluent rather than obviously broken. For organisations, the decomposition
-indicates which remedy fits: a recurring per-query verifier cost suits a policy
-problem, a one-off structural change suits a memory problem, and reporting only
-the sum leaves a team unable to tell which they have. Strategically, the
-measurement needs a rules engine and a linear probe rather than privileged access
-at scale, so it can be owned and audited in-house rather than taken on trust.
-For society, diagnosing a failure is cheaper than paying inference-time compute
-to mask it, and remedies that cost a small fraction of parameters travel to
-on-device and public-sector deployments that cannot buy deliberation per request.
 
 \section*{References}
 

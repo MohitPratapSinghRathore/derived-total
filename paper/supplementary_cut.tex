@@ -1,0 +1,323 @@
+% Moved out of the main text for length only. Nothing was deleted;
+% these sections are reported in supplementary material.
+
+\subsection{A second domain, and what it took to build one}
+\label{sec:synthfail}
+
+We attempted a second oracle-bearing domain, a program updating integer variables
+with interleaved queries, to test whether these findings are properties of
+long-horizon state tracking or of chess. Four designs failed to leave chance, and
+we report the sequence because the diagnosis is more useful than the intention.
+
+The first placed a single query at the end of a sequence of random updates.
+Training loss settled at the token-type entropy of the generator, which is the
+value a model achieves by learning the format and nothing else, and the reason is
+arithmetic: the only learnable signal was one answer token in roughly one
+hundred and thirty, so state tracking carried under one percent of the gradient.
+Interleaving queries raised that share and did not move accuracy. Reducing the
+modulus and the number of variables did not move it either. A final version
+separated a pure read-out query from a computed one, so that state tracking could
+succeed without the arithmetic succeeding, and read-out accuracy still sat at
+chance.
+
+We draw two conclusions from the arithmetic attempts. The narrow one is that this task
+family asks a small model to learn modular arithmetic before any state tracking
+becomes observable, and that our compute did not reach it. The broader one is a
+warning for anyone building synthetic state-tracking benchmarks: a task can be
+perfectly well specified, carry an exact oracle, and still measure nothing,
+because the quantity of interest contributes almost none of the training signal.
+The loss curve diagnoses this cheaply. A model that has learned the format and no
+content sits at the generator's token-type entropy, which is computable in
+advance and worth computing before trusting such a benchmark. We report this in
+place of an easy cross-domain result.
+
+\paragraph{A domain that does work.}
+Abandoning arithmetic entirely, we built the second domain around an assignment
+instead. Four objects sit in four boxes. The sequence states the initial
+assignment, then applies operations that permute it, and after every operation
+asks where one object now is. A \textsc{swap} names two boxes and moves their
+contents without naming the objects, so the affected object's location cannot be
+retrieved by attending to its last mention and has to be maintained. A
+\textsc{move} names the object, which gives an anchor and keeps the task
+learnable. The state is the assignment of objects to boxes, exact at every
+token, and the answer is a single symbol, so belief consistency here is exact
+rather than estimated: a wrong answer either is or is not the box the model's own
+probe says holds that object.
+
+Two further design choices were forced on us, and both are worth recording. Our
+first attempt used five objects. That makes the state an element of $S_5$, a
+permutation-composition problem that is theoretically hard for the relevant
+fixed-depth model classes under asymptotic expressivity assumptions
+\citep{merrill2024illusion}. That may have contributed, but a theorem about
+asymptotic expressivity does not establish why one finite model failed to
+optimise on one bounded-length dataset, and we do not claim group structure as
+the cause. Four objects give $S_4$,
+which is solvable. Our second attempt queried only occasionally, which left the
+task all-or-nothing: with uniformly random updates and sparse queries a model
+either tracks the permutation exactly or sits at chance, a structure that is hard
+to learn from endpoint supervision. Querying after every operation supplies
+partial credit, since a query one step after an operation is answerable directly,
+and that is the foothold from which the model extends. Chess has this property
+for free, because a plausible move needs only partial state.
+
+With those two changes the task became measurable, and the outcome follows.
+
+The outcome is not the clean replication we hoped for, and it is more
+informative than one would have been (Table~\ref{tab:boxes}).
+
+With the supervised recurrent channel the task is close to solved at every depth,
+\result{ansDeepBoxAlsb} at the deepest bucket against a chance rate of
+\result{chanceBoxAlsb}, the probe recovers the queried object at
+\result{probeDeepBoxAlsb}, and belief consistency is \result{beliefBoxAlsb}
+against a mismatched control of \result{beliefMisBoxAlsb}. The mechanism
+reproduces.
+
+The attention-only model behaves differently. It solves the task well above
+chance, \result{ansDeepBoxAttn} at depth, while the probe recovers its state at
+\result{probeDeepBoxAttn}, which is chance. Belief consistency is
+\result{beliefBoxAttn} against a control of \result{beliefMisBoxAttn}, which is
+no signal at all. The same probe procedure, on the same positions, recovers state
+at \result{probeDeepBoxAlsb} in the other model, so this is a fact about the
+model and not a failure of the probe.
+
+The reading we prefer is that this task does not force the model to maintain
+state. Only one object is asked about at a time, so the answer can be resolved on
+demand by tracing that object's history, and an explicit assignment carried
+forward is unnecessary. Chess allows no such shortcut: predicting a legal move
+requires the whole position, so the state must be maintained eagerly.
+
+That gives a fourth lesson for anyone building these diagnostics, and it is the
+one we would put first. A task can carry an exact oracle, be learnable, and still
+fail to measure state maintenance, because it never obliges the model to
+maintain anything. Belief consistency is only defined where a belief exists to
+read, and whether one exists is a property of the task, not only of the
+architecture.
+
+
+
+\subsection{Is the measurement useful, or only diagnostic?}
+\label{sec:abstain}
+
+Everything so far is a claim about mechanism. A reader is entitled to ask whether
+the same measurement is worth anything operationally, and the only baseline that
+matters is the model's own confidence. If an external state monitor merely
+recovers what the model already knows about its own uncertainty, it is
+interesting and redundant.
+
+We test this as selective prediction. A system that wants to avoid acting on a
+decayed state abstains on the positions it trusts least, and the question is what
+to rank by. We compare the model's top-1 probability, the entropy of its
+next-move distribution, and the probe's certainty about the squares the chosen
+move touches. That last signal uses only the probe's own output, so it is
+computable at inference from activations, the probe having been fitted against an
+oracle offline.
+
+One version of this experiment is not admissible and we report it only as a
+bound. Ranking by whether the probe is \emph{wrong} on those squares requires the
+oracle at inference, which is the very thing an abstention rule exists to avoid.
+It is an upper bound on what a perfect state monitor could deliver, not a method.
+
+The honest result is modest. Probe certainty alone is a weaker signal than the
+model's own confidence, with an AUC of \result{abAucProbe} against
+\result{abAucConf}. Combined with confidence it is better than either alone: at
+half coverage the illegal-move rate among retained positions falls to
+\result{abComb50} against \result{abConf50} for confidence and
+\result{abEnt50} for entropy, and in a joint fit both terms carry weight,
+\result{abBetaConf} for confidence and \result{abBetaProbe} for probe certainty.
+An external monitor therefore adds something the model does not self-report, and
+it adds less than we hoped.
+
+The gap to the bound is the interesting part. Ranking by oracle-verified
+move-touched state reaches \result{abOracle50} at the same coverage, less than
+half the base rate of \result{abBase}. Most of the benefit an ideal state monitor
+would deliver is not captured by the probe's own certainty, which says the
+limitation is the quality of the state read-out rather than the premise. Better
+read-outs, not a different signal, are the lever.
+
+
+\subsection{Transcript length against position difficulty}
+\label{sec:cycles}
+
+The decay curves are read throughout as loss caused by composing more updates.
+Depth is confounded with position difficulty: a position at ply 100 differs from
+one at ply 10 in material, phase, and legal-move count. The curves alone do not
+license the causal reading, and this test removes the confound.
+
+We insert a reversible cycle, a knight out and back for each side, which returns
+the position exactly while adding four plies of transcript. State is then read on
+an identical position at several transcript lengths.
+
+\input{tab_cycles}
+
+Fidelity falls monotonically, from \result{cycAcc0} [\result{cycLo0},
+\result{cycHi0}] with no insertion to \result{cycAcc12} [\result{cycLo12},
+\result{cycHi12}] after twelve added plies, on \result{cycN} positions whose
+state is unchanged. The intervals at the two ends do not overlap. Transcript
+length alone therefore causes measurable state loss.
+
+The size matters as much as the sign. Twelve plies of pure length cost about four
+points of accuracy, where the natural depth curve falls far further over its
+range. Both factors contribute, and we do not attribute the whole curve to
+composition depth. One caveat we cannot remove: the inserted moves are legal but
+unlike training data, so part of the drop may be distribution shift rather than
+length as such. The random-play result of Section~\ref{sec:randomplay} bounds
+that concern without eliminating it.
+
+
+\subsection{Inference that respects the clustering}
+\label{sec:stats}
+
+Positions within a game are not independent: they share an opening, a player, and
+an accumulating history. Intervals computed over positions therefore understate
+uncertainty, and every interval in this section resamples whole games instead.
+Section~\ref{sec:belief} already reports game-clustered intervals for belief
+consistency on the full evaluation population. This section is a restricted
+sensitivity analysis on a different population, \result{stN} positions from
+\result{stGames} games of which \result{stIll} carry an illegal top-1 move, over
+ply 10 to 80 where the depth buckets used by the predictor comparison are
+defined. Estimates therefore differ slightly from the primary ones, and both are
+reported rather than reconciled by choosing whichever is larger.
+
+\input{tab_stats}
+
+Belief consistency is \result{cbBel} [\result{cbBelLo}, \result{cbBelHi}], against
+\result{cbBelMis} [\result{cbBelMisLo}, \result{cbBelMisHi}] for a mismatched
+belief and \result{cbBelRand} [\result{cbBelRandLo}, \result{cbBelRandHi}] for a
+random illegal move. The intervals are far apart, and the separation does not
+depend on treating positions as independent.
+
+The two predictors of an illegal move separate as well. Whole-board error reaches
+an AUC of \result{cbAucAgg} [\result{cbAucAggLo}, \result{cbAucAggHi}] and
+move-touched error \result{cbAucTouch} [\result{cbAucTouchLo},
+\result{cbAucTouchHi}]. Bootstrapping the difference as a paired quantity gives
+\result{cbAucDiff} [\result{cbAucDiffLo}, \result{cbAucDiffHi}], which excludes
+zero.
+
+A population-averaged logistic fit, with game as the cluster and an exchangeable
+working correlation, gives coefficients with clustered standard errors on standardised
+predictors: \result{geeTouch} (clustered s.e.\ \result{geeTouchSE}) for move-touched
+error against \result{geeAgg} (\result{geeAggSE}) for the aggregate, with
+\result{geeConf} for low model confidence and \result{geeDepth} for depth. The
+ordering survives clustered inference.
+
+\paragraph{Out of sample, not only in sample.} Coefficients can be significant and
+still add little. Splitting by game and fitting on seventy percent of games, the
+held-out log loss falls from \result{lldepthonly} with depth alone to
+\result{llplusaggregate} adding whole-board error, and to \result{llplustouched}
+adding move-touched error instead. Using both gives \result{llplusboth}, and
+adding the model's own confidence \result{llplusbothandconfidence}. The
+move-touched predictor buys several times what the aggregate buys out of sample,
+and it buys most of it even when the aggregate is already present.
+
+\paragraph{A held-out abstention rule.} Fitting and evaluating a selective
+prediction rule on the same positions overstates it. Refitting on training games
+and evaluating on held-out games, the illegal rate among retained positions at
+half coverage is \result{hoComb05} for a rule combining the model's confidence
+with probe certainty, against \result{hoConf05} for confidence alone and
+\result{hoCert05} for probe certainty alone, from a base rate of
+\result{hoBase}. An oracle-verified state monitor would reach
+\result{hoBound05}, which remains the bound rather than a method: establishing it
+at inference needs the ground truth the rule exists to avoid.
+
+
+\subsection{A policy-conditioned state-fidelity horizon}
+\label{sec:hfid}
+
+Both horizons used so far are read off behaviour, and the read-out ablation
+showed why that is fragile: a model can lower its illegal-move rate by hedging
+toward the legal-move prior, without knowing the position any better. A horizon
+defined on the representation is less exposed, because it does not read the
+confidence of the output: a model that spreads its mass more evenly gains nothing
+from doing so. It is not policy-independent, and we do not claim it is. The
+squares it scores are those the selected move touches, and that move comes from
+the output distribution, so a policy change can alter which squares are scored
+even with the state representation unchanged. It is a policy-conditioned
+state-fidelity horizon. A genuinely policy-independent comparison would score a
+fixed set of components, for instance the recorded continuation move, every
+oracle-legal move averaged uniformly, or a candidate set shared across models.
+
+We define $H_{\mathrm{fid}}$ as the depth at which the probability that the probe
+is wrong on the squares the model's chosen move touches first crosses one half.
+It uses the same probe and the same activations as everything else, and it is
+immune to hedging: a model that spreads mass over legal moves gains nothing,
+since the measure asks what it knows, not what it emits.
+
+Read this way the ladder is orderly. The smallest model reaches
+\result{hfidRung1} ply, the baseline \result{hfidAttn}, and the largest
+\result{hfidRung6}. The behavioural horizon orders the same models the same way,
+\result{hintRung1}, \result{hintAttn} and \result{hintRung6} ply, on a shorter
+scale because it asks a harder question of the model. Move-touched error at
+the shallowest depth runs from \result{actErrFirstRung1} in the smallest model to
+\result{actErrFirstRung6} in the largest. We report both horizons throughout, and
+prefer this one where the comparison is between architectures rather than between
+depths, since that is where hedging is most likely to confound a behavioural
+reading.
+
+
+\section{Experimental detail}
+\label{app:methods}
+
+\paragraph{Data.} Public Lichess archives, standard chess only, both players rated
+at least 1600, games between 30 and 160 ply, deduplicated by a hash of the move
+sequence. Moves are tokenised one per move in UCI form, giving a vocabulary of
+\result{nVocab} including padding and a start symbol; there is no sub-move
+tokenisation and no board rendering in the input. Sequences are padded to 161
+tokens and truncated at 160 ply. Splits are by game: \result{ntrainlm} for
+language-model training, \result{ntrainprobe} for probe fitting,
+\result{neval} held out for evaluation.
+
+\paragraph{Oracle.} Every game is replayed with a rules engine, recording after
+each token the occupancy of all 64 squares as one of 13 classes, the side to
+move, and castling rights. Replay completeness is verified before any model is
+measured.
+
+\paragraph{Models.} Pre-norm decoder-only Transformers with learned positional
+embeddings, GELU feed-forward of width four times the model dimension, and no
+dropout. The grid spans 6 to 12 layers and widths 192 to 512, with 6 or 8 heads.
+Training uses AdamW, $\beta = (0.9, 0.95)$, weight decay 0.01, a one-cycle
+schedule peaking at $3\times10^{-4}$ with 5 percent warmup, batch size 32, 12000
+steps, and mixed precision with gradient clipping at 1.0. The final checkpoint is
+used; no checkpoint selection is performed. Seeds 0, 1 and 2 control
+initialisation, batch order, and any auxiliary sampling.
+
+\paragraph{Probes.} One linear head per layer maps the residual stream to 64
+squares by 13 classes, trained with cross-entropy on the probe split only, AdamW
+at $10^{-3}$, two epochs, batch size 48. The reported layer is the one with the
+highest occupied-square accuracy, selected on the probe split rather than on the
+evaluation split. Controls are a per-square per-depth majority predictor, a
+label-permutation control pairing activations with another game's state at equal
+depth, and a randomised-weight model of identical architecture whose probes are
+fitted the same way.
+
+\paragraph{Believed boards.} A decoded board is built by placing the argmax class
+at each square, setting side to move from ply parity, and clearing castling
+rights so that castling cannot be licensed by an assumption we did not decode.
+Legality is tested as pseudo-legality, since a decoded board may lack a king and
+make check tests ill-defined. Moves that fail to parse are counted as illegal.
+
+\paragraph{Engine scoring.} Stockfish 17 at fixed depth 10. Loss is the drop from
+the best available score to the score after the played move, both from the
+mover's point of view, with mate scores mapped to 10000. The blunder threshold is
+100 centipawns, fixed in advance.
+
+\paragraph{Interventions.} Edits are added to the residual stream at the output of
+the probed block, at the final position only. The direction is the difference of
+probe decoder rows for the target and current classes, normalised and scaled to
+$\alpha$ times the residual stream's own root-mean-square magnitude times the
+square root of the model dimension. The reported $\alpha$ is \result{patchAlphaAttn},
+chosen from the sweep in Table~\ref{tab:patchcal} as the smallest value that
+reliably flips the decoded belief while leaving a norm-matched random edit at
+chance. Random controls are drawn isotropically and rescaled to the same norm.
+
+\paragraph{Recurrent channel.} A gated diagonal recurrence of width 64 inserted
+after every fourth block, with the read-out matrix zero-initialised so the module
+begins as the identity. The auxiliary objective, when active, is cross-entropy
+from the channel to the oracle state with weight 1.0. The parameter-matched
+control widens the feed-forward multiplier to 4.156 to absorb the same parameter
+count.
+
+\paragraph{Second domain.} Four objects in four boxes, an explicit initial
+assignment, then 24 operations drawn evenly between a swap of two named boxes and
+a move of a named object to a named box, with a query after every operation
+asking where one object is. Answers are weighted five times in the loss. Details
+of the six designs that failed before this one are in Section~\ref{sec:synthfail}.
