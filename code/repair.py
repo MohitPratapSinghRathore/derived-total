@@ -378,11 +378,14 @@ def main():
     lo2, hi2 = boot_ci(di, games)
     out["correct_minus_irrelevant"] = {"mean": float(di.mean()),
                                        "ci_lo": lo2, "ci_hi": hi2}
-    json.dump(out, open(os.path.join(RES, f"{args.name}_repair.json"), "w"),
-              indent=1)
-
     # entropy-matched contrast: strata defined by the change in entropy the
-    # correct edit produced, contrast taken within stratum
+    # correct edit produced, contrast taken within stratum.
+    #
+    # Everything belonging in the saved record must be computed BEFORE the dump
+    # below. An earlier version dumped at this point, so the matched contrasts
+    # went to stdout and were never persisted. That is invisible when a driver
+    # captures and discards stdout, and it would have produced eighteen ladder
+    # files missing the comparison the argument rests on.
     sd, sdlo, sdhi, sdn = strat_diff(
         rec["correct"]["dr"], rec["wrong_target"]["dr"],
         (rec["correct"]["dent"], rec["wrong_target"]["dent"]), games)
@@ -396,6 +399,8 @@ def main():
     out["raw"] = {c: {k: list(map(float, rec[c][k]))
                       for k in ("dr", "dent", "now_legal")} for c in COND}
     out["raw"]["game"] = list(map(int, games))
+    json.dump(out, open(os.path.join(RES, f"{args.name}_repair.json"), "w"),
+              indent=1)
 
     print(f"\nKILL CRITERION 1  correct - wrong_target = {d.mean():+.4f} "
           f"[{lo:+.4f}, {hi:+.4f}]  -> "
