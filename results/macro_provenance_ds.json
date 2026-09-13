@@ -1,0 +1,1082 @@
+{
+ "nRuns": {
+  "value": "18",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "nRungs": {
+  "value": "6",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "nSeeds": {
+  "value": "3",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "paramsSmall": {
+  "value": "3.4M",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "paramsLarge": {
+  "value": "39.9M",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "spanLadder": {
+  "value": "11.6",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absFromEmptyFirst": {
+  "value": "0.0582",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absFromEmptyLast": {
+  "value": "0.0145",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioFromEmpty": {
+  "value": "4.01",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromEmpty": {
+  "value": "$-$0.574",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromEmptyLo": {
+  "value": "$-$0.748",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromEmptyHi": {
+  "value": "$-$0.331",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absFromOppFirst": {
+  "value": "0.0093",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absFromOppLast": {
+  "value": "0.0030",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioFromOpp": {
+  "value": "3.05",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromOpp": {
+  "value": "$-$0.437",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromOppLo": {
+  "value": "$-$0.586",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromOppHi": {
+  "value": "$-$0.255",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absToOwnFirst": {
+  "value": "0.0357",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absToOwnLast": {
+  "value": "0.0112",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioToOwn": {
+  "value": "3.19",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expToOwn": {
+  "value": "$-$0.474",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expToOwnLo": {
+  "value": "$-$0.492",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expToOwnHi": {
+  "value": "$-$0.452",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absGeometryFirst": {
+  "value": "0.0721",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absGeometryLast": {
+  "value": "0.0443",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioGeometry": {
+  "value": "1.63",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expGeometry": {
+  "value": "$-$0.207",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expGeometryLo": {
+  "value": "$-$0.287",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expGeometryHi": {
+  "value": "$-$0.150",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absLeavesCheckFirst": {
+  "value": "0.0776",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absLeavesCheckLast": {
+  "value": "0.0593",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioLeavesCheck": {
+  "value": "1.31",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expLeavesCheck": {
+  "value": "$-$0.112",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expLeavesCheckLo": {
+  "value": "$-$0.153",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expLeavesCheckHi": {
+  "value": "$-$0.066",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absCorrLocalFirst": {
+  "value": "0.0388",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absCorrLocalLast": {
+  "value": "0.0404",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioCorrLocal": {
+  "value": "0.96",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expCorrLocal": {
+  "value": "+0.023",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expCorrLocalLo": {
+  "value": "$-$0.005",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expCorrLocalHi": {
+  "value": "+0.066",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absIllegalFirst": {
+  "value": "0.2528",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "absIllegalLast": {
+  "value": "0.1323",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "ratioIllegal": {
+  "value": "1.91",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expIllegal": {
+  "value": "$-$0.267",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expIllegalLo": {
+  "value": "$-$0.307",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expIllegalHi": {
+  "value": "$-$0.216",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFree": {
+  "value": "+0.461",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFreeLo": {
+  "value": "+0.259",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFreeHi": {
+  "value": "+0.599",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFreePct": {
+  "value": "100",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffCorr": {
+  "value": "+0.596",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffCorrLo": {
+  "value": "+0.367",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffCorrHi": {
+  "value": "+0.761",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffCorrPct": {
+  "value": "100",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareFromEmptyFirst": {
+  "value": "0.230",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareFromEmptyLast": {
+  "value": "0.110",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareGeometryFirst": {
+  "value": "0.285",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareGeometryLast": {
+  "value": "0.335",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareLeavesFirst": {
+  "value": "0.307",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareLeavesLast": {
+  "value": "0.448",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "sharePolicyFirst": {
+  "value": "0.153",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "sharePolicyLast": {
+  "value": "0.306",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "shareOtherMax": {
+  "value": "0.0000",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "lcDepthRises": {
+  "value": "6",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "lcEarlyLarge": {
+  "value": "0.260",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "lcLateLarge": {
+  "value": "0.519",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "lcWhenLocalOk": {
+  "value": "0.477",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "lcLargestCount": {
+  "value": "15",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "geomWhenLocalOk": {
+  "value": "0.286",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "projFactor": {
+  "value": "25",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "projCorr": {
+  "value": "0.0435",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "projLeaves": {
+  "value": "0.0413",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "projFromEmpty": {
+  "value": "0.0023",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "kParamsSix": {
+  "value": "1.3M",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kIllSix": {
+  "value": "0.1253",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kFailSix": {
+  "value": "2,836",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kPosSix": {
+  "value": "22,634",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kAbsUnrSix": {
+  "value": "0.08193",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kAbsLcSix": {
+  "value": "0.01901",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kShareUnrSix": {
+  "value": "0.654",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kShareLcSix": {
+  "value": "0.152",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kParamsEight": {
+  "value": "25.8M",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kIllEight": {
+  "value": "0.0028",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kFailEight": {
+  "value": "233",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kPosEight": {
+  "value": "84,557",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kAbsUnrEight": {
+  "value": "0.00132",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kAbsLcEight": {
+  "value": "0.00095",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kShareUnrEight": {
+  "value": "0.479",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kShareLcEight": {
+  "value": "0.345",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kParamsSixteen": {
+  "value": "51.0M",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kIllSixteen": {
+  "value": "0.0012",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kFailSixteen": {
+  "value": "101",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kPosSixteen": {
+  "value": "84,557",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kAbsUnrSixteen": {
+  "value": "0.00045",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kAbsLcSixteen": {
+  "value": "0.00040",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kShareUnrSixteen": {
+  "value": "0.377",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kShareLcSixteen": {
+  "value": "0.334",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kSpan": {
+  "value": "38",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpUnr": {
+  "value": "$-$1.415",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpUnrLo": {
+  "value": "$-$1.482",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpUnrHi": {
+  "value": "$-$1.365",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpLc": {
+  "value": "$-$1.044",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpLcLo": {
+  "value": "$-$1.121",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpLcHi": {
+  "value": "$-$0.978",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpOwn": {
+  "value": "$-$1.276",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpOwnLo": {
+  "value": "$-$1.420",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kExpOwnHi": {
+  "value": "$-$1.185",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kDiff": {
+  "value": "+0.371",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kDiffLo": {
+  "value": "+0.278",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kDiffHi": {
+  "value": "+0.464",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kSixLcEarly": {
+  "value": "0.060",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kSixLcLate": {
+  "value": "0.266",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kSixUnrEarly": {
+  "value": "0.730",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kSixUnrLate": {
+  "value": "0.553",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "othPos": {
+  "value": "211,815",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othFail": {
+  "value": "161",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othRate": {
+  "value": "0.00076",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othOccupied": {
+  "value": "0",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othNoFlank": {
+  "value": "160",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othShareNoFlank": {
+  "value": "0.994",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othDepthA": {
+  "value": "6",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othDepthB": {
+  "value": "32",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othDepthC": {
+  "value": "123",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "cgProbeFirst": {
+  "value": "0.731",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgProbeLast": {
+  "value": "0.315",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgLayer": {
+  "value": "6",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "ourProbeFirst": {
+  "value": "0.777",
+  "source": "results/attn_8L256_s0_entangle.json"
+ },
+ "ourProbeLast": {
+  "value": "0.167",
+  "source": "results/attn_8L256_s0_entangle.json"
+ },
+ "ourBelOwn": {
+  "value": "0.355",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "ourBelMis": {
+  "value": "0.050",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "ourBelRand": {
+  "value": "0.007",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "ourBelRatio": {
+  "value": "7.2",
+  "source": "results/attn_8L256_s0_belief.json"
+ },
+ "ourAucAgg": {
+  "value": "0.587",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "ourAucAct": {
+  "value": "0.647",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "ourAucDiff": {
+  "value": "+0.060",
+  "source": "results/attn_8L256_s0_auc.json"
+ },
+ "cgIllH": {
+  "value": "0.0026",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgNIllH": {
+  "value": "131",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelOwnH": {
+  "value": "0.122",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelOwnHLo": {
+  "value": "0.070",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelOwnHHi": {
+  "value": "0.192",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelMisH": {
+  "value": "0.038",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelMisHLo": {
+  "value": "0.008",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelMisHHi": {
+  "value": "0.073",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRandH": {
+  "value": "0.000",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRandHLo": {
+  "value": "0.000",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRandHHi": {
+  "value": "0.000",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRefH": {
+  "value": "0.012",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRefHLo": {
+  "value": "0.011",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRefHHi": {
+  "value": "0.014",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRatioH": {
+  "value": "3.2",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgAucAggH": {
+  "value": "0.530",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgAucActH": {
+  "value": "0.608",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgAucDiffH": {
+  "value": "+0.078",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditH": {
+  "value": "$-$0.078",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditRandH": {
+  "value": "$-$0.005",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditDiffH": {
+  "value": "$-$0.074",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditDiffHLo": {
+  "value": "$-$0.095",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditDiffHHi": {
+  "value": "$-$0.052",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditGamesH": {
+  "value": "100",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgFlipH": {
+  "value": "1.000",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgIllR": {
+  "value": "0.0231",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgNIllR": {
+  "value": "903",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelOwnR": {
+  "value": "0.188",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelOwnRLo": {
+  "value": "0.160",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelOwnRHi": {
+  "value": "0.213",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelMisR": {
+  "value": "0.061",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelMisRLo": {
+  "value": "0.046",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelMisRHi": {
+  "value": "0.078",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRandR": {
+  "value": "0.003",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRandRLo": {
+  "value": "0.000",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRandRHi": {
+  "value": "0.008",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRefR": {
+  "value": "0.015",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRefRLo": {
+  "value": "0.015",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRefRHi": {
+  "value": "0.016",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgBelRatioR": {
+  "value": "3.1",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgAucAggR": {
+  "value": "0.485",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgAucActR": {
+  "value": "0.552",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgAucDiffR": {
+  "value": "+0.068",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditR": {
+  "value": "$-$0.042",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditRandR": {
+  "value": "$-$0.005",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditDiffR": {
+  "value": "$-$0.037",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditDiffRLo": {
+  "value": "$-$0.050",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditDiffRHi": {
+  "value": "$-$0.026",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgEditGamesR": {
+  "value": "100",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "cgFlipR": {
+  "value": "1.000",
+  "source": "results/chessgpt2_{probe,belief_*,edit_*}.json"
+ },
+ "metaKillPos": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaKillN": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaKillSig": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaKillP": {
+  "value": "$7.6\\times10^{-6}$",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaKillMean": {
+  "value": "+0.056",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaKillMin": {
+  "value": "+0.019",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaKillMax": {
+  "value": "+0.112",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocPos": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocN": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocSig": {
+  "value": "11",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocP": {
+  "value": "$7.6\\times10^{-6}$",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocMean": {
+  "value": "+0.039",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocMin": {
+  "value": "+0.009",
+  "source": "results/attn_*_repair.json"
+ },
+ "metaLocMax": {
+  "value": "+0.072",
+  "source": "results/attn_*_repair.json"
+ },
+ "repN": {
+  "value": "600",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "repGames": {
+  "value": "61",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "drCorrect": {
+  "value": "+0.140",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "nlCorrect": {
+  "value": "0.147",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "dentCorrect": {
+  "value": "$-$0.017",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "flipCorrect": {
+  "value": "0.826",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "drIrr": {
+  "value": "+0.061",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "nlIrr": {
+  "value": "0.203",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "dentIrr": {
+  "value": "$-$0.177",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "flipIrr": {
+  "value": "0.163",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "drWrong": {
+  "value": "+0.053",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "nlWrong": {
+  "value": "0.037",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "dentWrong": {
+  "value": "$-$0.007",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "flipWrong": {
+  "value": "0.171",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "drRand": {
+  "value": "+0.041",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "nlRand": {
+  "value": "0.268",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "dentRand": {
+  "value": "+0.298",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "flipRand": {
+  "value": "0.080",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "drNull": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "nlNull": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "dentNull": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "flipNull": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "rawCW": {
+  "value": "+0.087",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "matchedCW": {
+  "value": "+0.036",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "matchedCWLo": {
+  "value": "+0.011",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "matchedCWHi": {
+  "value": "+0.058",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "inflation": {
+  "value": "2.4",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "noflat": {
+  "value": "+0.108",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "noflatN": {
+  "value": "301",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "sweepQ": {
+  "value": "+0.042",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "sweepOne": {
+  "value": "+0.140",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "sweepTwo": {
+  "value": "$-$0.046",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "sweepFour": {
+  "value": "$-$0.091",
+  "source": "results/attn_8L256_s0_repair.json"
+ },
+ "invN": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "invCount": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "invRandBest": {
+  "value": "16",
+  "source": "results/attn_*_repair.json"
+ },
+ "invCorrBest": {
+  "value": "18",
+  "source": "results/attn_*_repair.json"
+ },
+ "invP": {
+  "value": "$7.6\\times10^{-6}$",
+  "source": "results/attn_*_repair.json"
+ },
+ "invGapMean": {
+  "value": "+0.102",
+  "source": "results/attn_*_repair.json"
+ },
+ "invGapMin": {
+  "value": "+0.048",
+  "source": "results/attn_*_repair.json"
+ },
+ "invGapMax": {
+  "value": "+0.143",
+  "source": "results/attn_*_repair.json"
+ },
+ "indRec": {
+  "value": "0.733",
+  "source": "results/attn_8L256_s0_induced.json"
+ },
+ "indRecLo": {
+  "value": "0.699",
+  "source": "results/attn_8L256_s0_induced.json"
+ },
+ "indRecHi": {
+  "value": "0.770",
+  "source": "results/attn_8L256_s0_induced.json"
+ },
+ "indRand": {
+  "value": "0.253",
+  "source": "results/attn_8L256_s0_induced.json"
+ },
+ "indDecode": {
+  "value": "0.679",
+  "source": "results/attn_8L256_s0_induced.json"
+ },
+ "natRepaired": {
+  "value": "0.114",
+  "source": "results/attn_8L256_s0_decompose.json"
+ },
+ "indNatRatio": {
+  "value": "6.4",
+  "source": "results/attn_8L256_s0_induced.json"
+ },
+ "decMem": {
+  "value": "0.054",
+  "source": "results/attn_8L256_s0_decompose.json"
+ },
+ "decMix": {
+  "value": "0.060",
+  "source": "results/attn_8L256_s0_decompose.json"
+ },
+ "decPol": {
+  "value": "0.184",
+  "source": "results/attn_8L256_s0_decompose.json"
+ },
+ "decUnr": {
+  "value": "0.701",
+  "source": "results/attn_8L256_s0_decompose.json"
+ },
+ "fidOccBefore": {
+  "value": "0.326",
+  "source": "results/attn_8L256_s0_repair_fidelity*.json"
+ },
+ "fidOccAfter": {
+  "value": "0.185",
+  "source": "results/attn_8L256_s0_repair_fidelity*.json"
+ },
+ "fidTargetAll": {
+  "value": "0.304",
+  "source": "results/attn_8L256_s0_repair_fidelity*.json"
+ },
+ "fidTargetPerSq": {
+  "value": "0.279",
+  "source": "results/attn_8L256_s0_repair_fidelity*.json"
+ },
+ "fidTargetTwo": {
+  "value": "0.677",
+  "source": "results/attn_8L256_s0_repair_fidelity*.json"
+ },
+ "natDivMedian": {
+  "value": "14",
+  "source": "results/attn_8L256_s0_natdiv.json"
+ },
+ "refreshNoop": {
+  "value": "0.296",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "refreshRepair": {
+  "value": "0.295",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "refreshStale": {
+  "value": "0.297",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "refreshRandom": {
+  "value": "0.296",
+  "source": "results/attn_8L256_s0_refresh.json"
+ },
+ "capGapMin": {
+  "value": "+0.011",
+  "source": "results/attn_8L256_s0_entangle.json"
+ },
+ "capGapMax": {
+  "value": "+0.033",
+  "source": "results/attn_8L256_s0_entangle.json"
+ },
+ "capCtlDeep": {
+  "value": "0.000",
+  "source": "results/attn_8L256_s0_entangle.json"
+ },
+ "capRandDeep": {
+  "value": "0.015",
+  "source": "results/attn_8L256_s0_entangle.json"
+ },
+ "powMdePct": {
+  "value": "19",
+  "source": "results/s5_power.json"
+ },
+ "powSeedRel": {
+  "value": "0.028",
+  "source": "results/s5_power.json"
+ },
+ "preregHash": {
+  "value": "28b68e5200dc0dba",
+  "source": "PREREGISTRATION.sha256"
+ }
+}

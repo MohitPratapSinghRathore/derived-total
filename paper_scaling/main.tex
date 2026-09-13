@@ -1,0 +1,651 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}\setlength{\emergencystretch}{3em}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,array,xcolor,enumitem,caption}
+\graphicspath{{figures/}}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\input{results_macros.tex}   % measured values only
+
+\newif\ifanon
+\ifdefined\ANON\anontrue\else\anonfalse\fi
+\ifanon
+  \newcommand{\priorp}{(Anonymous, 2026)}
+  \newcommand{\priort}{Anonymous (2026)}
+\else
+  \newcommand{\priorp}{\citep{rathore2026coherent}}
+  \newcommand{\priort}{\citet{rathore2026coherent}}
+\fi
+
+\title{\bf Scale Fixes Local Errors First: Differential Scaling\\of Chess Transformer Failures}
+
+\ifanon
+  \author{\normalsize\itshape Author names and affiliations removed for double-anonymous peer review}
+\else
+  \author{
+    Mohit Pratap Singh Rathore\\ \small Oviqo Private Limited
+    \and
+    Gunveer Sinh Kalsi\\ \small Oviqo Private Limited
+    \and
+    Sriharsha Meduri\\ \small Oviqo Private Limited
+  }
+\fi
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Scaling reduces how often language models make long-horizon errors, but it is
+rarely asked which errors it removes. We classify every illegal move made by
+search-free chess transformers by what made it illegal, using only a rules engine,
+and measure how the absolute rate of each class falls with model size. Across
+\result{nRuns} models spanning \result{paramsSmall} to \result{paramsLarge}
+parameters, errors decidable from the move's own squares fall with exponent
+\result{expFromEmpty}, while moves illegal only because they leave the king in
+check fall with exponent \result{expLeavesCheck}: a paired differential of
+\result{diffProbeFree} [\result{diffProbeFreeLo}, \result{diffProbeFreeHi}]. Failures
+that occur despite correct internal belief about the move's squares do not fall
+at all, exponent \result{expCorrLocal}. The ordering replicates on an independent
+character-level ladder spanning a \result{kSpan}-fold parameter range, and in
+OthelloGPT every residual failure is of the non-local kind. A causal account
+follows: belief is coupled to action locally, a repair edit can correct about two
+squares, and the class that scale leaves behind is the class local correction
+cannot reach. The standard intervention metric inverts on the same data. Illegal
+move rate ranks a norm-matched random edit above correct repair in
+\result{invCount} of \result{invN} models, because hedging lowers it.
+\end{abstract}
+
+\noindent\textbf{Keywords:} scaling, failure analysis, world models, state
+tracking, chess, interpretability, evaluation methodology
+
+% ====================================================================
+\section{Introduction}
+
+Scaling laws describe how aggregate loss falls with parameters and data
+\citep{kaplan2020scaling,hoffmann2022training}. They say much less about the
+composition of what remains. A model that makes half as many errors at ten times
+the size may have removed every kind of error evenly, or removed one kind almost
+entirely and left another untouched. The two cases recommend different research.
+If scale removes errors evenly, more scale is the remedy for all of them. If it
+removes some and not others, the ones it leaves are where effort should go, and
+interventions aimed at the kind scale already removes are buying something that
+arrives for free.
+
+Long-horizon reasoning is where this question matters most and is hardest to ask,
+because in open-ended text there is no ground truth for why a step was wrong. We
+ask it where there is. A search-free transformer trained on chess move notation
+produces a move at every position, a rules engine decides whether it is legal,
+and when it is not, the same engine says why. Some illegal moves are decidable
+from the two squares the move names: the source square is empty, or holds an
+opponent's piece, or the destination holds one of the mover's own. Others turn on
+the whole board: the move is geometrically possible for the piece but its path is
+blocked, or it is pseudo-legal and rejected only because it leaves the king in
+check. That distinction between local and global illegality is exact, needs no
+model internals, and is the axis along which we measure scaling.
+
+\paragraph{What we find.}
+\begin{enumerate}[nosep]
+\item \textbf{Failure classes scale at different rates, ordered by locality.}
+Absolute rates of local errors fall steeply with size and global ones slowly. The
+empty-source class falls \result{ratioFromEmpty}-fold across our ladder and the
+check class \result{ratioLeavesCheck}-fold, a differential exponent of
+\result{diffProbeFree} that excludes zero in every rung resample. No probe,
+intervention, or interpretability method enters this result.
+\item \textbf{It is not an artefact of our models.} The same ordering holds on an
+independent ladder with different data, notation, and training code, and in a
+game whose legality is non-local by construction.
+\item \textbf{The component scale does not remove is the one local correction
+cannot reach.} Internal belief is causally coupled to action at the squares a
+move touches, a residual-stream repair can install at most about two squares, and
+failures that occur despite correct belief at those squares have an exponent
+indistinguishable from zero.
+\item \textbf{The usual way of scoring interventions reads this backwards.}
+Illegal-move rate rewards edits that flatten the output distribution, and on our
+data it prefers a random direction to the correct repair in every model.
+\end{enumerate}
+
+\paragraph{Contributions.}
+A probe-free, rules-grounded measurement of how failure composition changes with
+scale; its replication across two ladders and two games; a mechanistic account,
+with a measured capability limit on the causal instrument; and a demonstration
+that a widely used intervention metric is anti-correlated with the effect it is
+meant to measure. The probe and edit instruments used in Section~\ref{sec:mech}
+are established in prior work \priorp; here they serve only to
+explain a result that stands without them.
+
+% ====================================================================
+\section{Related Work}
+
+\paragraph{Scaling and what it leaves.}
+Aggregate loss follows power laws in parameters, data, and compute
+\citep{kaplan2020scaling,hoffmann2022training}. Decomposing an aggregate into
+components with separate exponents is the step we take, applied to error classes
+rather than to loss, in a domain where the classes are defined by an oracle
+rather than by annotation.
+
+\paragraph{World models in game transformers.}
+Linear probes recover board state from move sequences \citep{li2023emergent},
+with linear structure \citep{nanda2023emergent}; chess is an established
+state-tracking testbed \citep{toshniwal2022chess}; and board-state probes in a
+character-level chess model can be intervened on \citep{karvonen2024emergent},
+later serving as ground truth for dictionary learning \citep{karvonen2024measuring}.
+\citet{walker2026chess} benchmark exact state tracking across architectures at a
+parameter range close to ours, \citet{li2026tracking} separate state tracking from
+decision quality, and \citet{pereira2026transformers} and
+\citet{harang2025tracking} document state decay over long generations. State
+decay and chess state tracking are not our contribution; how the composition of
+failure changes with size is.
+
+\paragraph{Coupling between probes and behaviour.}
+\citet{balogh2026verification} find the fraction of illegal moves legal on a
+probe-reconstructed board small in large-data models, and a probe gradient
+nearly orthogonal to the output head. Section~\ref{sec:mech} reconciles this with
+a strong causal edit effect: coupling is local, so whole-board measures
+understate it and square-level ones do not.
+
+\paragraph{Evaluating interventions.}
+Inference-time search and verification \citep{yao2023tree,lightman2024lets,
+wang2023selfconsistency} and causal editing \citep{meng2022locating} are commonly
+scored by an end-task error rate. Section~\ref{sec:inversion} shows why that rate
+can reward perturbations for the wrong reason.
+
+% ====================================================================
+\section{Setup}
+\label{sec:setup}
+
+\paragraph{Models.}
+Our ladder has \result{nRungs} decoder-only transformers from \result{paramsSmall}
+to \result{paramsLarge} parameters, each trained with \result{nSeeds} seeds, for
+\result{nRuns} runs. Models read one token per move in UCI notation and are
+trained on human games, with evaluation on held-out games and no search at inference. Depth and
+width vary together along the ladder, so a size exponent here is not a pure
+depth or width exponent (Section~\ref{sec:limits}).
+
+\paragraph{Failure taxonomy.}
+At every position from ply 20 onward we take the model's top-1 move and ask the
+rules engine whether it is legal. Each illegal move is assigned to exactly one
+class, in priority order, by what made it illegal:
+\emph{empty source} (no piece on the source square),
+\emph{opponent source} (the source holds the other side's piece),
+\emph{own destination} (the destination holds the mover's own piece),
+\emph{geometry} (a piece of the right colour is present but cannot reach the
+destination, or its path is blocked), and
+\emph{leaves check} (pseudo-legal, rejected only because the king would be in
+check). The first three are decidable from the two named squares. Geometry
+depends on intervening squares, and check on the positions of every attacker.
+Across all \result{nRuns} runs the residual class that none of these rules catch
+has a maximum share of \result{shareOtherMax}, which confirms the taxonomy is
+exhaustive and the parser correct; it is a quality check, not a finding.
+
+\paragraph{Absolute rates, not shares.}
+We report each class as a fraction of all scored positions, its share of illegal
+moves multiplied by the illegal-move rate. Shares are misleading here: the
+illegal-move rate itself falls with size, so a class whose absolute rate falls can
+still grow as a share of what remains. We state this because an earlier draft of
+this analysis read a rising share as the model getting worse at a class it was in
+fact getting better at.
+
+\paragraph{Exponents and intervals.}
+A class's exponent is the slope of log absolute rate on log parameter count,
+fitted to all runs. Intervals resample the \result{nRungs} rungs with
+replacement, since seeds within a rung are not independent draws of the
+architecture. A differential between two classes is bootstrapped on paired
+resamples, so its interval is on the difference itself.
+
+% ====================================================================
+\section{Differential Scaling}
+\label{sec:scaling}
+
+\begin{table}[t]
+\centering\small
+\caption{Absolute failure rate per scored position at the smallest and largest
+rung, mean over seeds, and the size exponent with its rung-resampled 95\%
+interval. Classes are ordered by how local the rule deciding them is. The last row
+is a cross-cutting flag computed with a probe (Section~\ref{sec:mech}), not a sixth
+disjoint class, and must not be summed with the others.}
+\label{tab:exponents}
+\begin{tabular}{lcccc}
+\toprule
+class & \result{paramsSmall} & \result{paramsLarge} & fold drop & exponent [95\% CI] \\
+\midrule
+empty source     & \result{absFromEmptyFirst} & \result{absFromEmptyLast} & \result{ratioFromEmpty} & \result{expFromEmpty} [\result{expFromEmptyLo}, \result{expFromEmptyHi}] \\
+own destination  & \result{absToOwnFirst} & \result{absToOwnLast} & \result{ratioToOwn} & \result{expToOwn} [\result{expToOwnLo}, \result{expToOwnHi}] \\
+opponent source  & \result{absFromOppFirst} & \result{absFromOppLast} & \result{ratioFromOpp} & \result{expFromOpp} [\result{expFromOppLo}, \result{expFromOppHi}] \\
+geometry         & \result{absGeometryFirst} & \result{absGeometryLast} & \result{ratioGeometry} & \result{expGeometry} [\result{expGeometryLo}, \result{expGeometryHi}] \\
+leaves check     & \result{absLeavesCheckFirst} & \result{absLeavesCheckLast} & \result{ratioLeavesCheck} & \result{expLeavesCheck} [\result{expLeavesCheckLo}, \result{expLeavesCheckHi}] \\
+\midrule
+all illegal moves & \result{absIllegalFirst} & \result{absIllegalLast} & \result{ratioIllegal} & \result{expIllegal} [\result{expIllegalLo}, \result{expIllegalHi}] \\
+\midrule
+\textit{despite correct local belief} & \result{absCorrLocalFirst} & \result{absCorrLocalLast} & \result{ratioCorrLocal} & \result{expCorrLocal} [\result{expCorrLocalLo}, \result{expCorrLocalHi}] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{scaling.png}
+\caption{Absolute failure rate against parameter count, log-log, so each line is a
+power law and its slope, shown in each label, is the exponent. (a) Our ladder; each
+point is one run. (b) An independent character-level ladder
+(Section~\ref{sec:external}); each point is one checkpoint. In both, the local
+class falls faster than the global one.}
+\label{fig:scaling}
+\end{figure}
+
+Every class falls with size, so the result is not that larger models get worse at
+anything. It is that they get better at different things at very different rates
+(Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The exponents order
+themselves by how local the rule is. Empty-source errors fall with exponent
+\result{expFromEmpty}; geometry, which depends on the squares between source and
+destination, with \result{expGeometry}; and check violations, which depend on
+every attacker's position, with \result{expLeavesCheck}. The paired differential
+between the check and empty-source exponents is \result{diffProbeFree}
+[\result{diffProbeFreeLo}, \result{diffProbeFreeHi}], positive in
+\result{diffProbeFreePct}\% of rung resamples.
+
+This is a claim about composition, and composition shifts accordingly. The
+empty-source share of illegal moves falls from \result{shareFromEmptyFirst} to
+\result{shareFromEmptyLast} while the check share rises from
+\result{shareLeavesFirst} to \result{shareLeavesLast}; geometry moves only from
+\result{shareGeometryFirst} to \result{shareGeometryLast}. The shift is
+substantially one class collapsing into another rather than diffuse rebalancing.
+Within models, check violations also concentrate at depth: their share rises from
+early to late game in \result{lcDepthRises} of \result{nRungs} rungs, from
+\result{lcEarlyLarge} to \result{lcLateLarge} at the largest.
+
+Nothing in this section uses model internals. The measurement is a rules engine
+and a move counter, which makes it reproducible against any chess model and immune
+to objections about probe validity.
+
+\paragraph{An illustrative extrapolation.}
+Extending the fitted lines \result{projFactor}-fold beyond our largest model, to
+one billion parameters, gives check violations at \result{projLeaves} per position
+against empty-source errors at \result{projFromEmpty}, and failures despite
+correct local belief at \result{projCorr}. This is far outside the fitted range and
+we offer it only to show what the exponents imply if they held: the category that
+scale does not remove would become the largest.
+
+% ====================================================================
+\section{External Validity}
+\label{sec:external}
+
+\paragraph{An independent ladder.}
+Karvonen's lichess checkpoints \citep{karvonen2024emergent} differ from ours in
+every respect we could change without training: character-level PGN rather than
+one token per move, standard algebraic notation rather than UCI, roughly 16M
+training games rather than ours, and different training code. We use its
+\result{kParamsSix}, \result{kParamsEight}, and \result{kParamsSixteen} checkpoints,
+converted and verified by legal play before any measurement, and read the model's
+move by greedy character decoding at verified move boundaries.
+
+Algebraic notation changes the taxonomy in an instructive way. It never names a
+source square, so the empty-source class cannot occur: a model that does not name
+the square cannot place a piece on an empty one. The nearest local class is
+\emph{unreachable}, no piece of the named type can reach the destination, which
+also absorbs path blocking. That makes the local class less local than ours and
+biases the comparison against the result.
+
+The ordering holds (Table~\ref{tab:external}, Figure~\ref{fig:scaling}b).
+Unreachable errors fall with exponent \result{kExpUnr} and check violations with
+\result{kExpLc}, a differential of \result{kDiff}, against \result{diffProbeFree} on
+our ladder. The local share of failures falls from \result{kShareUnrSix} to
+\result{kShareUnrSixteen} while the check share rises from \result{kShareLcSix} to
+\result{kShareLcSixteen}. Within the smallest checkpoint the check share rises from
+\result{kSixLcEarly} to \result{kSixLcLate} across depth while the unreachable
+share falls from \result{kSixUnrEarly} to \result{kSixUnrLate}. At comparable size
+this ladder fails far less often than ours, because it was trained on far more
+data, so only exponents are comparable and never levels.
+
+\begin{table}[t]
+\centering\small
+\caption{Independent ladder. Absolute rates per scored position. With three
+checkpoints no uncertainty in the fit itself can be estimated; the intervals
+propagate only each checkpoint's sampling noise in class shares and should be read
+as a lower bound on uncertainty, not as a confidence statement about the slope.}
+\label{tab:external}
+\begin{tabular}{lcccc}
+\toprule
+checkpoint & illegal & failures & unreachable & leaves check \\
+\midrule
+\result{kParamsSix}     & \result{kIllSix}     & \result{kFailSix}     & \result{kAbsUnrSix}     & \result{kAbsLcSix} \\
+\result{kParamsEight}   & \result{kIllEight}   & \result{kFailEight}   & \result{kAbsUnrEight}   & \result{kAbsLcEight} \\
+\result{kParamsSixteen} & \result{kIllSixteen} & \result{kFailSixteen} & \result{kAbsUnrSixteen} & \result{kAbsLcSixteen} \\
+\midrule
+exponent & & & \result{kExpUnr} [\result{kExpUnrLo}, \result{kExpUnrHi}] & \result{kExpLc} [\result{kExpLcLo}, \result{kExpLcHi}] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{A game with non-local rules.}
+Othello legality is non-local by construction: a move is legal only if it flanks a
+line of opponent discs, so it is never decidable from the target square. There is
+no published Othello ladder, so no exponent can be fitted, and we test only what
+the claim implies for a single well-trained model: that its residual failures
+should be the non-local kind. In Li's synthetic OthelloGPT \citep{li2023emergent},
+across \result{othPos} positions and \result{othFail} failures, \result{othOccupied}
+are moves onto an occupied square and \result{othNoFlank} are moves that flank
+nothing. The comparison is weaker than it looks, because discs never leave a
+square: whether a square is occupied reduces to whether it appears in the move
+history, which requires no state tracking at all. Failures also concentrate late,
+\result{othDepthA}, \result{othDepthB}, and \result{othDepthC} across the three move
+bands.
+
+\paragraph{Heavy training.}
+The mechanism in Section~\ref{sec:mech} rests on three measurements taken on
+models trained on about a hundred thousand games. We repeated all three on
+Karvonen's character-level model trained on roughly 16M games
+(Table~\ref{tab:chessgpt}). Its board state at depth is better than ours, so the
+comparison is not against a model whose state was hard to extract: probe accuracy
+on occupied squares is \result{cgProbeFirst} early and \result{cgProbeLast} late,
+against \result{ourProbeFirst} and \result{ourProbeLast} for ours. Human games give
+only \result{cgNIllH} illegal moves, so we also report uniformly random legal play,
+which lifts the illegal rate from \result{cgIllH} to \result{cgIllR}.
+
+\begin{table}[t]
+\centering\small
+\caption{The three mechanism measurements on a model trained on roughly 16M games.
+Belief consistency is the fraction of illegal moves legal on the probe-decoded
+board. The AUC on our models is a mean over depth buckets and on Chess-GPT is
+pooled over depth, which is not the same quantity; only the sign and rough size of
+the move-touched advantage are compared. Chess-GPT's move-touched square is the
+destination, since algebraic notation names no source.}
+\label{tab:chessgpt}
+\begin{tabular}{lccc}
+\toprule
+& ours & Chess-GPT, human & Chess-GPT, random play \\
+\midrule
+belief consistency, own board & \result{ourBelOwn} & \result{cgBelOwnH} & \result{cgBelOwnR} \\
+\quad mismatched board        & \result{ourBelMis} & \result{cgBelMisH} & \result{cgBelMisR} \\
+\quad random move             & \result{ourBelRand} & \result{cgBelRandH} & \result{cgBelRandR} \\
+\quad own / mismatched        & \result{ourBelRatio} & \result{cgBelRatioH} & \result{cgBelRatioR} \\
+\midrule
+AUC, whole board              & \result{ourAucAgg} & \result{cgAucAggH} & \result{cgAucAggR} \\
+AUC, move-touched             & \result{ourAucAct} & \result{cgAucActH} & \result{cgAucActR} \\
+\quad advantage               & \result{ourAucDiff} & \result{cgAucDiffH} & \result{cgAucDiffR} \\
+\midrule
+edit, state direction         & n/a & \result{cgEditH} & \result{cgEditR} \\
+edit, norm-matched random     & & \result{cgEditRandH} & \result{cgEditRandR} \\
+edit, manipulation check      & & \result{cgFlipH} & \result{cgFlipR} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All three hold, at reduced size. The model's illegal moves are legal on its own
+decoded board far more often than on another position's, at a ratio of
+\result{cgBelRatioR} against \result{ourBelRatio} for ours. Fidelity at the square
+the move targets predicts illegality where whole-board fidelity is near chance.
+And emptying a square in the model's belief lowers the probability of moves from
+it, by \result{cgEditDiffR} [\result{cgEditDiffRLo}, \result{cgEditDiffRHi}] beyond a
+norm-matched random edit, with the decoded square flipped in \result{cgFlipR} of
+cases. Heavy training weakens coherent error without removing it.
+
+% ====================================================================
+\section{Mechanism}
+\label{sec:mech}
+
+Why does scale leave the global class behind? Three measurements, using the probe
+and edit instruments of \priort, point to the same answer.
+
+\paragraph{Coupling is local.}
+We repair the model's belief at the squares its illegal move touches by adding
+probe-derived occupancy directions to the residual stream, and score the change in
+a forced-choice preference $r = P(m^\ast)/(P(m^\ast)+P(m_{\mathrm{ill}}))$ between
+the best legal move and the illegal one, which is invariant to uniform flattening
+of the distribution. Two controls matter. A wrong-target edit installs the same
+occupancy at an unrelated square; an irrelevant edit spends an identical budget on
+squares that are wrongly decoded but not touched by the move. Both are matched to
+correct repair in magnitude and construction, and all contrasts are taken on
+positions where the two edits changed the output entropy comparably. Across
+\result{metaKillN} models, correct repair beats wrong-target in
+\result{metaKillPos} (sign test \result{metaKillP}) and beats the irrelevant edit in
+\result{metaLocPos} (\result{metaLocP}), mean advantage \result{metaLocMean}. Only
+\result{metaLocSig} of the irrelevant-edit contrasts exclude zero individually,
+because matching retains about half the positions per run; the evidence is that
+none of \result{metaLocN} is negative. Correcting the squares the move depends on
+changes behaviour more than correcting other wrong squares, which reconciles a
+weak whole-board coupling \citep{balogh2026verification} with a strong local one.
+
+\paragraph{Correction reaches about two squares.}
+The repair channel works: when we corrupt a single square ourselves and repair it,
+the model recovers a legal move in \result{indRec} [\result{indRecLo},
+\result{indRecHi}] of cases against \result{indRand} for a random repair. On the
+model's own failures, repair at the touched squares restores a legal move in only
+\result{natRepaired}, a \result{indNatRatio}-fold gap. Natural failures involve a
+median of \result{natDivMedian} wrongly decoded squares, so we tried repairing all
+of them. It fails in a specific way (Table~\ref{tab:mechanism}): a two-square edit
+restores the decoded value at \result{fidTargetTwo} of its targets, while an
+all-square edit restores \result{fidTargetAll}, and full strength per square does
+no better at \result{fidTargetPerSq}. Whole-board repair lowers occupied-square
+decoding accuracy from \result{fidOccBefore} to \result{fidOccAfter}. The instrument
+has a capability limit of roughly two squares, whatever the edit magnitude.
+
+\begin{table}[t]
+\centering\small
+\caption{Mechanism summary. Meta rows count models out of \result{metaKillN};
+repair and fidelity rows are from a single model.}
+\label{tab:mechanism}
+\begin{tabular}{lc}
+\toprule
+correct beats wrong-target edit, models          & \result{metaKillPos} / \result{metaKillN} \\
+correct beats irrelevant-square edit, models     & \result{metaLocPos} / \result{metaLocN} \\
+\midrule
+induced single-square corruption, recovered      & \result{indRec} \\
+\quad random repair                               & \result{indRand} \\
+natural failures, recovered by touched-square repair & \result{natRepaired} \\
+\midrule
+decoded value restored, two-square edit          & \result{fidTargetTwo} \\
+decoded value restored, all-square edit          & \result{fidTargetAll} \\
+occupied-square accuracy, before and after all-square edit & \result{fidOccBefore} to \result{fidOccAfter} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{What local correction cannot reach.}
+Where decoded belief is already correct at both squares a move touches, a check
+violation accounts for \result{lcWhenLocalOk} of failures on average against
+\result{geomWhenLocalOk} for geometry, and is the largest class in
+\result{lcLargestCount} of \result{nRuns} models. Such failures cannot be attributed
+to the decoded belief being wrong at the move's squares, and a check violation is
+decided by squares an edit of two cannot address. Their
+absolute rate is flat with size, exponent \result{expCorrLocal}
+[\result{expCorrLocalLo}, \result{expCorrLocalHi}], a differential against
+empty-source errors of \result{diffCorr} [\result{diffCorrLo}, \result{diffCorrHi}].
+An earlier oracle-free attempt to repair state by re-presenting information the
+model already attends to also failed, leaving the late-game illegal rate at
+\result{refreshRepair} against \result{refreshNoop} without intervention.
+
+We do not claim these failures are unrepairable in principle. The instrument cannot
+install a multi-square correction, so whether the residual is genuine policy
+failure or simply beyond its reach is undetermined, and we recorded the stronger
+reading as retracted (Appendix~\ref{app:integrity}). The claim is narrower and
+sufficient: the component scale leaves behind is concentrated in exactly the
+failures that correction at the move's squares cannot address.
+
+% ====================================================================
+\section{The Standard Metric Inverts}
+\label{sec:inversion}
+
+Interventions on state are usually scored by whether the model's output becomes
+legal. On our repair edits that metric orders the conditions nearly in reverse
+(Table~\ref{tab:inversion}). On one model, correct repair produces the largest
+preference shift, \result{drCorrect}, and a random direction the smallest,
+\result{drRand}; yet after the edit the random direction leaves a legal top-1 move
+in \result{nlRand} of cases and correct repair in \result{nlCorrect}. The random
+direction also raises output entropy most, by \result{dentRand}. Hedging moves
+probability off a confidently illegal move and onto whatever else is plausible,
+some of which is legal.
+
+\begin{table}[t]
+\centering\small
+\caption{Repair conditions on one model (\result{repN} positions, \result{repGames}
+games): change in forced-choice preference, fraction of top-1 moves legal after
+the edit, change in entropy, and how often the target square's decoded value
+flipped. The null edit re-installs values already decoded correctly and is zero by
+construction.}
+\label{tab:inversion}
+\begin{tabular}{lcccc}
+\toprule
+condition & $\Delta r$ & legal after edit & $\Delta$ entropy & decode flipped \\
+\midrule
+correct repair   & \result{drCorrect} & \result{nlCorrect} & \result{dentCorrect} & \result{flipCorrect} \\
+irrelevant squares & \result{drIrr}   & \result{nlIrr}     & \result{dentIrr}     & \result{flipIrr} \\
+wrong target     & \result{drWrong}   & \result{nlWrong}   & \result{dentWrong}   & \result{flipWrong} \\
+random direction & \result{drRand}    & \result{nlRand}    & \result{dentRand}    & \result{flipRand} \\
+null             & \result{drNull}    & \result{nlNull}    & \result{dentNull}    & \result{flipNull} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This is not one model. In \result{invCount} of \result{invN} models the random
+direction produces more legal moves than correct repair while correct repair
+produces the larger preference shift (sign test \result{invP}), and the random
+direction has the best legal-move rate of all four edits in \result{invRandBest} of
+them.
+Its advantage in legal moves over correct repair ranges from \result{invGapMin} to
+\result{invGapMax}.
+
+The same artefact affects our own preference metric if uncontrolled. The raw
+advantage of correct repair over wrong-target is \result{rawCW}; restricted to
+positions where both edits changed entropy comparably it is \result{matchedCW}
+[\result{matchedCWLo}, \result{matchedCWHi}], \result{inflation} times smaller. The
+edit also responds gradedly to strength: preference rises from \result{sweepQ} at a
+quarter of calibrated strength to \result{sweepOne} at calibrated strength, then
+turns to \result{sweepTwo} and \result{sweepFour} at double and quadruple, a
+rise-then-collapse that is harder to explain as generic damage than a monotone
+decline would be.
+Studies that score state interventions by illegal-move rate, or by any error rate
+a flatter distribution can lower, may be measuring hedging.
+
+% ====================================================================
+\section{Discussion}
+
+The practical content is about where effort goes. The class that does not fall
+with size is the one defined by constraints spanning the whole board, and on our
+evidence it is also the class that correcting the model's belief about a move's own
+squares does not reach. We read this, as an interpretation we have not tested
+directly, as a caution for interventions such as auxiliary board losses and state
+supervision: they aim at the model's knowledge of where pieces stand, and the
+failures most directly attributable to that knowledge are the ones scale is already
+removing. An intervention that lowers total error while leaving the global class
+flat may have improved only what scale improves anyway, and should be evaluated by
+its effect on that class.
+
+This also bounds what an intervention study can show. A training comparison that
+targets state-attributable failure is adequately powered on our data, detecting a
+change of \result{powMdePct}\% of that component with seed variation contributing
+little (relative spread \result{powSeedRel}), but the component is a small share of
+what goes wrong, so a detectable improvement is a small behavioural one.
+
+The local and global distinction is not specific to chess. Wherever a checker can
+say not only that a step is wrong but which constraint it violated, program
+execution, spreadsheet recalculation, and formal proof among them, the same
+decomposition is available, and the question of which violations scale removes can
+be asked without any access to model internals.
+
+% ====================================================================
+\section{Limitations}
+\label{sec:limits}
+
+\begin{description}[nosep]
+\item[Depth and width are confounded.] Both ladders grow depth and width together,
+so an exponent in parameters does not isolate either.
+\item[Three external checkpoints.] The independent ladder supports directional
+agreement, not a second estimate of the slope; its intervals omit fit uncertainty.
+\item[Notation changes the classes.] Algebraic notation removes the empty-source
+class, and its nearest local analogue absorbs path blocking.
+\item[Othello cannot test scaling.] No ladder exists, and its local class requires
+no state tracking, so it is a consistency check rather than a replication.
+\item[The residual is unattributed.] The repair instrument corrects about two
+squares, so whether failures despite correct local belief reflect policy or
+unreachable state is undetermined.
+\item[Probe-based rows depend on a linear probe.] A nonlinear decoder of four times
+the capacity gains only \result{capGapMin} to \result{capGapMax} across depth
+(Appendix~\ref{app:capacity}), so decoder weakness does not explain decay, but the
+probe-based rows inherit its approximation. The headline result uses no probe.
+\item[One game family.] Chess and Othello both carry exact oracles, which is what
+makes them measurable and what makes them unrepresentative of open-ended reasoning.
+\end{description}
+
+% ====================================================================
+\section{Conclusion}
+
+Scale does not remove long-horizon errors evenly. In chess transformers it removes
+errors decidable from a move's own squares several times faster than errors
+decided by the whole board, the ordering replicates on an independent model family,
+and the failures that occur despite correctly decoded belief at the move's squares
+do not decline at all. The measurement needs only a rules engine. What it suggests is that the
+failures worth studying at scale are the ones defined by global constraints, and
+that interventions should be judged by their effect on those, measured with a
+metric a flatter output distribution cannot improve.
+
+\section*{Declarations}
+
+\paragraph{Disclosure statement.}
+\ifanon Removed for double-anonymous peer review.
+\else The authors report no conflict of interest. \fi
+
+\paragraph{Funding.}
+\ifanon Removed for double-anonymous peer review.
+\else This research received no specific grant from any funding agency in the
+public, commercial, or not-for-profit sectors. \fi
+
+\paragraph{Data availability statement.}
+Trained checkpoints, analysis code, and every result file cited by the manuscript
+are available from the corresponding author on reasonable request. External
+checkpoints are public.
+
+\paragraph{AI usage declaration.}
+During preparation the authors used a generative AI tool to assist with analysis
+code and language editing. The authors reviewed and edited all output and take full
+responsibility for the content.
+
+\appendix
+
+\section{Probe capacity}
+\label{app:capacity}
+
+Every fidelity curve in this line of work is read with a linear probe, which could
+confound information leaving the representation with information becoming
+nonlinearly encoded. On identical activations and budgets, a two-layer probe whose
+hidden layer is four times the residual width improves occupied-square accuracy by
+between
+\result{capGapMin} and \result{capGapMax} across depth, with no tendency to widen.
+The same nonlinear probe reaches \result{capCtlDeep} on a control task with
+shuffled boards and \result{capRandDeep} on a randomly initialised model in the
+deepest bucket, so there is no memorisation headroom for extra capacity to exploit.
+Decay in these curves is therefore not explained by the weakness of a linear
+decoder, though a single alternative decoder cannot rule out every nonlinear
+encoding.
+
+\section{Integrity record}
+\label{app:integrity}
+
+The analysis was pre-registered (SHA-256 prefix \texttt{\result{preregHash}}).
+Three amendments changed reported claims and are stated here in full. First, the
+frozen entropy-matching procedure was vacuous, since weighting strata by their own
+counts reproduces the overall mean; it was replaced by matching on positions after
+point estimates were seen, and the replacement reduced the headline effect. Second,
+a prior that about a third of illegal moves would be restored to legality by repair
+was mis-specified, by conflating whether an error is explicable by wrong belief with
+whether repairing belief is sufficient to change behaviour; the observed rate was
+far lower. Third, a conclusion that the failures repair could not fix are genuine
+was retracted once whole-board repair was shown not to install a board, which is
+why Section~\ref{sec:mech} leaves that residual unattributed.
+
+Two further corrections changed how a result was stated rather than a reported
+value. The scaling result was first framed in terms of shares of failures, and that
+framing was stated before it was found to imply that models grew worse at a class
+they were in fact improving at; it was revised to absolute rates, which is the form
+reported here. The metric comparison was first reported on one model and is now
+reported across all of them. Analysis corrections that changed no reported claim,
+including a move-touched definition that scored illegal algebraic moves at
+arbitrary squares and edit intervals clustered on too few games, are recorded in the
+analysis repository's version history.
+
+\ifanon\else\nocite{rathore2026coherent}\fi
+\bibliographystyle{apalike}
+\bibliography{refs}
+
+\end{document}
