@@ -10,3 +10,4 @@ tools/
 *.bbl
 *.blg
 *.out
+build*/log.txt

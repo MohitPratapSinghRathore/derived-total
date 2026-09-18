@@ -1142,5 +1142,49 @@
  "acAllNano": {
   "value": "all three",
   "source": "results/adapter_checks.json"
+ },
+ "envGpu": {
+  "value": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "source": "results/environment.json"
+ },
+ "envGpuMem": {
+  "value": "4",
+  "source": "results/environment.json"
+ },
+ "envHostMem": {
+  "value": "15",
+  "source": "results/environment.json"
+ },
+ "envOs": {
+  "value": "Windows 11",
+  "source": "results/environment.json"
+ },
+ "envOsBuild": {
+  "value": "26200",
+  "source": "results/environment.json"
+ },
+ "envPython": {
+  "value": "3.12.10",
+  "source": "results/environment.json"
+ },
+ "envTorch": {
+  "value": "2.5.1+cu121",
+  "source": "results/environment.json"
+ },
+ "envCuda": {
+  "value": "12.1",
+  "source": "results/environment.json"
+ },
+ "envNumpy": {
+  "value": "2.4.6",
+  "source": "results/environment.json"
+ },
+ "envScipy": {
+  "value": "1.18.1",
+  "source": "results/environment.json"
+ },
+ "envChess": {
+  "value": "1.11.2",
+  "source": "results/environment.json"
  }
 }

@@ -1,0 +1,17 @@
+{
+ "gpu_name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+ "gpu_memory_gib": 4.0,
+ "gpu_count": 1,
+ "gpu_capability": "8.6",
+ "host_memory_gb": 15.3,
+ "os": "Windows 11",
+ "os_build": "10.0.26200",
+ "cpu_count": 16,
+ "python": "3.12.10",
+ "torch": "2.5.1+cu121",
+ "cuda": "12.1",
+ "numpy": "2.4.6",
+ "scipy": "1.18.1",
+ "python_chess": "1.11.2",
+ "timestamp": "2026-09-18 14:57"
+}

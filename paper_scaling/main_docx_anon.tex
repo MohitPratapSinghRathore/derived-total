@@ -181,6 +181,21 @@ replacement, since seeds within a rung are not independent draws of the
 architecture. A differential between two classes is bootstrapped on paired
 resamples, so its interval is on the difference itself.
 
+\paragraph{Computing environment.}
+Every run in this paper, training and analysis alike, fits on a single
+NVIDIA GeForce RTX 3050 Laptop GPU with 4\,GiB of device memory, in a host with
+15\,GB of physical memory visible to the operating system, under
+Windows 11 (build 26200),
+using Python~3.12.10 with PyTorch~2.5.1+cu121 on
+CUDA~12.1, NumPy~2.4.6, SciPy~1.18.1, and
+python-chess~1.11.2 as the rules engine. That memory ceiling, not a
+choice about what was interesting to measure, is what sets the top rung of the
+ladder at 39.9M parameters, and it is why the external ladders of
+Section~\ref{sec:external} carry the weight they do: they extend the size range
+past what we can train ourselves. Versions are recorded by
+\texttt{code/record\_environment.py} rather than typed here, so they cannot go
+stale if the work moves to another machine.
+
 % ====================================================================
 \section{Differential Scaling}
 \label{sec:scaling}
