@@ -167,6 +167,73 @@ def external_partition_rows():
     return rows, keep
 
 
+# ------------------------------------------ competence vs size, out of sample
+# Matched to the coarsest taxonomy both families share. Algebraic notation never
+# names a source square, so from_empty, from_opponent and geometry are not
+# separately observable there and collapse into 'unreachable'.
+MATCHED = ["local", "to_own", "leaves_check"]
+
+
+def _matched_ours(rows):
+    out = []
+    for q in rows:
+        v = np.array([q["share_from_empty"] + q["share_from_opponent"]
+                      + q["share_geometry"],
+                      q["share_to_own"], q["share_leaves_check"]], float)
+        out.append({"ill": q["illegal_rate"], "params": q["params"],
+                    "y": v / v.sum()})
+    return out
+
+
+def _matched_theirs():
+    out = []
+    for r in S.external_rows():
+        s = r["shares"]
+        v = np.array([s["unreachable"]["mean"], s["to_own"]["mean"],
+                      s["leaves_check"]["mean"]], float)
+        out.append({"ill": r["illegal_rate"], "params": r["params"],
+                    "y": v / v.sum()})
+    return out
+
+
+def _softmax3(p, xs):
+    a = np.concatenate([[0.0], p[:len(MATCHED) - 1]])
+    b = np.concatenate([[0.0], p[len(MATCHED) - 1:]])
+    z = a[None, :] + b[None, :] * np.asarray(xs, float)[:, None]
+    z -= z.max(1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(1, keepdims=True)
+
+
+def covariate_test(rows, pivot=np.log(0.05)):
+    """Fit composition on our runs under each covariate, predict theirs.
+
+    Reported as mean total variation distance over their three checkpoints,
+    against the baseline of predicting our own mean composition regardless.
+    """
+    A, B = _matched_ours(rows), _matched_theirs()
+    Y = np.array([r["y"] for r in A])
+
+    def fit(cov):
+        x = np.array([cov(r) for r in A]) - pivot
+
+        def nll(p):
+            return -(Y * np.log(np.clip(_softmax3(p, x), 1e-12, 1))).sum()
+        return minimize(nll, np.zeros(2 * (len(MATCHED) - 1)),
+                        method="L-BFGS-B").x
+
+    res = {}
+    for tag, cov in (("competence", lambda r: np.log(r["ill"])),
+                     ("size", lambda r: np.log(r["params"]))):
+        p = fit(cov)
+        tv = [0.5 * np.abs(_softmax3(p, [cov(r) - pivot])[0] - r["y"]).sum()
+              for r in B]
+        res[tag] = float(np.mean(tv))
+    mu = Y.mean(0)
+    res["baseline"] = float(np.mean([0.5 * np.abs(mu - r["y"]).sum() for r in B]))
+    return res
+
+
 def main():
     rows = S.ladder_rows()
     p = fit_simplex(rows)
@@ -225,6 +292,8 @@ def main():
     out["overspend_1e9_lo"] = float(np.percentile(bs, 2.5))
     out["overspend_1e9_hi"] = float(np.percentile(bs, 97.5))
     out["overspend_1e9_frac_above_one"] = float((bs > 1).mean())
+
+    out["covariate_tv"] = covariate_test(rows)
 
     json.dump(out, open(os.path.join(S.RES, "compositional.json"), "w"), indent=1)
 

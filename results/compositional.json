@@ -92,5 +92,10 @@
  "ext_breakdown": 242804616.05638742,
  "overspend_1e9_lo": 1.1300412076597068,
  "overspend_1e9_hi": 1.566100005148953,
- "overspend_1e9_frac_above_one": 1.0
+ "overspend_1e9_frac_above_one": 1.0,
+ "covariate_tv": {
+  "competence": 0.4897185984497683,
+  "size": 0.09959480838890238,
+  "baseline": 0.11463135191526956
+ }
 }

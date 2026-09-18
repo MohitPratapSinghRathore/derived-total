@@ -349,6 +349,9 @@ put("cmpExtDiverge", sgn(cp["ext_divergence_rate"]), CP)
 put("cmpExtOverBn", cp["ext_overspend_1e9"], CP, "{:.2f}")
 put("cmpExtBreakdown", _pf(cp["ext_breakdown"]), CP)
 put("cmpExtNclass", len(cp["ext_classes"]), CP, "{:d}")
+put("cmpCompTV", cp["covariate_tv"]["competence"], CP, "{:.3f}")
+put("cmpSizeTV", cp["covariate_tv"]["size"], CP, "{:.3f}")
+put("cmpBaseTV", cp["covariate_tv"]["baseline"], CP, "{:.3f}")
 
 
 env = S.load("environment.json")

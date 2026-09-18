@@ -645,7 +645,22 @@ in this paper, agreed with the data in range, and were still projecting an
 impossibility two orders of magnitude out. Any decomposition of error into
 categories that scale at different rates, whether by capability, benchmark subset,
 or error type, has this property, and fitting on the simplex removes it without
-costing accuracy.
+costing accuracy. We supply the check as \texttt{code/closure\_check.py}, which
+needs only the exponents and intercepts such papers already print.
+
+One consequence is easy to miss, and we missed it. An inadmissible fit voids
+negative conclusions as well as positive ones. While preparing this section we
+tested whether failure composition is governed by achieved competence rather than
+by size, rejected it because the fitted shares exceeded one, and recorded it as
+refuted. That rejection was worthless: predicting an impossibility is what the
+uncoupled form does everywhere, so its disagreement with data carries no evidence
+about the hypothesis under test. Refitting the same comparison on the simplex, in
+competence coordinates, and predicting Karvonen's checkpoints out of sample does
+refute it, by a total variation distance of 0.490 against
+0.100 for size coordinates and 0.115 for predicting our
+own mean composition. The conclusion survived; the first argument for it did not.
+A model that cannot make an admissible prediction cannot be used to reject
+anything.
 
 The local and global distinction is not specific to chess. Wherever a checker can
 say not only that a step is wrong but which constraint it violated, program

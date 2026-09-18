@@ -1275,6 +1275,18 @@
   "value": "4",
   "source": "results/compositional.json"
  },
+ "cmpCompTV": {
+  "value": "0.490",
+  "source": "results/compositional.json"
+ },
+ "cmpSizeTV": {
+  "value": "0.100",
+  "source": "results/compositional.json"
+ },
+ "cmpBaseTV": {
+  "value": "0.115",
+  "source": "results/compositional.json"
+ },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",
   "source": "results/environment.json"
