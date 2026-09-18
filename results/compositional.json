@@ -1,0 +1,86 @@
+{
+ "n_runs": 18,
+ "classes": [
+  "from_empty",
+  "from_opponent",
+  "to_own",
+  "geometry",
+  "leaves_check",
+  "policy"
+ ],
+ "pivot": 10000000.0,
+ "rmse_simplex": 0.010728235080801203,
+ "rmse_independent": 0.011478862449275812,
+ "simplex_fits_better": true,
+ "share_sum": {
+  "ours_small": {
+   "N": 3440000.0,
+   "sum": 1.0074296266096698,
+   "max_share": 0.2707621631754638,
+   "argmax": "geometry"
+  },
+  "ours_large": {
+   "N": 39900000.0,
+   "sum": 1.017793044350988,
+   "max_share": 0.34453140821302614,
+   "argmax": "leaves_check"
+  },
+  "proj_1e9": {
+   "N": 1000000000.0,
+   "sum": 1.3361186661195257,
+   "max_share": 0.5129970577052169,
+   "argmax": "policy"
+  },
+  "proj_1e12": {
+   "N": 1000000000000.0,
+   "sum": 3.9252619165723694,
+   "max_share": 2.64551798478554,
+   "argmax": "policy"
+  }
+ },
+ "composition": {
+  "ours_small": {
+   "N": 3440000.0,
+   "from_empty": 0.18415416830810818,
+   "from_opponent": 0.030693761436448662,
+   "to_own": 0.12327948866583952,
+   "geometry": 0.2672646729005162,
+   "leaves_check": 0.26337159927901094,
+   "policy": 0.13123630941007655
+  },
+  "ours_large": {
+   "N": 39900000.0,
+   "from_empty": 0.07059055781343164,
+   "from_opponent": 0.017728896981976765,
+   "to_own": 0.06567330766391227,
+   "geometry": 0.27179067384448574,
+   "leaves_check": 0.33920797317954604,
+   "policy": 0.2350085905166475
+  },
+  "proj_1e9": {
+   "N": 1000000000.0,
+   "from_empty": 0.015237478669505464,
+   "from_opponent": 0.006559825862913837,
+   "to_own": 0.02184848152749592,
+   "geometry": 0.21151122283530918,
+   "leaves_check": 0.3601007173968544,
+   "policy": 0.38474227370792125
+  },
+  "proj_1e12": {
+   "N": 1000000000000.0,
+   "from_empty": 0.00034622151997078986,
+   "from_opponent": 0.00047337474925259073,
+   "to_own": 0.0012551969702013503,
+   "geometry": 0.07516761796974311,
+   "leaves_check": 0.2490611788346735,
+   "policy": 0.6736964099561585
+  }
+ },
+ "peak_leaves_check": 450310598.3450581,
+ "peak_share": 0.3621399558179831,
+ "peak_lo": 77240816.09151104,
+ "peak_hi": 2850437207.889666,
+ "peak_n_boot": 1000,
+ "peak_frac_above_our_max": 0.998,
+ "policy_overtakes_check": 611264544.8098288
+}

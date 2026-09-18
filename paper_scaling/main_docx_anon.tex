@@ -41,7 +41,10 @@ follows: belief is coupled to action locally, a repair edit can correct about tw
 squares, and the class that scale leaves behind is the class local correction
 cannot reach. The standard intervention metric inverts on the same data. Illegal
 move rate ranks a norm-matched random edit above correct repair in
-18 of 18 models, because hedging lowers it.
+18 of 18 models, because hedging lowers it. Finally,
+per-category scaling fits are not closed: our own extrapolated shares sum to
+1.34 at one billion parameters. Fitting the composition on the simplex
+fits better in range, and moves the projection from an impossible one to a peak.
 \end{abstract}
 
 \noindent\textbf{Keywords:} scaling, failure analysis, world models, state
@@ -261,13 +264,53 @@ Nothing in this section uses model internals. The measurement is a rules engine
 and a move counter, which makes it reproducible against any chess model and immune
 to objections about probe validity.
 
-\paragraph{An illustrative extrapolation.}
-Extending the fitted lines 25-fold beyond our largest model, to
-one billion parameters, gives check violations at 0.0413 per position
-against empty-source errors at 0.0023, and failures despite
-correct local belief at 0.0435. This is far outside the fitted range and
-we offer it only to show what the exponents imply if they held: the category that
-scale does not remove would become the largest.
+\paragraph{Why we do not extrapolate the fitted lines.}
+The obvious next step is to extend the fitted lines beyond our largest model and
+report what they imply at, say, one billion parameters. We did this in an earlier
+version of this analysis and it is wrong, for a reason that applies to any
+per-category scaling fit and that we have not seen stated.
+
+The categories partition the illegal moves. Their absolute rates must therefore
+sum to the illegal-move rate at every scale. Six independently fitted power laws
+with six different exponents cannot satisfy that identity away from the fitted
+range: the shallowest exponent must eventually dominate a total that is itself
+falling faster. The failure is not gradual. Summing the independently fitted
+shares gives 1.02 at our largest rung, which is fit noise, but
+1.34 at one billion parameters and 3.93 at one trillion,
+where the single largest category is assigned 2.65 of the failures.
+A category holding more than all of them is not a wide estimate, it is an
+arithmetic impossibility, and it means the extrapolation was never reporting the
+exponents' implications at all. It is worth noting that the violation runs in the
+direction that flatters our argument, since the categories we claim survive are
+exactly the shallow ones that grow without bound.
+
+\paragraph{A closed compositional fit.}
+The repair is to fit the composition on the simplex rather than one category at a
+time. We model the shares with a softmax linear in $\log N$, which is closed by
+construction: the shares sum to one at every scale and for every parameter value,
+so a category can never be assigned more failures than occur. The illegal-move
+rate keeps its own power law, which is legitimate because the total is not a part
+of anything. Coherence is not bought with fit quality. In range the closed model
+attains RMSE 0.01073 across the 18 runs against
+0.01148 for the uncoupled fits, so it is at least as good on the
+data while being the only one of the two that can be extended.
+
+The correction changes the projection qualitatively, and in a direction we did not
+anticipate. Under uncoupled fits the check category rises without limit and appears
+to absorb nearly all failures. Under the closed model it peaks, at
+450M parameters
+(77M to 2.9B, 99.8\% of bootstrap
+resamples above our largest model) and a share of 0.362, and then
+declines, because it is in turn displaced by the category that never scales away.
+Failures despite correctly decoded local belief overtake it at 611M
+parameters and reach 0.674 of failures at one trillion, while the
+locally decidable categories fall to 0.000. The paper's qualitative
+claim is unchanged, and the ordering is if anything sharper: what scale removes
+first is local error, what it removes last is not global error but error that
+survives a correct local belief. We stress that the peak lies outside our fitted
+range and is a property of the model, not an observation. The difference from the
+earlier version is that it is now a coherent implication of the exponents rather
+than an impossible one.
 
 % ====================================================================
 \section{External Validity}
@@ -558,6 +601,17 @@ change of 19\% of that component with seed variation contributing
 little (relative spread 0.028), but the component is a small share of
 what goes wrong, so a detectable improvement is a small behavioural one.
 
+A methodological point generalises further than our subject. Whenever failures are
+decomposed into categories and each category is given its own scaling exponent, the
+fits are not closed, and extending them makes claims the categories cannot jointly
+satisfy. The check costs nothing: sum the extrapolated parts and see whether they
+still make the whole. We report it because our own uncoupled fits passed every gate
+in this paper, agreed with the data in range, and were still projecting an
+impossibility two orders of magnitude out. Any decomposition of error into
+categories that scale at different rates, whether by capability, benchmark subset,
+or error type, has this property, and fitting on the simplex removes it without
+costing accuracy.
+
 The local and global distinction is not specific to chess. Wherever a checker can
 say not only that a step is wrong but which constraint it violated, program
 execution, spreadsheet recalculation, and formal proof among them, the same
@@ -577,6 +631,11 @@ agreement, not a second estimate of the slope; its intervals omit fit uncertaint
 class, and its nearest local analogue absorbs path blocking.
 \item[Othello cannot test scaling.] No ladder exists, and its local class requires
 no state tracking, so it is a consistency check rather than a replication.
+\item[The peak is a model property, not a measurement.] The scale at which the
+check category turns over lies above our largest model in
+99.8\% of resamples. The closed fit guarantees that the
+projection is arithmetically possible, which the uncoupled fits do not; it does
+not make it observed, and a different link function would move the turn.
 \item[The residual is unattributed.] The repair instrument corrects about two
 squares, so whether failures despite correct local belief reflect policy or
 unreachable state is undetermined.

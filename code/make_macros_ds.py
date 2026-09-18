@@ -310,6 +310,37 @@ _allnano = all(ac.get(f"{t}_legal") == ac.get(f"{t}_total") for t in ("nano6", "
 put("acAllNano", "all three" if _allnano else "not all", AC)
 
 
+cp = S.load("compositional.json")
+CP = "results/compositional.json"
+
+
+def _pf(n):
+    """Parameter count as a readable magnitude."""
+    if n >= 1e12:
+        return f"{n / 1e12:.1f}T"
+    if n >= 1e9:
+        return f"{n / 1e9:.1f}B"
+    return f"{n / 1e6:.0f}M"
+
+
+put("cmpRmseSimplex", cp["rmse_simplex"], CP, "{:.5f}")
+put("cmpRmseIndep", cp["rmse_independent"], CP, "{:.5f}")
+for tag, lab in (("ours_large", "Large"), ("proj_1e9", "Bn"), ("proj_1e12", "Tn")):
+    put(f"cmpSum{lab}", cp["share_sum"][tag]["sum"], CP, "{:.2f}")
+    put(f"cmpMax{lab}", cp["share_sum"][tag]["max_share"], CP, "{:.2f}")
+for tag, lab in (("ours_large", "Large"), ("proj_1e9", "Bn"), ("proj_1e12", "Tn")):
+    for k in ("leaves_check", "policy", "from_empty", "geometry"):
+        nm = {"leaves_check": "Check", "policy": "Policy",
+              "from_empty": "Empty", "geometry": "Geom"}[k]
+        put(f"cmp{nm}{lab}", cp["composition"][tag][k], CP, "{:.3f}")
+put("cmpPeak", _pf(cp["peak_leaves_check"]), CP)
+put("cmpPeakLo", _pf(cp["peak_lo"]), CP)
+put("cmpPeakHi", _pf(cp["peak_hi"]), CP)
+put("cmpPeakShare", cp["peak_share"], CP, "{:.3f}")
+put("cmpPeakAbove", 100 * cp["peak_frac_above_our_max"], CP, "{:.1f}")
+put("cmpOvertake", _pf(cp["policy_overtakes_check"]), CP)
+
+
 env = S.load("environment.json")
 EV = "results/environment.json"
 put("envGpu", env["gpu_name"], EV)

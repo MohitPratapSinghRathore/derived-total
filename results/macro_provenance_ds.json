@@ -1143,6 +1143,110 @@
   "value": "all three",
   "source": "results/adapter_checks.json"
  },
+ "cmpRmseSimplex": {
+  "value": "0.01073",
+  "source": "results/compositional.json"
+ },
+ "cmpRmseIndep": {
+  "value": "0.01148",
+  "source": "results/compositional.json"
+ },
+ "cmpSumLarge": {
+  "value": "1.02",
+  "source": "results/compositional.json"
+ },
+ "cmpMaxLarge": {
+  "value": "0.34",
+  "source": "results/compositional.json"
+ },
+ "cmpSumBn": {
+  "value": "1.34",
+  "source": "results/compositional.json"
+ },
+ "cmpMaxBn": {
+  "value": "0.51",
+  "source": "results/compositional.json"
+ },
+ "cmpSumTn": {
+  "value": "3.93",
+  "source": "results/compositional.json"
+ },
+ "cmpMaxTn": {
+  "value": "2.65",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckLarge": {
+  "value": "0.339",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyLarge": {
+  "value": "0.235",
+  "source": "results/compositional.json"
+ },
+ "cmpEmptyLarge": {
+  "value": "0.071",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomLarge": {
+  "value": "0.272",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckBn": {
+  "value": "0.360",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyBn": {
+  "value": "0.385",
+  "source": "results/compositional.json"
+ },
+ "cmpEmptyBn": {
+  "value": "0.015",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomBn": {
+  "value": "0.212",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckTn": {
+  "value": "0.249",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyTn": {
+  "value": "0.674",
+  "source": "results/compositional.json"
+ },
+ "cmpEmptyTn": {
+  "value": "0.000",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomTn": {
+  "value": "0.075",
+  "source": "results/compositional.json"
+ },
+ "cmpPeak": {
+  "value": "450M",
+  "source": "results/compositional.json"
+ },
+ "cmpPeakLo": {
+  "value": "77M",
+  "source": "results/compositional.json"
+ },
+ "cmpPeakHi": {
+  "value": "2.9B",
+  "source": "results/compositional.json"
+ },
+ "cmpPeakShare": {
+  "value": "0.362",
+  "source": "results/compositional.json"
+ },
+ "cmpPeakAbove": {
+  "value": "99.8",
+  "source": "results/compositional.json"
+ },
+ "cmpOvertake": {
+  "value": "611M",
+  "source": "results/compositional.json"
+ },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",
   "source": "results/environment.json"
