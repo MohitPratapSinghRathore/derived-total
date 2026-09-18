@@ -1144,107 +1144,135 @@
   "source": "results/adapter_checks.json"
  },
  "cmpRmseSimplex": {
-  "value": "0.01073",
+  "value": "0.01251",
   "source": "results/compositional.json"
  },
  "cmpRmseIndep": {
-  "value": "0.01148",
+  "value": "0.01322",
   "source": "results/compositional.json"
  },
- "cmpSumLarge": {
+ "cmpAstar": {
+  "value": "$-$0.112",
+  "source": "results/compositional.json"
+ },
+ "cmpBtotal": {
+  "value": "$-$0.267",
+  "source": "results/compositional.json"
+ },
+ "cmpWeighted": {
+  "value": "$-$0.266",
+  "source": "results/compositional.json"
+ },
+ "cmpDiverge": {
+  "value": "+0.154",
+  "source": "results/compositional.json"
+ },
+ "cmpBreakdown": {
+  "value": "174M",
+  "source": "results/compositional.json"
+ },
+ "cmpOverLarge": {
   "value": "1.02",
   "source": "results/compositional.json"
  },
- "cmpMaxLarge": {
-  "value": "0.34",
+ "cmpOverBn": {
+  "value": "1.27",
   "source": "results/compositional.json"
  },
- "cmpSumBn": {
-  "value": "1.34",
+ "cmpOverTn": {
+  "value": "2.82",
   "source": "results/compositional.json"
  },
- "cmpMaxBn": {
-  "value": "0.51",
+ "cmpOverBnLo": {
+  "value": "1.13",
   "source": "results/compositional.json"
  },
- "cmpSumTn": {
-  "value": "3.93",
+ "cmpOverBnHi": {
+  "value": "1.57",
   "source": "results/compositional.json"
  },
- "cmpMaxTn": {
-  "value": "2.65",
+ "cmpOverBnFrac": {
+  "value": "100",
   "source": "results/compositional.json"
  },
  "cmpCheckLarge": {
-  "value": "0.339",
-  "source": "results/compositional.json"
- },
- "cmpPolicyLarge": {
-  "value": "0.235",
+  "value": "0.444",
   "source": "results/compositional.json"
  },
  "cmpEmptyLarge": {
-  "value": "0.071",
+  "value": "0.093",
   "source": "results/compositional.json"
  },
  "cmpGeomLarge": {
-  "value": "0.272",
+  "value": "0.354",
   "source": "results/compositional.json"
  },
  "cmpCheckBn": {
-  "value": "0.360",
-  "source": "results/compositional.json"
- },
- "cmpPolicyBn": {
-  "value": "0.385",
+  "value": "0.588",
   "source": "results/compositional.json"
  },
  "cmpEmptyBn": {
-  "value": "0.015",
+  "value": "0.025",
   "source": "results/compositional.json"
  },
  "cmpGeomBn": {
-  "value": "0.212",
+  "value": "0.341",
   "source": "results/compositional.json"
  },
  "cmpCheckTn": {
-  "value": "0.249",
-  "source": "results/compositional.json"
- },
- "cmpPolicyTn": {
-  "value": "0.674",
+  "value": "0.769",
   "source": "results/compositional.json"
  },
  "cmpEmptyTn": {
-  "value": "0.000",
+  "value": "0.001",
   "source": "results/compositional.json"
  },
  "cmpGeomTn": {
-  "value": "0.075",
+  "value": "0.225",
   "source": "results/compositional.json"
  },
- "cmpPeak": {
-  "value": "450M",
+ "cmpCheckMax": {
+  "value": "0.871",
   "source": "results/compositional.json"
  },
- "cmpPeakLo": {
-  "value": "77M",
+ "cmpPolicySlope": {
+  "value": "+0.372",
   "source": "results/compositional.json"
  },
- "cmpPeakHi": {
-  "value": "2.9B",
+ "cmpPolicyObsLo": {
+  "value": "0.148",
   "source": "results/compositional.json"
  },
- "cmpPeakShare": {
-  "value": "0.362",
+ "cmpPolicyObsHi": {
+  "value": "0.321",
   "source": "results/compositional.json"
  },
- "cmpPeakAbove": {
-  "value": "99.8",
+ "cmpPolicyLarge": {
+  "value": "0.308",
   "source": "results/compositional.json"
  },
- "cmpOvertake": {
-  "value": "611M",
+ "cmpPolicyBn": {
+  "value": "0.596",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyTn": {
+  "value": "0.951",
+  "source": "results/compositional.json"
+ },
+ "cmpExtDiverge": {
+  "value": "+0.234",
+  "source": "results/compositional.json"
+ },
+ "cmpExtOverBn": {
+  "value": "1.28",
+  "source": "results/compositional.json"
+ },
+ "cmpExtBreakdown": {
+  "value": "243M",
+  "source": "results/compositional.json"
+ },
+ "cmpExtNclass": {
+  "value": "4",
   "source": "results/compositional.json"
  },
  "envGpu": {

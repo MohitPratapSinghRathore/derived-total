@@ -1,86 +1,96 @@
 {
  "n_runs": 18,
- "classes": [
+ "partition": [
   "from_empty",
   "from_opponent",
   "to_own",
   "geometry",
   "leaves_check",
-  "policy"
+  "other"
  ],
  "pivot": 10000000.0,
- "rmse_simplex": 0.010728235080801203,
- "rmse_independent": 0.011478862449275812,
+ "rmse_simplex": 0.012506118986507048,
+ "rmse_independent": 0.0132170131967795,
  "simplex_fits_better": true,
- "share_sum": {
-  "ours_small": {
-   "N": 3440000.0,
-   "sum": 1.0074296266096698,
-   "max_share": 0.2707621631754638,
-   "argmax": "geometry"
-  },
+ "divergence_rate": 0.15437729752011914,
+ "a_star": -0.11226480791145714,
+ "b_total": -0.2666421054315763,
+ "weighted_mean_exponent": -0.26595843758273735,
+ "breakdown_scale": 173672359.01164782,
+ "overspend": {
   "ours_large": {
    "N": 39900000.0,
-   "sum": 1.017793044350988,
-   "max_share": 0.34453140821302614,
-   "argmax": "leaves_check"
+   "ratio": 1.0156098787820564
   },
   "proj_1e9": {
    "N": 1000000000.0,
-   "sum": 1.3361186661195257,
-   "max_share": 0.5129970577052169,
-   "argmax": "policy"
+   "ratio": 1.2684175049437734
   },
   "proj_1e12": {
    "N": 1000000000000.0,
-   "sum": 3.9252619165723694,
-   "max_share": 2.64551798478554,
-   "argmax": "policy"
+   "ratio": 2.8229506383889875
   }
  },
  "composition": {
   "ours_small": {
    "N": 3440000.0,
-   "from_empty": 0.18415416830810818,
-   "from_opponent": 0.030693761436448662,
-   "to_own": 0.12327948866583952,
-   "geometry": 0.2672646729005162,
-   "leaves_check": 0.26337159927901094,
-   "policy": 0.13123630941007655
+   "from_empty": 0.21106359308713515,
+   "from_opponent": 0.035348604541041544,
+   "to_own": 0.14195109656856508,
+   "geometry": 0.3086130634422994,
+   "leaves_check": 0.30302362649477566,
+   "other": 1.586618323899626e-08
   },
   "ours_large": {
    "N": 39900000.0,
-   "from_empty": 0.07059055781343164,
-   "from_opponent": 0.017728896981976765,
-   "to_own": 0.06567330766391227,
-   "geometry": 0.27179067384448574,
-   "leaves_check": 0.33920797317954604,
-   "policy": 0.2350085905166475
+   "from_empty": 0.09280312561201712,
+   "from_opponent": 0.023189770807392412,
+   "to_own": 0.08585007157813883,
+   "geometry": 0.3544115550316523,
+   "leaves_check": 0.443745469882606,
+   "other": 7.088193385675616e-09
   },
   "proj_1e9": {
    "N": 1000000000.0,
-   "from_empty": 0.015237478669505464,
-   "from_opponent": 0.006559825862913837,
-   "to_own": 0.02184848152749592,
-   "geometry": 0.21151122283530918,
-   "leaves_check": 0.3601007173968544,
-   "policy": 0.38474227370792125
+   "from_empty": 0.02527603219619905,
+   "from_opponent": 0.010686760612218849,
+   "to_own": 0.03555199642692224,
+   "geometry": 0.3409340437314392,
+   "leaves_check": 0.5875511650618461,
+   "other": 1.971374427874871e-09
   },
   "proj_1e12": {
    "N": 1000000000000.0,
-   "from_empty": 0.00034622151997078986,
-   "from_opponent": 0.00047337474925259073,
-   "to_own": 0.0012551969702013503,
-   "geometry": 0.07516761796974311,
-   "leaves_check": 0.2490611788346735,
-   "policy": 0.6736964099561585
+   "from_empty": 0.0011137304618721521,
+   "from_opponent": 0.0014544317316434797,
+   "to_own": 0.0038473097922928027,
+   "geometry": 0.22484261611531334,
+   "leaves_check": 0.7687419118080278,
+   "other": 9.085034237572528e-11
   }
  },
- "peak_leaves_check": 450310598.3450581,
- "peak_share": 0.3621399558179831,
- "peak_lo": 77240816.09151104,
- "peak_hi": 2850437207.889666,
- "peak_n_boot": 1000,
- "peak_frac_above_our_max": 0.998,
- "policy_overtakes_check": 611264544.8098288
+ "check_monotone": true,
+ "check_max_share": 0.8710159216403269,
+ "policy_logit_slope": 0.3720977452757207,
+ "policy_at": {
+  "ours_large": 0.3079564780285691,
+  "proj_1e9": 0.5960365211005194,
+  "proj_1e12": 0.9507029600534024
+ },
+ "policy_obs_min": 0.14777777777777779,
+ "policy_obs_max": 0.3211111111111111,
+ "ext_classes": [
+  "unreachable",
+  "leaves_check",
+  "to_own",
+  "ambiguous"
+ ],
+ "ext_divergence_rate": 0.23419790431920662,
+ "ext_a_star": -1.0440366029794652,
+ "ext_b": -1.2782345072986718,
+ "ext_overspend_1e9": 1.2780061004422845,
+ "ext_breakdown": 242804616.05638742,
+ "overspend_1e9_lo": 1.1300412076597068,
+ "overspend_1e9_hi": 1.566100005148953,
+ "overspend_1e9_frac_above_one": 1.0
 }

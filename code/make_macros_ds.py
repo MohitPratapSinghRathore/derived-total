@@ -317,7 +317,7 @@ CP = "results/compositional.json"
 def _pf(n):
     """Parameter count as a readable magnitude."""
     if n >= 1e12:
-        return f"{n / 1e12:.1f}T"
+        return f"{n / 1e12:.0f}T"
     if n >= 1e9:
         return f"{n / 1e9:.1f}B"
     return f"{n / 1e6:.0f}M"
@@ -325,20 +325,30 @@ def _pf(n):
 
 put("cmpRmseSimplex", cp["rmse_simplex"], CP, "{:.5f}")
 put("cmpRmseIndep", cp["rmse_independent"], CP, "{:.5f}")
+put("cmpAstar", sgn(cp["a_star"]), CP)
+put("cmpBtotal", sgn(cp["b_total"]), CP)
+put("cmpWeighted", sgn(cp["weighted_mean_exponent"]), CP)
+put("cmpDiverge", sgn(cp["divergence_rate"]), CP)
+put("cmpBreakdown", _pf(cp["breakdown_scale"]), CP)
 for tag, lab in (("ours_large", "Large"), ("proj_1e9", "Bn"), ("proj_1e12", "Tn")):
-    put(f"cmpSum{lab}", cp["share_sum"][tag]["sum"], CP, "{:.2f}")
-    put(f"cmpMax{lab}", cp["share_sum"][tag]["max_share"], CP, "{:.2f}")
+    put(f"cmpOver{lab}", cp["overspend"][tag]["ratio"], CP, "{:.2f}")
+put("cmpOverBnLo", cp["overspend_1e9_lo"], CP, "{:.2f}")
+put("cmpOverBnHi", cp["overspend_1e9_hi"], CP, "{:.2f}")
+put("cmpOverBnFrac", 100 * cp["overspend_1e9_frac_above_one"], CP, "{:.0f}")
 for tag, lab in (("ours_large", "Large"), ("proj_1e9", "Bn"), ("proj_1e12", "Tn")):
-    for k in ("leaves_check", "policy", "from_empty", "geometry"):
-        nm = {"leaves_check": "Check", "policy": "Policy",
-              "from_empty": "Empty", "geometry": "Geom"}[k]
+    for k, nm in (("leaves_check", "Check"), ("from_empty", "Empty"),
+                  ("geometry", "Geom")):
         put(f"cmp{nm}{lab}", cp["composition"][tag][k], CP, "{:.3f}")
-put("cmpPeak", _pf(cp["peak_leaves_check"]), CP)
-put("cmpPeakLo", _pf(cp["peak_lo"]), CP)
-put("cmpPeakHi", _pf(cp["peak_hi"]), CP)
-put("cmpPeakShare", cp["peak_share"], CP, "{:.3f}")
-put("cmpPeakAbove", 100 * cp["peak_frac_above_our_max"], CP, "{:.1f}")
-put("cmpOvertake", _pf(cp["policy_overtakes_check"]), CP)
+put("cmpCheckMax", cp["check_max_share"], CP, "{:.3f}")
+put("cmpPolicySlope", sgn(cp["policy_logit_slope"]), CP)
+put("cmpPolicyObsLo", cp["policy_obs_min"], CP, "{:.3f}")
+put("cmpPolicyObsHi", cp["policy_obs_max"], CP, "{:.3f}")
+for tag, lab in (("ours_large", "Large"), ("proj_1e9", "Bn"), ("proj_1e12", "Tn")):
+    put(f"cmpPolicy{lab}", cp["policy_at"][tag], CP, "{:.3f}")
+put("cmpExtDiverge", sgn(cp["ext_divergence_rate"]), CP)
+put("cmpExtOverBn", cp["ext_overspend_1e9"], CP, "{:.2f}")
+put("cmpExtBreakdown", _pf(cp["ext_breakdown"]), CP)
+put("cmpExtNclass", len(cp["ext_classes"]), CP, "{:d}")
 
 
 env = S.load("environment.json")

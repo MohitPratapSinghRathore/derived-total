@@ -55,9 +55,11 @@ squares, and the class that scale leaves behind is the class local correction
 cannot reach. The standard intervention metric inverts on the same data. Illegal
 move rate ranks a norm-matched random edit above correct repair in
 \result{invCount} of \result{invN} models, because hedging lowers it. Finally,
-per-category scaling fits are not closed: our own extrapolated shares sum to
-\result{cmpSumBn} at one billion parameters. Fitting the composition on the simplex
-fits better in range, and moves the projection from an impossible one to a peak.
+per-category scaling fits are not closed. Whenever the exponents differ, the parts
+must outgrow the whole beyond a computable scale; ours exceed it by
+\result{cmpOverBn}-fold at one billion parameters, and Karvonen's ladder reproduces
+the defect. Fitting the composition on the simplex is closed by construction and
+fits better in range.
 \end{abstract}
 
 \noindent\textbf{Keywords:} scaling, failure analysis, world models, state
@@ -284,14 +286,15 @@ version of this analysis and it is wrong, for a reason that applies to any
 per-category scaling fit and that we have not seen stated.
 
 The categories partition the illegal moves. Their absolute rates must therefore
-sum to the illegal-move rate at every scale. Six independently fitted power laws
-with six different exponents cannot satisfy that identity away from the fitted
+sum to the illegal-move rate at every scale. Five independently fitted power laws
+with five different exponents cannot satisfy that identity away from the fitted
 range: the shallowest exponent must eventually dominate a total that is itself
-falling faster. The failure is not gradual. Summing the independently fitted
-shares gives \result{cmpSumLarge} at our largest rung, which is fit noise, but
-\result{cmpSumBn} at one billion parameters and \result{cmpSumTn} at one trillion,
-where the single largest category is assigned \result{cmpMaxTn} of the failures.
-A category holding more than all of them is not a wide estimate, it is an
+falling faster. The failure is not gradual. Summing the independently fitted parts
+and dividing by the independently fitted whole gives \result{cmpOverLarge} at our
+largest rung, which is fit noise, but \result{cmpOverBn} at one billion parameters
+[\result{cmpOverBnLo}, \result{cmpOverBnHi}, above one in
+\result{cmpOverBnFrac}\% of resamples] and \result{cmpOverTn} at one trillion.
+Parts holding nearly three times the whole is not a wide estimate, it is an
 arithmetic impossibility, and it means the extrapolation was never reporting the
 exponents' implications at all. It is worth noting that the violation runs in the
 direction that flatters our argument, since the categories we claim survive are
@@ -308,22 +311,48 @@ attains RMSE \result{cmpRmseSimplex} across the \result{nRuns} runs against
 \result{cmpRmseIndep} for the uncoupled fits, so it is at least as good on the
 data while being the only one of the two that can be extended.
 
-The correction changes the projection qualitatively, and in a direction we did not
-anticipate. Under uncoupled fits the check category rises without limit and appears
-to absorb nearly all failures. Under the closed model it peaks, at
-\result{cmpPeak} parameters
-(\result{cmpPeakLo} to \result{cmpPeakHi}, \result{cmpPeakAbove}\% of bootstrap
-resamples above our largest model) and a share of \result{cmpPeakShare}, and then
-declines, because it is in turn displaced by the category that never scales away.
-Failures despite correctly decoded local belief overtake it at \result{cmpOvertake}
-parameters and reach \result{cmpPolicyTn} of failures at one trillion, while the
+Under the closed model the check category's share rises from \result{cmpCheckLarge}
+at our largest rung to \result{cmpCheckBn} at one billion and \result{cmpCheckTn}
+at one trillion, approaching but never exceeding \result{cmpCheckMax}, while the
 locally decidable categories fall to \result{cmpEmptyTn}. The paper's qualitative
-claim is unchanged, and the ordering is if anything sharper: what scale removes
-first is local error, what it removes last is not global error but error that
-survives a correct local belief. We stress that the peak lies outside our fitted
-range and is a property of the model, not an observation. The difference from the
-earlier version is that it is now a coherent implication of the exponents rather
-than an impossible one.
+claim is unchanged. What changes is that the projection is now bounded by
+construction, so the figures above are statements the categories can jointly
+satisfy, which the earlier ones were not.
+
+The same discipline applies to the policy share, the fraction of illegal moves
+occurring despite correctly decoded local belief. It is not a member of the
+partition, since it cuts across the classes, but it is a proportion, and fitting a
+proportion linearly in $\log N$ is unbounded in exactly the same way. Fitted on the
+logit it rises from \result{cmpPolicyLarge} at our largest rung to
+\result{cmpPolicyBn} at one billion and \result{cmpPolicyTn} at one trillion, having
+been observed between \result{cmpPolicyObsLo} and \result{cmpPolicyObsHi}. We report
+it separately rather than folding it into the simplex; an earlier version of this
+analysis did fold it in, which is wrong and which manufactured a spurious interior
+maximum in the check category.
+
+\paragraph{The failure is forced, not particular to us.}
+Let the parts have exponents $a_i$ and the total exponent $b$, and let
+$a^\star=\max_i a_i$. The sum of the parts is asymptotically $N^{a^\star}$ and the
+total is $N^{b}$, so the ratio grows like $N^{a^\star-b}$ and diverges precisely
+when $a^\star>b$. This is not a coincidence to be checked case by case. Fitted in
+range, $b$ tracks the rate-weighted mean of the $a_i$, and a maximum is at least a
+weighted mean, with equality only if every exponent is identical. Our own values
+make the point: $a^\star$ is \result{cmpAstar}, the weighted mean is
+\result{cmpWeighted}, and the separately fitted $b$ is \result{cmpBtotal}, giving
+divergence \result{cmpDiverge}. So any per-category scaling fit whose exponents
+differ at all, which is the entire reason for reporting them separately, must
+describe an impossibility beyond some finite scale. That scale is computable from
+the reported exponents alone: ours passes a ten percent overspend at
+\result{cmpBreakdown} parameters, well below the billion the earlier projection
+used.
+
+We checked this on a model family we did not train. Refitting Karvonen's ladder
+over its own \result{cmpExtNclass} classes gives divergence \result{cmpExtDiverge},
+an overspend of \result{cmpExtOverBn} at one billion parameters, and a breakdown
+scale of \result{cmpExtBreakdown}. A different tokenisation, a different taxonomy,
+a different training set and a different laboratory reproduce the defect at the
+same order of magnitude, which is what the argument above predicts and what makes
+us report it as a property of the method rather than of our data.
 
 % ====================================================================
 \section{External Validity}
@@ -644,11 +673,11 @@ agreement, not a second estimate of the slope; its intervals omit fit uncertaint
 class, and its nearest local analogue absorbs path blocking.
 \item[Othello cannot test scaling.] No ladder exists, and its local class requires
 no state tracking, so it is a consistency check rather than a replication.
-\item[The peak is a model property, not a measurement.] The scale at which the
-check category turns over lies above our largest model in
-\result{cmpPeakAbove}\% of resamples. The closed fit guarantees that the
-projection is arithmetically possible, which the uncoupled fits do not; it does
-not make it observed, and a different link function would move the turn.
+\item[The closed fit is coherent, not validated.] The softmax link guarantees the
+projection is arithmetically possible, which the uncoupled fits are not. It does
+not make it observed: every scale past \result{paramsLarge} is extrapolation, and
+a different link satisfying the same constraint would give different numbers while
+agreeing that the uncoupled ones are inadmissible.
 \item[The residual is unattributed.] The repair instrument corrects about two
 squares, so whether failures despite correct local belief reflect policy or
 unreachable state is undetermined.
