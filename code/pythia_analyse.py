@@ -17,7 +17,12 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 RES = os.path.join(HERE, "..", "results")
-CSV = os.path.join(RES, "pythia_partition.csv")
+# The real CSV by default. PYTHIA_CSV overrides it so the verdict paths can be
+# exercised on synthetic input without writing anywhere near a live run; nothing
+# preregistered depends on the path.
+CSV = os.environ.get("PYTHIA_CSV") or os.path.join(RES, "pythia_partition.csv")
+OUT_JSON = os.environ.get("PYTHIA_OUT") or os.path.join(RES,
+                                                        "pythia_analysis.json")
 
 TOL_CHECK1 = 1e-6
 BREAKDOWN_TOL = 1.10
@@ -80,8 +85,7 @@ def main():
 
     if not (out["check1_pass"] and out["check1b_pass"]):
         out["verdict"] = "VOID: check 1 or 1b failed; nothing is reported"
-        json.dump(out, open(os.path.join(RES, "pythia_analysis.json"), "w"),
-                  indent=1)
+        json.dump(out, open(OUT_JSON, "w"), indent=1)
         print("\n" + out["verdict"])
         return 1
 
@@ -176,18 +180,24 @@ def main():
           f"{out['divergence_frac_pos']:.3f} of resamples")
 
     # the preregistered verdict
-    if out["divergence"] > 0 and np.isfinite(out["breakdown"]) \
+    # Exponents that are equal differ by rounding, so the comparison needs a
+    # tolerance. Without one, a decomposition with no divergence at all reports
+    # as "divergence positive but the breakdown is far away", which is both wrong
+    # and flattering. This is the same guard closure_check.py carries.
+    ATOL = 1e-9
+    if out["divergence"] > ATOL and np.isfinite(out["breakdown"]) \
             and out["breakdown"] <= 1e12:
         out["verdict"] = "POSITIVE: inconsistent at scales of practical interest"
-    elif out["divergence"] <= 0:
-        out["verdict"] = ("NEGATIVE: divergence rate is not positive; the parts do "
-                          "not outgrow the fitted whole on this ladder")
+    elif out["divergence"] <= ATOL:
+        out["verdict"] = ("NEGATIVE: divergence rate is indistinguishable from "
+                          "zero; the parts do not outgrow the fitted whole on "
+                          "this ladder")
     else:
         out["verdict"] = ("NEGATIVE: divergence positive but the breakdown scale "
                           "lies beyond any scale anyone extrapolates to")
     print("\n" + out["verdict"])
 
-    json.dump(out, open(os.path.join(RES, "pythia_analysis.json"), "w"), indent=1)
+    json.dump(out, open(OUT_JSON, "w"), indent=1)
     return 0
 
 
