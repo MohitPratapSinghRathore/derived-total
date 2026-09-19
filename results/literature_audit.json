@@ -1,0 +1,116 @@
+{
+ "sources": [
+  {
+   "source": "Loquacious supplementary analysis, Table 9 (arXiv:2512.17915)",
+   "n_rows": 11,
+   "n_closed": 11,
+   "max_abs_residual": 0.1,
+   "aggregate_independently_fitted": false,
+   "admissible": true,
+   "note": "WER is defined as the sum of its parts, so closure is exact by construction and no independent aggregate exists to conflict with it. Rows vary architecture, not scale, so no exponent is fitted and no breakdown scale applies.",
+   "detail": [
+    {
+     "row": "AED BPE 1K / LS",
+     "parts_sum": 13.7,
+     "stated": 13.7,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "CTC BPE 128 / LS",
+     "parts_sum": 11.3,
+     "stated": 11.3,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "CTC phonemes 80 / LS",
+     "parts_sum": 10.7,
+     "stated": 10.6,
+     "residual": 0.1,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "RNN-T BPE 128 / LS",
+     "parts_sum": 13.9,
+     "stated": 13.9,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "mRNN-T / LS",
+     "parts_sum": 10.7,
+     "stated": 10.7,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "RNN-T phonemes 80/LS",
+     "parts_sum": 10.8,
+     "stated": 10.8,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "AED BPE 1K / Yodas",
+     "parts_sum": 18.3,
+     "stated": 18.3,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "CTC BPE 128 / Yodas",
+     "parts_sum": 16.8,
+     "stated": 16.8,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "CTC phonemes 80/Yodas",
+     "parts_sum": 15.6,
+     "stated": 15.6,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "RNN-T BPE 128 / Yodas",
+     "parts_sum": 18.5,
+     "stated": 18.5,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    },
+    {
+     "row": "mRNN-T / Yodas",
+     "parts_sum": 15.9,
+     "stated": 15.9,
+     "residual": 0.0,
+     "tol": 0.2,
+     "ok": true
+    }
+   ]
+  },
+  {
+   "source": "This project's ladder (companion manuscript)",
+   "n_rows": 18,
+   "n_closed": 0,
+   "aggregate_independently_fitted": true,
+   "admissible": false,
+   "note": "The aggregate illegal-move rate was fitted as its own power law alongside the category curves, which is the configuration that fails. Breakdown scale reported in admissibility.json."
+  }
+ ],
+ "summary": {
+  "sources_examined": 2,
+  "with_independent_aggregate": 1,
+  "inadmissible": 1
+ }
+}

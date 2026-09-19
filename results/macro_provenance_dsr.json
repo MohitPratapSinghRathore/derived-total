@@ -275,6 +275,126 @@
   "value": "0.115",
   "source": "results/compositional.json"
  },
+ "admSizeMargin": {
+  "value": "0.015",
+  "source": "results/compositional.json"
+ },
+ "admBfitted": {
+  "value": "$-$0.267",
+  "source": "results/admissibility.json"
+ },
+ "admAstar": {
+  "value": "$-$0.112",
+  "source": "results/admissibility.json"
+ },
+ "admAmin": {
+  "value": "$-$0.574",
+  "source": "results/admissibility.json"
+ },
+ "admEffSmall": {
+  "value": "$-$0.299",
+  "source": "results/admissibility.json"
+ },
+ "admEffLarge": {
+  "value": "$-$0.228",
+  "source": "results/admissibility.json"
+ },
+ "admEffBn": {
+  "value": "$-$0.174",
+  "source": "results/admissibility.json"
+ },
+ "admEffTn": {
+  "value": "$-$0.137",
+  "source": "results/admissibility.json"
+ },
+ "admDriftRange": {
+  "value": "0.071",
+  "source": "results/admissibility.json"
+ },
+ "admDriftBn": {
+  "value": "0.125",
+  "source": "results/admissibility.json"
+ },
+ "admDriftPct": {
+  "value": "27",
+  "source": "results/admissibility.json"
+ },
+ "admSpan": {
+  "value": "0.461",
+  "source": "results/admissibility.json"
+ },
+ "admOverLarge": {
+  "value": "1.02",
+  "source": "results/admissibility.json"
+ },
+ "admOverBn": {
+  "value": "1.27",
+  "source": "results/admissibility.json"
+ },
+ "admOverTn": {
+  "value": "2.82",
+  "source": "results/admissibility.json"
+ },
+ "admBreakdown": {
+  "value": "174M",
+  "source": "results/admissibility.json"
+ },
+ "admBreakdownLo": {
+  "value": "57M",
+  "source": "results/admissibility.json"
+ },
+ "admBreakdownHi": {
+  "value": "635M",
+  "source": "results/admissibility.json"
+ },
+ "admShareSimplex": {
+  "value": "0.01251",
+  "source": "results/admissibility.json"
+ },
+ "admShareSum": {
+  "value": "0.01274",
+  "source": "results/admissibility.json"
+ },
+ "admRateSimplex": {
+  "value": "0.00234",
+  "source": "results/admissibility.json"
+ },
+ "admRateSum": {
+  "value": "0.00244",
+  "source": "results/admissibility.json"
+ },
+ "admMaxShareGap": {
+  "value": "0.0060",
+  "source": "results/admissibility.json"
+ },
+ "admLadderWide": {
+  "value": "12",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "admForecastBeyond": {
+  "value": "25",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "audRows": {
+  "value": "11",
+  "source": "results/literature_audit.json"
+ },
+ "audClosed": {
+  "value": "11",
+  "source": "results/literature_audit.json"
+ },
+ "audWorst": {
+  "value": "0.10",
+  "source": "results/literature_audit.json"
+ },
+ "audSources": {
+  "value": "2",
+  "source": "results/literature_audit.json"
+ },
+ "audWithAgg": {
+  "value": "1",
+  "source": "results/literature_audit.json"
+ },
  "kParamsSix": {
   "value": "1.3M",
   "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"

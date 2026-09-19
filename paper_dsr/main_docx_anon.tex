@@ -9,8 +9,7 @@
 
 
 
-\title{\bf When Scaling Forecasts Are Inadmissible: A Diagnostic\\for Error
-Decompositions}
+\title{\bf Decomposed Scaling Forecasts Need a Derived Total, Not a Fitted One}
 
 
   \author{\normalsize\itshape Author names and affiliations removed for
@@ -25,24 +24,23 @@ Decompositions}
 Organisations increasingly decide where to spend an artificial intelligence budget
 by asking which of a system's failures the next model generation will remove on its
 own. The usual evidence is a decomposition: sort the errors into categories, fit a
-scaling curve to each, and read off which categories shrink fastest. We show this
-procedure is not merely noisy but inadmissible, and that the defect is structural
-rather than incidental. Because the categories partition the errors, their rates
-must sum to the total rate at every scale, and independently fitted curves cannot
-satisfy that identity once their exponents differ, which is the only reason to fit
-them separately. The largest category exponent necessarily exceeds the total's, so
-the parts outgrow the whole and the forecast describes an impossibility beyond a
-computable scale. On our own measurements the parts reach 1.27 times
-the whole at one billion parameters and 2.82 times at one trillion.
-The threshold sits at 174M parameters, below the range our earlier
-analysis had forecast into. An independent model family reproduces the defect at
-243M. We contribute a diagnostic that needs only the exponents
-a study already publishes, a closed remedy that fits the composition on the simplex
-and is 5.4\% more accurate in range, and the finding that an
-inadmissible fit voids negative conclusions as well as forecasts, which we
-demonstrate by retracting one of our own. For managers the practical yield is a
-cheap, auditable test of whether a supplier's roadmap claim is arithmetic or
-assertion.
+scaling curve to each, and read off which shrink fastest. Studies that do this
+commonly also fit the aggregate error rate as a curve of its own. We show the two
+cannot both be right. If the categories follow power laws with different exponents,
+their sum is provably not a power law, so an independently fitted aggregate
+contradicts the categories it summarises, and the contradiction grows without
+bound. On our measurements the parts reach 1.27 times the fitted
+whole at one billion parameters and 2.82 times at one trillion,
+exceeding ten percent beyond 174M parameters
+[57M, 635M]. The repair is to derive the
+total from the parts rather than fit it separately. What that costs is the
+aggregate exponent itself, which does not exist: its effective slope drifts from
+$-$0.299 to $-$0.174, covering 27\% of the
+span of the category exponents it is meant to summarise. We contribute a diagnostic
+needing only the coefficients a study already prints, an audit finding that speech
+recognition already follows the derived-total convention while scaling analyses do
+not, and the observation that conclusions resting on such a pair's out-of-range
+behaviour are void, which we show by withdrawing one of our own.
 \end{abstract}
 
 \vspace{0.5em}
@@ -63,28 +61,36 @@ a forecasting problem, and the field has a standard way of answering it: partiti
 the observed errors into categories, fit a scaling curve to each category, and
 compare the exponents.
 
-The procedure is appealing because it is cheap and because it appears to convert an
-argument about the future into a measurement. It is also, as we show here,
-inadmissible whenever the exponents differ, which is the only circumstance in which
-anybody bothers to compute them. The categories partition the errors, so their rates
-must sum to the total error rate at every scale. Five curves fitted one at a time
-do not know this and cannot enforce it. The category with the shallowest decline
-eventually dominates a total that is falling faster than it is, the parts overtake
-the whole, and the forecast is then assigning more failures to one category than
-occur altogether. This is not a wide confidence interval. It is an arithmetic
-impossibility, and it means the extrapolation stopped reporting the exponents'
-implications somewhere below the scale at which it was read.
+Studies that do this almost always report one more thing: a scaling curve for the
+aggregate error rate, fitted separately. That aggregate is usually the headline. We
+show the two reports are mutually inconsistent, and that the inconsistency is forced
+rather than incidental. If the categories are power laws with different exponents,
+their sum is provably not a power law, because a sum of power laws has a slope that
+moves. An aggregate fitted as a power law therefore contradicts the categories it is
+meant to summarise, and the contradiction grows without bound with scale. Past a
+computable point the fitted parts exceed the fitted whole, which is not a wide
+confidence interval but an arithmetic impossibility.
 
-We came to this the embarrassing way. A companion study of ours
- (Anonymous, 2026){} decomposed the
-illegal moves made by chess transformers, fitted a curve per category, and projected
-to one billion parameters. That projection was inadmissible, and the threshold at
-which it became so, 174M parameters, lay well below the scale we
-had read it at. The fitted curves had passed every quality gate we had, agreed
-closely with the data in range, and were still describing something that cannot
-happen. We report the diagnosis, the remedy, and our own retraction together,
-because the sequence is the argument: this failure is invisible to the checks
-practitioners actually run.
+The repair is simpler than the diagnosis, and it is not ours. Stop fitting the
+aggregate and define it as the sum of the categories. That is consistent at every
+scale, preserves every category exponent, and needs no new machinery. What it costs
+is the aggregate exponent, which under the repair does not exist as a single number:
+on our data its effective slope drifts from $-$0.299 at the bottom of
+our range to $-$0.174 at one billion parameters, covering
+27\% of the span of the category exponents it was meant to
+summarise. A study may report per-category exponents, or an aggregate exponent, but
+reporting both is reporting two things that cannot both hold.
+
+A companion study of ours
+ (Anonymous, 2026){} decomposed the illegal
+moves made by chess transformers, fitted a curve per category and a separate curve
+for the aggregate, and projected to one billion parameters. The inconsistency
+exceeded ten percent beyond 174M parameters
+[57M, 635M], well below where we read it. The
+fits had passed every quality gate we had and agreed closely with the data in range.
+We report the diagnosis, the repair, and our own correction together, because the
+sequence is the argument: this failure is invisible to the checks practitioners
+actually run.
 
 \paragraph{Why this matters beyond the laboratory.}
 The decomposition-and-extrapolate pattern has escaped the research literature. It
@@ -100,34 +106,37 @@ question of analytic authority into a question anyone can audit.
 
 \paragraph{Research questions and objectives.}
 \begin{description}[nosep,leftmargin=2.2em]
-\item[RQ1] Is the failure of independently fitted category curves to respect the
-partition identity incidental to particular data, or structural?
-\item[RO1] Establish the condition under which the parts must outgrow the whole and
-derive the scale at which a given decomposition becomes inadmissible
+\item[RQ1] Is the inconsistency between per-category curves and a separately fitted
+aggregate incidental to particular data, or forced?
+\item[RO1] Establish the condition under which the fitted parts must outgrow the
+fitted whole, and derive the scale at which a given pair becomes inconsistent
 (Section~\ref{sec:design}).
-\item[RQ2] Can the defect be detected from what published studies already report,
+\item[RQ2] What does the derived-total repair cost, and is further machinery needed?
+\item[RO2] Compare the derived total against the fitted one, and compare the two
+admissible ways of writing the composition under a common loss
+(Sections~\ref{sec:design} and~\ref{sec:eval}).
+\item[RQ3] Can the defect be detected from what published studies already print,
 without access to their data?
-\item[RO2] Design and implement a diagnostic that consumes only reported exponents
-and intercepts (Sections~\ref{sec:arch} and~\ref{sec:method}).
-\item[RQ3] Does a closed reformulation restore admissibility without costing
-accuracy?
-\item[RO3] Fit the composition on the simplex and compare in-range accuracy against
-the uncoupled baseline (Section~\ref{sec:eval}).
-\item[RQ4] What does an inadmissible fit invalidate, beyond the forecast itself?
-\item[RO4] Test whether conclusions drawn against such a fit survive, using a
-hypothesis we had previously rejected on exactly that basis
-(Section~\ref{sec:eval}).
+\item[RO3] Implement a diagnostic consuming only reported coefficients and apply it
+to published decompositions (Sections~\ref{sec:arch} and~\ref{sec:eval}).
+\item[RQ4] What does an inconsistent pair invalidate, beyond the forecast itself?
+\item[RO4] Test whether a conclusion we had drawn against such a pair survives being
+redrawn admissibly (Section~\ref{sec:eval}).
 \end{description}
 
 \paragraph{Contributions.}
 The contribution is a diagnostic artifact together with the design knowledge it
-carries, in three pillars. First, an admissibility condition for per-category
-scaling forecasts, with a computable breakdown scale, which shows the defect is
-forced rather than accidental. Second, a closed parameterisation that removes it
-and is more accurate in range than the practice it replaces, so adoption costs
-nothing. Third, evidence that inadmissible fits void negative results as well as
-positive ones, demonstrated by retracting a rejection of our own that turned out to
-rest on nothing.
+carries, in three pillars. First, a consistency condition for the pair of a
+per-category decomposition and a fitted aggregate, with a computable breakdown
+scale, showing the conflict is forced and identifying the aggregate as the term that
+must give way. Second, a characterisation of what the repair costs, namely the
+aggregate exponent, quantified as the drift of the derived total's slope, together
+with the finding that the two admissible ways of writing the composition agree to
+within 
+esult{admMaxShareGap} in share and so present no further choice worth
+arguing about. Third, evidence that a conclusion resting on such a pair's
+out-of-range behaviour is void, demonstrated by withdrawing a rejection of our own
+that turned out to rest on nothing.
 
 % ====================================================================
 \section{Related Work}
@@ -153,7 +162,21 @@ conclusion about the measurement apparatus, and they are complementary in
 mechanism: theirs concerns the shape imposed by a discontinuous scoring function,
 ours the constraint violated by fitting the parts of a whole independently. A study
 can satisfy their recommendation completely, using a perfectly continuous metric,
-and still produce the inadmissible forecast we describe.
+and still produce the inconsistent pair we describe.
+
+\paragraph{Compositional data and non-power-law scaling.}
+Modelling a vector of shares with an additive-logratio link is the standard
+apparatus of compositional data analysis \citep{aitchison1986statistical}, and
+Equation~\ref{eq:softmax} is that apparatus with $\log N$ as the covariate. We claim
+no novelty for the model; the contribution is the observation that a decomposition
+plus a fitted aggregate is already an implicit compositional model, and an
+inconsistent one, so the field has been doing compositional analysis without the
+constraint that defines it. Separately, work on scaling laws with more than one
+regime \citep{caballero2023broken} arrives at the same conclusion that a single
+power law is often the wrong form, from the shape of observed curves rather than
+from a constraint the curves must jointly satisfy. Our argument is complementary and
+stronger in one narrow respect: it says a single power law for the aggregate cannot
+be right, without needing to observe the aggregate at all.
 
 \paragraph{Design science and the evaluated artifact.}
 We frame the contribution as design-science research in the sense of
@@ -188,28 +211,78 @@ partition the errors, so the identity
 \end{equation}
 holds of the quantities being estimated. It does not hold of the estimates.
 
-\paragraph{The admissibility condition.}
+\paragraph{The consistency condition.}
 Let $a^\star = \max_i a_i$. The sum of the parts is asymptotically proportional to
-$N^{a^\star}$, the whole to $N^{b}$, so the ratio of parts to whole grows as
-$N^{a^\star - b}$ and diverges precisely when $a^\star > b$. That inequality is not
-a coincidence to be checked case by case. Fitted within the observed range, $b$
+$N^{a^\star}$ and the fitted whole to $N^{b}$, so the ratio of parts to whole grows
+as $N^{a^\star - b}$ and diverges precisely when $a^\star > b$. That inequality is
+not a coincidence to be checked case by case. Fitted within the observed range, $b$
 tracks the rate-weighted mean of the $a_i$, because the total is the rate-weighted
 sum of the parts there. A maximum is at least a weighted mean, with equality only
 if every $a_i$ is identical. Hence:
 
 \begin{quote}
-\emph{Any per-category scaling decomposition whose fitted exponents are not all
-equal must violate Equation~\ref{eq:closure} beyond a finite scale, and that scale
-is computable from the fitted coefficients alone.}
+\emph{If the categories are fitted as power laws with exponents that are not all
+equal, no power law can represent their total, and any separately fitted aggregate
+must contradict them beyond a finite scale computable from the fitted coefficients.}
 \end{quote}
 
 Since exponents that are all equal would make the decomposition pointless, every
-decomposition worth reporting is inadmissible somewhere. The question is only
-whether the scale at which it becomes so lies above or below where the forecast was
-read. Our own values illustrate the mechanism: $a^\star$ is $-$0.112, the
-rate-weighted mean of the part exponents is $-$0.266, and the
-separately fitted $b$ is $-$0.267, giving a divergence rate of
-+0.154.
+decomposition worth reporting conflicts with its own fitted aggregate somewhere. Our
+values illustrate it: $a^\star$ is $-$0.112, the rate-weighted mean of the
+part exponents is $-$0.266, and the separately fitted $b$ is
+$-$0.267.
+
+\paragraph{Which term is wrong, and the obvious repair.}
+It is worth being precise about where the error lies, because the natural first
+reading is that the category fits are at fault and they are not. A sum of power laws
+with distinct exponents is not a power law. The categories may each be perfectly
+well specified; what cannot be sustained is the additional claim that their total is
+also a power law. The misspecified object is the aggregate.
+
+The repair follows immediately and requires nothing new: do not fit the aggregate,
+and define
+\begin{equation}
+T(N) \;:=\; \sum_{i=1}^{k} r_i(N),
+\label{eq:derived}
+\end{equation}
+which satisfies Equation~\ref{eq:closure} identically at every scale, for every
+setting of the coefficients, and preserves each category exponent exactly. No link
+function, no constrained estimation, and no reparameterisation is needed. We state
+this plainly because it is the correct remedy and because an earlier version of our
+own analysis reached for a more elaborate one before noticing it.
+
+\paragraph{What the repair costs.}
+It costs the aggregate exponent, and that is not a small thing, because the
+aggregate exponent is usually the number a study is read for. Under
+Equation~\ref{eq:derived} the total has a slope that moves with scale. On our
+measurements the effective slope $\mathrm{d}\log T/\mathrm{d}\log N$ is
+$-$0.299 at the bottom of the observed range, $-$0.228 at
+the top, $-$0.174 at one billion parameters and $-$0.137 at one
+trillion. The drift within the observed range alone is 0.071, and
+by one billion it is 0.125, which is 27\% of the
+0.461 span between our steepest and shallowest category exponents. An
+aggregate exponent quoted from such a fit is a local slope valid over the fitted
+range, and reporting it as a property of the system is the substantive error behind
+the arithmetic one. This is the same observation that motivates work on scaling laws
+with more than one regime \citep{caballero2023broken}, arrived at from the
+constraint side rather than the curve-shape side.
+
+\paragraph{Writing the composition.}
+Dividing Equation~\ref{eq:derived} through gives the category shares
+\begin{equation}
+s_i(N) \;=\; \frac{A_i N^{a_i}}{\sum_j A_j N^{a_j}}
+      \;=\; \frac{\exp(\log A_i + a_i \log N)}{\sum_j \exp(\log A_j + a_j \log N)},
+\label{eq:softmax}
+\end{equation}
+which is a softmax linear in $\log N$, that is, a compositional model with an
+additive-logratio link and $\log N$ as the covariate, in the sense of
+\citet{aitchison1986statistical}. So the derived-total repair and a compositional
+fit on the simplex are the same model of the composition; they differ only in the
+loss used to estimate it, log-rate space in the first case and share space in the
+second. Section~\ref{sec:eval} reports that on our data they agree to within
+0.0060 in share across six orders of magnitude and agree on the
+asymptotics, so an analyst need not choose carefully between them. What matters is
+that either is used instead of the fitted aggregate.
 
 \paragraph{Design principles.}
 Table~\ref{tab:dp} states the principles the artifact realises. They are stated so
@@ -239,7 +312,7 @@ it. \\
 DP5. Fail loudly on inputs that cannot bear a fit & A category with a zero rate at
 any scale has no exponent; the implementation refuses rather than flooring the
 value and inventing a slope. \\
-DP6. State what is invalidated & Output distinguishes what an inadmissible fit
+DP6. State what is invalidated & Output distinguishes what an inconsistent pair
 costs, which includes conclusions drawn against it, not only its forecasts. \\
 \bottomrule
 \end{tabular}
@@ -251,9 +324,9 @@ as a power law in a common scale variable. Out of scope: single aggregate scalin
 laws, for which no partition identity exists and the criticism does not apply;
 categories that overlap rather than partition, for which a different bound is
 needed; and the question of whether any particular fitted exponent is correct, which
-this work does not address and does not need to. An inadmissible forecast can rest
-on exponents that are individually excellent, which is precisely what makes the
-defect hard to see.
+this work does not address and does not need to. The conflict arises between fits
+that may each be individually excellent, which is precisely what makes it hard to
+see.
 
 % ====================================================================
 \section{Artifact Architecture}
@@ -275,12 +348,17 @@ A convenience path that fits the coefficients from raw measurements rather than
 requiring them to be transcribed, applying DP5: a category whose rate is zero at
 some scale is refused, with an explanation, rather than silently floored.
 
-\paragraph{The closed model.}
-The remedy, which parameterises the composition as a softmax linear in $\log N$ and
-multiplies it by a separately fitted total. Shares sum to one at every scale for
-every parameter value, so Equation~\ref{eq:closure} holds by construction and no
-setting of the parameters can produce an impossible forecast. The total keeps an
-ordinary power law, which is legitimate because a total is not a part of anything.
+\paragraph{The derived total.}
+The remedy of Equation~\ref{eq:derived}: the total is computed from the category
+curves rather than fitted, so Equation~\ref{eq:closure} holds identically and no
+setting of the coefficients can produce an impossible forecast. The module also
+returns the effective slope at any scale, because an analyst who previously quoted
+an aggregate exponent needs to see what has replaced it, and returns the drift
+across a stated range so that a single number can still be quoted where the drift
+is small enough to tolerate. The equivalent compositional fit of
+Equation~\ref{eq:softmax} is provided alongside it for analysts who prefer to
+estimate in share space; the two are the same model and the implementation says so
+rather than presenting them as alternatives to be chosen between.
 
 \paragraph{Tolerance.}
 Admissibility is asymptotic, but in-range fit noise makes a strict threshold
@@ -329,9 +407,13 @@ All runs fit on a single NVIDIA GeForce RTX 3050 Laptop GPU with 4\,GiB of devic
 memory, in a host with 15\,GB of physical memory visible to the
 operating system, under Windows 11, using Python~3.12.10 with
 PyTorch~2.5.1+cu121, NumPy~2.4.6 and SciPy~1.18.1. The
-memory ceiling, rather than a judgement about what was worth measuring, is what
-sets the top of our ladder, which is why the independently trained family carries
-weight in Section~\ref{sec:eval}.
+memory ceiling, rather than a judgement about what was worth measuring, is what sets
+the top of our ladder. It is worth stating the consequence bluntly, because it is
+the underlying reason the companion forecast went wrong: the ladder spans
+12-fold in parameters, and the forecast was read
+25-fold beyond its top. No fitted form is owed that much
+credit, and the arithmetic failure documented here is what happens when one is
+extended that far without a constraint to stop it.
 
 % ====================================================================
 \section{Illustrative Walkthrough}
@@ -346,21 +428,24 @@ least, a paired differential of +0.461
 [+0.259, +0.599]. Nothing in the residuals
 suggests trouble.
 
-Running the check takes the ten fitted coefficients and returns: $a^\star$ is
-$-$0.112 against a total exponent of $-$0.267, a divergence rate
-of +0.154, and a breakdown scale of 174M parameters at
-a ten percent tolerance. The intended forecast scale is one billion. The forecast is
-therefore being read roughly six times past the point at which the decomposition
-stops being arithmetic, and the overspend there is 1.27
+Running the check takes the eleven fitted coefficients, five categories and the
+aggregate, and returns: the largest category exponent $a^\star$ is
+$-$0.112 against a fitted aggregate exponent of $-$0.267, so the
+parts outgrow the whole, and the inconsistency passes ten percent at
+174M parameters [57M, 635M].
+The intended forecast scale is one billion, several times past that threshold, and
+the parts there stand at 1.27 times the whole
 [1.13, 1.57], above one in
 100\% of resamples of the ladder.
 
-The analyst now has two usable options and one unusable one. The unusable option is
-to widen the intervals, which does not help, because the problem is not that the
-estimate is imprecise. The first usable option is to report the forecast only up to
-174M parameters and say so. The second is to refit the composition
-on the simplex, which restores admissibility at every scale and, on these data,
-improves in-range accuracy. Section~\ref{sec:eval} reports what that refit gives.
+The analyst has one unusable option and two usable ones. The unusable option is to
+widen the intervals, which does not help, because the fitted aggregate is not
+imprecise but contradicted. The first usable option is to keep both fits and report
+nothing above 174M parameters. The second, and the one we
+recommend, is to drop the fitted aggregate and derive the total from the categories,
+which is consistent at every scale. The cost of the second is that there is no
+longer an aggregate exponent to quote, only a slope that moves;
+Section~\ref{sec:eval} reports how far it moves here.
 
 % ====================================================================
 \section{Evaluation}
@@ -393,11 +478,15 @@ One trillion parameters & 2.82 & n/a \\
 \end{table}
 
 \paragraph{Does it replicate on a family we did not train?}
-Yes, and at a similar magnitude. Refitting the independent ladder over its own
-4 usable categories gives $a^\star$ $-$1.044 against
-a total of $-$1.278, a divergence rate of +0.234, an
-overspend of 1.28 at one billion parameters, and a breakdown scale
-of 243M. A different tokenisation, a different taxonomy, a
+Directionally yes, and that is as much as three checkpoints can support. Refitting
+the independent ladder over its own 4 usable categories gives a
+positive divergence rate, so the same conflict exists, and a breakdown scale of the
+same order of magnitude as ours. We deliberately do not quote those figures to three
+significant digits. Each is a two-parameter fit to three points, one of the five
+categories had to be dropped because its rate is zero at two of the three, and the
+resulting coefficients carry no usable precision. The claim the replication supports
+is that the conflict is not a peculiarity of our ladder, not that its magnitude has
+been estimated twice. A different tokenisation, a different taxonomy, a
 different corpus and a different laboratory reproduce the defect within the same
 order of magnitude, which is what Section~\ref{sec:design} predicts and what makes
 this a property of the method rather than of our data. One of that family's
@@ -405,18 +494,79 @@ categories is excluded because its rate is zero at two of three checkpoints; an
 exponent fitted there would be an artefact of the floor, and DP5 makes the
 implementation refuse it rather than produce one.
 
-\paragraph{Does the remedy cost accuracy?}
-No, it improves it. Fitted in range across the 18 runs, the closed model
-attains a root-mean-square error of 0.01251 in share space against
-0.01322 for the uncoupled fits, an improvement of
-5.4\%. This matters for adoption rather than for truth: an
-admissible model that fitted worse would face a trade-off argument, and this one
-does not. Under the closed model the least local category's share rises from
-0.444 at the top of our range to 0.588 at one billion
-and 0.769 at one trillion, approaching but never exceeding
-0.871, while the most local category falls to 0.001.
-The substantive ordering the decomposition was meant to establish survives. What
-changes is that the numbers are now ones the categories can jointly satisfy.
+\paragraph{Do the two admissible forms differ?}
+Barely, which is the useful answer. The derived-total model and the compositional
+fit are the same model estimated under different losses, so the only question is
+whether the loss matters. Scored in share space the compositional fit attains
+0.01251 against 0.01274 for the derived total; scored
+in rate space, 0.00234 against 0.00244. The compositional
+fit is marginally ahead in both, which is expected since neither is being scored in
+a space that favours it over the other by construction, and the two disagree by at
+most 0.0060 in share across six orders of magnitude. We draw no
+conclusion from the ordering. An earlier version of this analysis reported the
+compositional fit as several percent more accurate than the uncoupled baseline; that
+comparison was not like for like, because the baseline had been estimated in
+log-rate space and scored in share space, and we withdraw it.
+
+The honest summary is that the repair is free in fit quality rather than beneficial.
+The case for it is not accuracy but consistency, and the case against the fitted
+aggregate is not that it fits badly, which it does not, but that it asserts
+something the categories contradict.
+
+\paragraph{What the repair costs, measured.}
+Table~\ref{tab:drift} gives the effective slope of the derived total. Within the
+observed range it moves by 0.071, and by one billion parameters it
+has moved 0.125 from where it started, which is 27\%
+of the 0.461 separating our steepest and shallowest category exponents.
+An analyst who quoted $-$0.267 as the aggregate exponent was quoting a
+local slope, and the forecast error from treating it as global is the quantity in
+Table~\ref{tab:overspend}.
+
+\begin{table}[t]
+\centering
+\caption{Effective slope of the derived total, $\mathrm{d}\log T/\mathrm{d}\log N$.
+Constant only if all category exponents are equal; here it drifts across a
+substantial fraction of the span it is meant to summarise.}
+\label{tab:drift}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Scale} & \textbf{Effective slope} \\
+\midrule
+Bottom of observed range (3.4M) & $-$0.299 \\
+Top of observed range (39.9M) & $-$0.228 \\
+One billion parameters & $-$0.174 \\
+One trillion parameters & $-$0.137 \\
+\midrule
+Separately fitted aggregate exponent & $-$0.267 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Published decompositions: who already does this right.}
+We applied the check to published error decompositions, which
+Section~\ref{sec:limits} of an earlier draft had listed as undone. The binding
+constraint turned out to be finding a published table that has the failing
+configuration at all, and that is itself the finding.
+
+Speech recognition is the mature case. Word error rate is defined as the sum of
+substitutions, deletions and insertions, so the aggregate is derived rather than
+fitted, exactly as Equation~\ref{eq:derived} recommends, and no inconsistency is
+possible. Checking the identity row by row against a recent published table
+\citep{loquacious2025supplementary} confirms it holds in 11 of
+11 rows, with a worst discrepancy of 0.10 points, which is
+what independent rounding of three components and a total to one decimal produces.
+That field settled on the derived total decades ago and does not discuss it, because
+within it the alternative never seemed available.
+
+The configuration that fails is the one where the aggregate is the headline and the
+categories are secondary, which is the habit of scaling analysis rather than of
+error analysis. Of the 2 sources we examined in detail,
+1 fits the aggregate independently, and it is ours. We report this
+as a limitation converted into a finding rather than as a survey: it establishes
+that the repair is already standard practice in a field that decomposes errors
+carefully, and it does not establish how common the failing configuration is in the
+scaling literature, which would need the survey described in FR6.
 
 \paragraph{The same discipline outside the partition.}
 A quantity confined to the unit interval needs a link that respects the confinement
@@ -427,23 +577,31 @@ belonging to them, was observed between 0.148 and
 billion and 0.951 at one trillion, remaining a proportion throughout.
 Fitted linearly in the log, as the categories originally were, it would not.
 
-\paragraph{What an inadmissible fit invalidates.}
+\paragraph{What an inconsistent pair invalidates.}
 This is the evaluation we did not expect to run. While preparing this manuscript we
 tested a hypothesis that failure composition is governed by a model's achieved
-competence rather than by its size, rejected it on the grounds that the fitted
-shares exceeded one, and recorded the rejection. That rejection was worthless.
-Predicting an impossibility is what the uncoupled form does everywhere, so its
-disagreement with the data carried no evidence about the hypothesis under test. We
-repeated the comparison admissibly, fitting the composition on the simplex in
+competence rather than by its size, rejected it on the grounds that the fitted shares
+exceeded one, and recorded the rejection. That rejection was worthless. Shares
+exceeding one is what the inconsistent form produces everywhere, at every scale, for
+any data whatever, so the observation carried no information about the hypothesis
+under test.
+
+We repeated the comparison admissibly, fitting the composition on the simplex in
 competence coordinates, matching the two families down to the three categories both
-taxonomies share, and predicting the independent family's checkpoints entirely out
-of sample. The hypothesis is genuinely refuted: mean total variation distance
+taxonomies share, and predicting the independent family's checkpoints entirely out of
+sample. The hypothesis is genuinely refuted: mean total variation distance
 0.490, against 0.100 for size coordinates and
 0.115 for the baseline of predicting our own mean composition
-regardless of input. The conclusion survived. The original argument for it did not.
-An inadmissible fit cannot be used to reject a hypothesis, because a model that
-predicts impossibilities everywhere cannot be embarrassed by data anywhere. We have
-not seen this stated, and we had it wrong ourselves until we checked.
+regardless of input. The conclusion survived; the original argument for it did not.
+
+Two cautions on this result, both of which cut against us. The claim to take away is
+narrow: a conclusion that depends on an inconsistent pair's out-of-range or
+share-space behaviour is void, because that behaviour is determined by the
+misspecification rather than by the data. A conclusion resting on in-range residuals
+would have been unaffected, and we do not claim otherwise. Second, size coordinates
+beat the constant baseline only by 0.015 in total variation, which
+is close enough to nothing that the right reading is that neither covariate transfers
+across model families, rather than that size transfers and competence does not.
 
 \paragraph{Honest negative results.}
 Two further ideas were tested and are reported because they failed. We predicted
@@ -464,20 +622,19 @@ rather than the future. Neither appears in our conclusions.
 Each part of the artifact is individually unremarkable. A ratio of two fitted curves
 is arithmetic; a softmax is standard; refusing to fit a zero is hygiene. What the
 combination buys is that a practitioner can act on the finding without first
-believing it. The checker tells an analyst that a forecast is inadmissible using
-only what the analyst already has, and the closed model gives somewhere to go that
+believing it. The checker tells an analyst that a forecast is internally
+inconsistent using only what the analyst already has, and the closed model gives somewhere to go that
 costs nothing in accuracy. A criticism that arrives with a remedy priced at zero is
 adopted; one that arrives as a warning is filed.
 
 \paragraph{A design-choice defence.}
-The softmax is one admissible parameterisation among many, and we do not claim it is
-the right one. Any link that maps the real line onto the simplex would enforce
-Equation~\ref{eq:closure}, and different links would give different numbers beyond
-the observed range while agreeing that the uncoupled numbers are inadmissible. We
-chose the softmax because it is the minimal change from a log-linear fit, reducing
-to one when there are two categories, so an analyst can adopt it without adopting a
-new modelling philosophy. The transferable knowledge is the admissibility condition,
-not the link.
+We are not arguing for a link function. The repair that matters is dropping the
+fitted aggregate, which requires no link at all, and the compositional form is what
+that repair turns out to be equivalent to rather than an additional commitment. This
+matters for adoption: an analyst who distrusts the softmax can decline it and still
+take the entire correction, because Equation~\ref{eq:derived} is arithmetic. The
+transferable knowledge is the consistency condition and the identification of the
+aggregate as the term that must give way, not any particular parameterisation.
 
 \paragraph{Why the defect survives ordinary quality control.}
 Our uncoupled fits passed every gate we had. The residuals were small, the exponents
@@ -510,7 +667,7 @@ the defect that was left: the applicant whose document is misread, the patient w
 triage note is misfiled, the small trader whose claim is misclassified. When a
 category of failure is forecast to disappear with scale, mitigation for it is
 deferred, and the deferral lasts as long as the forecast is believed. An
-inadmissible forecast systematically favours deferral, because the categories it
+inconsistent forecast systematically favours deferral, because the categories it
 inflates are the shallow ones, which are exactly the ones described as persistent.
 The people who carry the cost of an over-optimistic roadmap are rarely the people
 who wrote it, and they have no way to contest an analysis they cannot see. A test
@@ -543,19 +700,12 @@ auditors and regulators than one that can show only that it believed a vendor, a
 the record is created as a by-product of doing the analysis properly.
 
 \paragraph{For society and digital equity.}
-The ability to check a scaling claim should not be a function of having a research
-team. At present, evaluating whether a capability forecast is sound requires either
-the underlying data, which is usually unavailable, or the standing to be believed
-when disagreeing, which is distributed very unevenly. A diagnostic that consumes
-only published coefficients moves this from the second category to the first: it is
-checkable by a civil-society organisation, a journalist, a procurement officer in a
-small public body, or a graduate student, on ordinary hardware. We note that all
-measurements reported here were produced on a single consumer laptop graphics card,
-which is not incidental to that claim. We also record what the artifact
-deliberately does not do. It does not rank models, score vendors, or certify
-anything. It answers one narrow question, whether a forecast is entitled to the
-numbers it reports, and it leaves the judgement of what to do about that with the
-people accountable for the decision.
+The ability to check a scaling claim should not depend on having a research team. A
+diagnostic that consumes only published coefficients is runnable by a civil-society
+organisation, a journalist, or a procurement officer in a small public body, on
+ordinary hardware. We also record what the artifact deliberately does not do: it
+does not rank models, score vendors, or certify anything, but answers the single
+question of whether a forecast is entitled to the numbers it reports.
 
 % ====================================================================
 \section{Limitations}
@@ -566,23 +716,28 @@ people accountable for the decision.
 because a rules engine gives an exact and unambiguous error partition. The
 admissibility argument is arithmetic and does not depend on the domain, but the
 empirical demonstration does.
-\item[L2. The closed model is coherent, not validated.] The softmax guarantees the
-forecast is arithmetically possible, which the uncoupled fits are not. It does not
-make it observed. Every scale beyond 39.9M is extrapolation, and a
-different admissible link would give different numbers.
-\item[L3. Three checkpoints in the independent family.] The replication supports
-directional agreement on admissibility rather than a precise second estimate of any
-exponent, and its coefficients carry correspondingly little precision.
-\item[L4. Depth and width are confounded.] Both ladders grow depth and width
+\item[L2. Consistency is not validation.] The derived total is arithmetically
+possible, which the fitted aggregate is not. That does not make it observed. Every
+scale beyond 39.9M is extrapolation, and consistency constrains the
+form of a forecast without supplying evidence for it.
+\item[L3. Three checkpoints in the independent family.] Its coefficients are
+two-parameter fits to three points with one category dropped, so the replication is
+reported as directional and no figure from it should be read as an estimate.
+\item[L4. The invalidation claim is narrow.] What an inconsistent pair voids are
+conclusions depending on its out-of-range or share-space behaviour, since that
+behaviour is fixed by the misspecification rather than by data. Conclusions resting
+on in-range residuals are unaffected, and we make no broader claim.
+\item[L5. Depth and width are confounded.] Both ladders grow depth and width
 together, so an exponent in parameters isolates neither.
-\item[L5. Partitions only.] The condition is derived for categories that partition a
+\item[L6. Partitions only.] The condition is derived for categories that partition a
 total. Overlapping categories are common in practice and need a different bound,
 which we have not derived.
-\item[L6. No audit of the published literature.] We show the defect is forced and
-demonstrate it on two families. We have not surveyed published decompositions to
-establish how often forecasts are read beyond their breakdown scale, which is the
-question a practitioner would most like answered.
-\item[L7. The tolerance is a convention.] Ten percent is a defensible default and
+\item[L7. The audit is an existence check, not a survey.] We establish that speech
+recognition already derives its total and that our own companion study did not. We
+have not estimated how often the failing configuration occurs in the scaling
+literature, which is the question a practitioner would most like answered and which
+needs the survey of FR6.
+\item[L8. The tolerance is a convention.] Ten percent is a defensible default and
 not a derived quantity; a different tolerance moves the reported breakdown scale
 though not the verdict.
 \end{description}
@@ -602,16 +757,20 @@ choosing among them has evidence rather than only the guarantee they share.
 \item[FR3] Extend the independent replication to a family with more checkpoints, so
 that admissibility can be tested against exponents estimated with usable precision
 rather than only in direction.
-\item[FR4] Separate depth from width along a ladder that varies them independently,
+\item[FR4] Characterise precisely which inferences an inconsistent pair voids, by
+constructing cases where a conclusion depends on in-range residuals alone and
+confirming it survives, so that the narrow claim of L4 can be stated as a criterion
+rather than as a caution.
+\item[FR5] Separate depth from width along a ladder that varies them independently,
 and determine whether the divergence rate is a property of parameter count or of
 one of its components.
-\item[FR5] Derive the corresponding bound for overlapping categories, which would
+\item[FR6] Derive the corresponding bound for overlapping categories, which would
 extend the check to severity scales and multi-label failure taxonomies as used in
 industrial evaluation.
-\item[FR6] Conduct a survey of published per-category scaling forecasts, applying
+\item[FR7] Conduct a survey of published per-category scaling forecasts, applying
 the diagnostic to their reported coefficients, to estimate how frequently forecasts
 are read beyond their own breakdown scale.
-\item[FR7] Study the tolerance itself, relating it to the sampling error of the
+\item[FR8] Study the tolerance itself, relating it to the sampling error of the
 underlying rate estimates so that the breakdown scale can be reported with a
 principled rather than a conventional threshold.
 \end{description}
@@ -621,22 +780,24 @@ principled rather than a conventional threshold.
 \label{sec:conclusion}
 
 Decomposing a system's errors and fitting a scaling curve to each category is a
-reasonable thing to want to do, and the resulting forecast is used to decide where
-money and attention go. We have shown that the forecast is inadmissible whenever the
-fitted exponents differ, which is whenever the exercise is worth performing, and
-that the scale at which it becomes so can be computed from the coefficients a study
-already publishes. On our own measurements that scale was 174M
-parameters and we had read a forecast at one billion; an independently trained
-family breaks down at 243M. The remedy costs nothing, improving
-in-range accuracy by 5.4\%, and the diagnostic costs a function
-call.
+reasonable thing to want to do, and the resulting forecast decides where money and
+attention go. What cannot also be done is to fit the aggregate error rate as a curve
+of its own, because a sum of power laws with differing exponents is not a power law,
+and the two reports then contradict each other by a margin that grows without bound.
+On our measurements the contradiction passed ten percent beyond
+174M parameters [57M, 635M],
+and we had read a forecast at one billion. The repair is to derive the total from
+the parts, which is arithmetic rather than methodology and which speech recognition
+adopted long ago. Its price is the aggregate exponent, a number that does not
+survive contact with the constraint: on our data its effective slope moves
+0.125 between the bottom of our range and one billion parameters.
 
 The finding we would most want carried forward is the one we obtained by being
-wrong. An inadmissible fit does not merely produce forecasts that are too confident;
-it produces a model that cannot be contradicted by evidence, and so it silently
-voids the negative conclusions drawn against it as well as the positive ones drawn
-from it. We found this because a hypothesis we had rejected turned out to have been
-rejected by nothing. The people this ultimately matters for are not the analysts.
+wrong. An inconsistent pair does not merely produce forecasts that are too
+confident. Where its out-of-range behaviour is fixed by the misspecification rather
+than by data, that behaviour cannot be evidence for or against anything, so
+conclusions drawn from it in either direction are void. We found this because a
+hypothesis we had rejected turned out to have been rejected by nothing. The people this ultimately matters for are not the analysts.
 They are the users of systems whose known defects were left unrepaired because a
 forecast said scale would take care of them, and who had no way to ask whether the
 arithmetic held.

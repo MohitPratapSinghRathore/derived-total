@@ -98,6 +98,47 @@ put("cmpExtNclass", len(cp["ext_classes"]), CP, "{:d}")
 put("cmpCompTV", cp["covariate_tv"]["competence"], CP, "{:.3f}")
 put("cmpSizeTV", cp["covariate_tv"]["size"], CP, "{:.3f}")
 put("cmpBaseTV", cp["covariate_tv"]["baseline"], CP, "{:.3f}")
+put("admSizeMargin", cp["covariate_tv"]["baseline"] - cp["covariate_tv"]["size"],
+    CP, "{:.3f}")
+
+# ------------------------------------------- admissibility (corrected framing)
+ad = S.load("admissibility.json")
+AD = "results/admissibility.json"
+put("admBfitted", sgn(ad["b_fitted"]), AD)
+put("admAstar", sgn(ad["a_star"]), AD)
+put("admAmin", sgn(ad["a_min"]), AD)
+for tag, lab in (("small", "Small"), ("large", "Large"), ("bn", "Bn"), ("tn", "Tn")):
+    put(f"admEff{lab}", sgn(ad["effective_exponent"][tag]), AD)
+put("admDriftRange", ad["eff_drift_in_range"], AD, "{:.3f}")
+put("admDriftBn", ad["eff_drift_to_bn"], AD, "{:.3f}")
+put("admDriftPct", 100 * ad["drift_frac_of_span"], AD, "{:.0f}")
+put("admSpan", ad["exponent_span"], AD, "{:.3f}")
+for tag, lab in (("large", "Large"), ("bn", "Bn"), ("tn", "Tn")):
+    put(f"admOver{lab}", ad["overspend"][tag], AD, "{:.2f}")
+put("admBreakdown", mag(ad["breakdown"]), AD)
+put("admBreakdownLo", mag(ad["breakdown_lo"]), AD)
+put("admBreakdownHi", mag(ad["breakdown_hi"]), AD)
+acc = ad["accuracy"]
+put("admShareSimplex", acc["share_rmse_simplex"], AD, "{:.5f}")
+put("admShareSum", acc["share_rmse_sumparts"], AD, "{:.5f}")
+put("admRateSimplex", acc["rate_rmse_simplex"], AD, "{:.5f}")
+put("admRateSum", acc["rate_rmse_sumparts"], AD, "{:.5f}")
+put("admMaxShareGap", acc["max_share_gap"], AD, "{:.4f}")
+
+# how far beyond the fitted range the companion forecast reached
+_span = S.PARAMS[S.RUNGS[-1]] / S.PARAMS[S.RUNGS[0]]
+put("admLadderWide", _span, LAD, "{:.0f}")
+put("admForecastBeyond", 1e9 / S.PARAMS[S.RUNGS[-1]], LAD, "{:.0f}")
+
+# ----------------------------------------------------- literature audit
+la = S.load("literature_audit.json")
+LA = "results/literature_audit.json"
+_lq = la["sources"][0]
+put("audRows", _lq["n_rows"], LA, "{:d}")
+put("audClosed", _lq["n_closed"], LA, "{:d}")
+put("audWorst", _lq["max_abs_residual"], LA, "{:.2f}")
+put("audSources", la["summary"]["sources_examined"], LA, "{:d}")
+put("audWithAgg", la["summary"]["with_independent_aggregate"], LA, "{:d}")
 
 # --------------------------------------------------------- external ladder
 ext = S.external_rows()

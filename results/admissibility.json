@@ -1,0 +1,41 @@
+{
+ "n_runs": 18,
+ "b_fitted": -0.2666421054315763,
+ "a_exponents": {
+  "from_empty": -0.5735649575928141,
+  "from_opponent": -0.436554843108444,
+  "to_own": -0.4740247855041179,
+  "geometry": -0.20694734847694374,
+  "leaves_check": -0.11226480791145714
+ },
+ "a_star": -0.11226480791145714,
+ "a_min": -0.5735649575928141,
+ "effective_exponent": {
+  "small": -0.2994513376156194,
+  "large": -0.228084786122551,
+  "bn": -0.17402102268975206,
+  "tn": -0.13689510965617657
+ },
+ "eff_drift_in_range": 0.07136655149306836,
+ "eff_drift_to_bn": 0.12543031492586731,
+ "exponent_span": 0.46130014968135696,
+ "drift_frac_of_span": 0.27190607896509095,
+ "overspend": {
+  "large": 1.0156098787820564,
+  "bn": 1.2684175049437734,
+  "tn": 2.8229506383889875
+ },
+ "breakdown": 173672359.01164782,
+ "breakdown_lo": 56880014.15078196,
+ "breakdown_hi": 635162531.7391005,
+ "breakdown_n_boot": 2000,
+ "accuracy": {
+  "share_rmse_simplex": 0.012506118986507048,
+  "share_rmse_sumparts": 0.012742570108587996,
+  "rate_rmse_simplex": 0.0023399168233032256,
+  "rate_rmse_sumparts": 0.002442280642734527,
+  "share_winner": "simplex",
+  "rate_winner": "simplex",
+  "max_share_gap": 0.00603307622189711
+ }
+}

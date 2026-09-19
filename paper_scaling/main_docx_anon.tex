@@ -41,12 +41,9 @@ follows: belief is coupled to action locally, a repair edit can correct about tw
 squares, and the class that scale leaves behind is the class local correction
 cannot reach. The standard intervention metric inverts on the same data. Illegal
 move rate ranks a norm-matched random edit above correct repair in
-18 of 18 models, because hedging lowers it. Finally,
-per-category scaling fits are not closed. Whenever the exponents differ, the parts
-must outgrow the whole beyond a computable scale; ours exceed it by
-1.27-fold at one billion parameters, and Karvonen's ladder reproduces
-the defect. Fitting the composition on the simplex is closed by construction and
-fits better in range.
+18 of 18 models, because hedging lowers it. Finally, these
+per-category fits and a separately fitted aggregate cannot both hold, since a sum of
+power laws is not a power law; we derive the total from the categories instead.
 \end{abstract}
 
 \noindent\textbf{Keywords:} scaling, failure analysis, world models, state
@@ -289,11 +286,12 @@ exactly the shallow ones that grow without bound.
 
 \paragraph{A closed compositional fit.}
 The repair is to fit the composition on the simplex rather than one category at a
-time. We model the shares with a softmax linear in $\log N$, which is closed by
-construction: the shares sum to one at every scale and for every parameter value,
-so a category can never be assigned more failures than occur. The illegal-move
-rate keeps its own power law, which is legitimate because the total is not a part
-of anything. Coherence is not bought with fit quality. In range the closed model
+time. The simplest repair is to stop fitting the aggregate and define it as the sum
+of the categories, which satisfies the identity at every scale and keeps every
+category exponent. Dividing through, the implied shares are a softmax linear in
+$\log N$, so the compositional form and the derived total are the same model and
+not a further choice. What the repair costs is the aggregate exponent: the derived
+total is not a power law, and its effective slope drifts with scale. Coherence is not bought with fit quality. In range the closed model
 attains RMSE 0.01251 across the 18 runs against
 0.01322 for the uncoupled fits, so it is at least as good on the
 data while being the only one of the two that can be extended.
@@ -632,8 +630,8 @@ what goes wrong, so a detectable improvement is a small behavioural one.
 
 A methodological point generalises further than our subject. Whenever failures are
 decomposed into categories and each category is given its own scaling exponent, the
-fits are not closed, and extending them makes claims the categories cannot jointly
-satisfy. The check costs nothing: sum the extrapolated parts and see whether they
+fits sit alongside a separately fitted aggregate, the two make claims that cannot
+both hold, and extrapolation is where the conflict becomes visible. The check costs nothing: sum the extrapolated parts and see whether they
 still make the whole. We report it because our own uncoupled fits passed every gate
 in this paper, agreed with the data in range, and were still projecting an
 impossibility two orders of magnitude out. Any decomposition of error into
@@ -675,7 +673,7 @@ agreement, not a second estimate of the slope; its intervals omit fit uncertaint
 class, and its nearest local analogue absorbs path blocking.
 \item[Othello cannot test scaling.] No ladder exists, and its local class requires
 no state tracking, so it is a consistency check rather than a replication.
-\item[The closed fit is coherent, not validated.] The softmax link guarantees the
+\item[Consistency is not validation.] The derived total guarantees the
 projection is arithmetically possible, which the uncoupled fits are not. It does
 not make it observed: every scale past 39.9M is extrapolation, and
 a different link satisfying the same constraint would give different numbers while
