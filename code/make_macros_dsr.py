@@ -143,6 +143,24 @@ put("curvRmseLin", cv["rmse_linear"], CV, "{:.4f}")
 put("curvRmseQuad", cv["rmse_quadratic"], CV, "{:.4f}")
 put("curvQImplied", f"{cv['implied_q']:+.4f}", CV)
 
+# ------------------------------------------- where the curvature comes from
+cd_ = S.load("curvature_decomp.json")
+CD = "results/curvature_decomp.json"
+put("curvMeasured", f"{cd_['measured_q']:+.4f}", CD)
+put("curvImplied", f"{cd_['implied_q']:+.4f}", CD)
+put("curvImpliedLo", f"{cd_['implied_lo']:+.4f}", CD)
+put("curvImpliedHi", f"{cd_['implied_hi']:+.4f}", CD)
+put("curvGap", f"{cd_['gap']:+.4f}", CD)
+put("curvGapLo", f"{cd_['gap_lo']:+.4f}", CD)
+put("curvGapHi", f"{cd_['gap_hi']:+.4f}", CD)
+put("curvGapPosPct", 100 * (1 - cd_["gap_frac_le_zero"]), CD, "{:.0f}")
+put("curvNCurved", cd_["n_curved"], CD, "{:d}")
+put("curvNClasses", len(cd_["categories"]), CD, "{:d}")
+_lc = cd_["categories"]["leaves_check"]
+put("curvCheckQ", f"{_lc['q']:+.4f}", CD)
+put("curvCheckLo", f"{_lc['lo']:+.4f}", CD)
+put("curvCheckHi", f"{_lc['hi']:+.4f}", CD)
+
 # ----------------------------------------------------- literature audit
 la = S.load("literature_audit.json")
 LA = "results/literature_audit.json"

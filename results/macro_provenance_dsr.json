@@ -411,6 +411,58 @@
   "value": "+0.0146",
   "source": "results/curvature.json"
  },
+ "curvMeasured": {
+  "value": "+0.0403",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvImplied": {
+  "value": "+0.0146",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvImpliedLo": {
+  "value": "+0.0087",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvImpliedHi": {
+  "value": "+0.0257",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvGap": {
+  "value": "+0.0257",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvGapLo": {
+  "value": "-0.0007",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvGapHi": {
+  "value": "+0.0508",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvGapPosPct": {
+  "value": "97",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvNCurved": {
+  "value": "1",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvNClasses": {
+  "value": "5",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvCheckQ": {
+  "value": "+0.0379",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvCheckLo": {
+  "value": "+0.0069",
+  "source": "results/curvature_decomp.json"
+ },
+ "curvCheckHi": {
+  "value": "+0.0697",
+  "source": "results/curvature_decomp.json"
+ },
  "audRows": {
   "value": "11",
   "source": "results/literature_audit.json"

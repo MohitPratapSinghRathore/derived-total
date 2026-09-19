@@ -261,11 +261,20 @@ part exponents is \result{cmpWeighted}, and the separately fitted $b$ is
 \result{admBfitted}.
 
 \paragraph{Which term is wrong, and the obvious repair.}
-It is worth being precise about where the error lies, because the natural first
-reading is that the category fits are at fault and they are not. A sum of power laws
-with distinct exponents is not a power law. The categories may each be perfectly
-well specified; what cannot be sustained is the additional claim that their total is
-also a power law. The misspecified object is the aggregate.
+It is worth being precise about where the error lies. A sum of power laws with
+distinct exponents is not a power law, so a decomposition and a separately fitted
+aggregate cannot both be correct specifications, and the aggregate is the term that
+has to give way. This holds as a matter of arithmetic whatever the categories are
+doing, which is what makes it a condition rather than an empirical claim.
+
+We resist the stronger statement that the categories are each well specified and
+only their total is not. On our data that is false, and Section~\ref{sec:eval}
+reports it: one of the \result{curvNClasses} categories is itself detectably curved
+in log-log, and it is the shallowest one, the category that dominates the total at
+scale. The defensible claim is therefore the weaker one, in two parts. Even if every
+category were an exact power law, the aggregate could not be. And in practice the
+categories are not exact power laws either, which makes a single fitted aggregate
+exponent worse rather than better than the condition alone implies.
 
 The repair follows immediately and requires nothing new: do not fit the aggregate,
 and define
@@ -539,13 +548,38 @@ quadratic term halves the residual, from \result{curvRmseLin} to
 
 So a single power law is not merely inadequate beyond our range; it is a
 demonstrably wrong model of the aggregate inside it, on eighteen runs across a
-\result{admLadderWide}-fold span. This is the direct evidence for the paper's thesis
-and it does not depend on any extrapolation. One honest asymmetry is worth recording:
-the curvature the category curves imply is \result{curvQImplied}, smaller than the
-\result{curvQ} actually measured, so the aggregate bends more than the decomposition
-predicts. The direction agrees and the magnitude does not, which means the
-decomposition understates how badly a single exponent describes the total rather than
-manufacturing the effect.
+\result{admLadderWide}-fold span, with no extrapolation involved.
+
+\paragraph{Where that curvature comes from, and what it costs the argument.}
+If every category were an exact power law, the curvature the aggregate must show
+would be fixed by the category coefficients alone. That implied value is
+\result{curvImplied} [\result{curvImpliedLo}, \result{curvImpliedHi}], against a
+measured \result{curvMeasured}. The total bends more than the decomposition can
+produce, and the measured value lies outside the implied interval.
+
+We report the paired test rather than that comparison, because both quantities come
+from the same eighteen runs. Refitting both on each rung resample, the gap is
+\result{curvGap} [\result{curvGapLo}, \result{curvGapHi}], positive in
+\result{curvGapPosPct}\% of resamples but with an interval that includes zero by a
+narrow margin. On that test alone we could not claim the excess is established.
+
+The category fits settle it. Fitting each category quadratically,
+\result{curvNCurved} of \result{curvNClasses} shows curvature whose interval
+excludes zero: the check category, at \result{curvCheckQ}
+[\result{curvCheckLo}, \result{curvCheckHi}]. That is the shallowest category and
+therefore the one that dominates the total at scale, so the aggregate inheriting
+extra curvature from it is exactly what one would expect.
+
+This costs the paper its stronger reading and we would rather say so than let a
+reader find it. We cannot claim the categories are well specified and only their
+total is not. What survives is the two-part claim of Section~\ref{sec:design}: the
+arithmetic says that even exact category power laws cannot have a power-law total,
+and the data say the categories are not exact power laws either. Both point the same
+way, and the second makes a single fitted aggregate exponent a worse summary rather
+than a better one. It also means the check category's own exponent, which our
+companion study reports as the quantity that does not fall with scale, is itself a
+local slope; that does not affect its sign or the ordering that study reports, but a
+reader extrapolating it should know it bends.
 
 \paragraph{Do the two consistent forms differ?}
 Barely, which is the useful answer. The derived-total model and the compositional
@@ -726,6 +760,35 @@ Those who carry the cost of an over-optimistic roadmap rarely wrote it and canno
 contest an analysis they never see; a test that runs on published coefficients gives
 an advocate or a regulator something concrete to ask for.
 
+\paragraph{A worked procurement check.}
+The artifact is meant to be used by someone deciding whether to sign, so we set out
+what that looks like with the numbers a buyer would actually hold. Suppose a
+supplier of a document-processing service argues against funding a mitigation
+programme on the grounds that the error class in question is on a steep curve. The
+buyer asks for one thing: the fitted coefficients behind that claim, an exponent and
+an intercept for each error class and for the overall error rate, together with the
+range of model sizes they were fitted on. These are not proprietary; they are what
+the supplier's own analyst already computed, and a supplier unwilling to provide
+them has answered a different question.
+
+Running the check on our own ladder's coefficients, which stand here for the
+supplier's, returns: largest class exponent \result{admAstar} against an overall
+exponent of \result{admBfitted}, so the classes outgrow the total they belong to,
+and a threshold of \result{admBreakdown} parameters
+[\result{admBreakdownLo}, \result{admBreakdownHi}] past which the two reports
+contradict each other by more than a tenth. The buyer compares that threshold with
+the scale the supplier's roadmap actually invokes. If the roadmap points at a model
+ten times larger than the threshold, as ours did, the claim being made is not
+supported by the analysis behind it, and the right response is not to reject the
+supplier but to ask for the forecast restated up to the threshold, or restated with
+the total derived rather than fitted. Both are cheap for the supplier to produce,
+which is what makes the request reasonable to put in a contract schedule.
+
+Two things make this usable rather than aspirational. It needs no access to weights,
+data, or evaluation harness, so it survives a supplier's confidentiality position.
+And it produces a dated artefact, the coefficients and the threshold, that an
+internal auditor can read later without reconstructing anyone's reasoning.
+
 \paragraph{For managers and organisations.}
 The practical reframing is from a number to be received into a claim to be governed.
 A supplier asserting that a failure class is on a steep curve is making a forecast
@@ -765,28 +828,33 @@ question of whether a forecast is entitled to the numbers it reports.
 because a rules engine gives an exact and unambiguous error partition. The
 consistency argument is arithmetic and does not depend on the domain, but the
 empirical demonstration does.
-\item[L2. Consistency is not validation.] The derived total is arithmetically
+\item[L2. The categories are not exact power laws either.] One of
+\result{curvNClasses} shows detectable log-log curvature, so the paper's condition
+is what survives rather than a claim that only the aggregate is misspecified. A
+fuller treatment would model every level with a form that admits curvature, which
+would change the coefficients while leaving the condition untouched.
+\item[L3. Consistency is not validation.] The derived total is arithmetically
 possible, which the fitted aggregate is not. That does not make it observed. Every
 scale beyond \result{paramsLarge} is extrapolation, and consistency constrains the
 form of a forecast without supplying evidence for it.
-\item[L3. Three checkpoints in the independent family.] Its coefficients are
+\item[L4. Three checkpoints in the independent family.] Its coefficients are
 two-parameter fits to three points with one category dropped, so the replication is
 reported as directional and no figure from it should be read as an estimate.
-\item[L4. The invalidation claim is narrow.] What an inconsistent pair voids are
+\item[L5. The invalidation claim is narrow.] What an inconsistent pair voids are
 conclusions depending on its out-of-range or share-space behaviour, since that
 behaviour is fixed by the misspecification rather than by data. Conclusions resting
 on in-range residuals are unaffected, and we make no broader claim.
-\item[L5. Depth and width are confounded.] Both ladders grow depth and width
+\item[L6. Depth and width are confounded.] Both ladders grow depth and width
 together, so an exponent in parameters isolates neither.
-\item[L6. Partitions only.] The condition is derived for categories that partition a
+\item[L7. Partitions only.] The condition is derived for categories that partition a
 total. Overlapping categories are common in practice and need a different bound,
 which we have not derived.
-\item[L7. The audit is an existence check, not a survey.] We establish that speech
+\item[L8. The audit is an existence check, not a survey.] We establish that speech
 recognition already derives its total and that our own companion study did not. We
 have not estimated how often the failing configuration occurs in the scaling
 literature, which is the question a practitioner would most like answered and which
 needs the survey of FR6.
-\item[L8. The tolerance is a convention.] Ten percent is a defensible default and
+\item[L9. The tolerance is a convention.] Ten percent is a defensible default and
 not a derived quantity; a different tolerance moves the reported breakdown scale
 though not the verdict.
 \end{description}
@@ -800,27 +868,31 @@ though not the verdict.
 non-game oracle, such as program execution traces or spreadsheet recalculation,
 where a checker can say not only that a step is wrong but which constraint it
 violated, to establish that the empirical demonstration is not an artefact of chess.
-\item[FR2] Compare the estimation losses rather than the links, since the derived
+\item[FR2] Refit every level of the decomposition with a form that admits
+curvature, such as a broken or multi-term law, and establish whether the consistency
+condition has an analogue once neither the parts nor the whole are power laws, which
+we expect it does but have not derived.
+\item[FR3] Compare the estimation losses rather than the links, since the derived
 total and the compositional fit are the same model: establish whether fitting in
 log-rate space or in share space is preferable when category rates are small and
 sampling error is asymmetric, which is the only remaining choice an analyst faces.
-\item[FR3] Extend the independent replication to a family with more checkpoints, so
+\item[FR4] Extend the independent replication to a family with more checkpoints, so
 that consistency can be tested against exponents estimated with usable precision
 rather than only in direction.
-\item[FR4] Characterise precisely which inferences an inconsistent pair voids, by
+\item[FR5] Characterise precisely which inferences an inconsistent pair voids, by
 constructing cases where a conclusion depends on in-range residuals alone and
 confirming it survives, so that the narrow claim of L4 can be stated as a criterion
 rather than as a caution.
-\item[FR5] Separate depth from width along a ladder that varies them independently,
+\item[FR6] Separate depth from width along a ladder that varies them independently,
 and determine whether the divergence rate is a property of parameter count or of
 one of its components.
-\item[FR6] Derive the corresponding bound for overlapping categories, which would
+\item[FR7] Derive the corresponding bound for overlapping categories, which would
 extend the check to severity scales and multi-label failure taxonomies as used in
 industrial evaluation.
-\item[FR7] Conduct a survey of published per-category scaling forecasts, applying
+\item[FR8] Conduct a survey of published per-category scaling forecasts, applying
 the diagnostic to their reported coefficients, to estimate how frequently forecasts
 are read beyond their own breakdown scale.
-\item[FR8] Study the tolerance itself, relating it to the sampling error of the
+\item[FR9] Study the tolerance itself, relating it to the sampling error of the
 underlying rate estimates so that the breakdown scale can be reported with a
 principled rather than a conventional threshold.
 \end{description}
