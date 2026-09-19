@@ -11,3 +11,4 @@ tools/
 *.blg
 *.out
 build*/log.txt
+smoke.log

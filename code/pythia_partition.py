@@ -1,46 +1,34 @@
-"""Test the consistency condition on a public ladder, in a non-chess domain.
+"""Per-source loss over the Pythia ladder, to test the consistency condition.
 
-STATUS: WRITTEN BUT NOT RUN. It has never been executed, so treat it as a
-specification rather than as a verified tool, and do not cite anything from it
-until it has been run and its output checked. The machine this was written on has
-no CUDA build of torch and no `datasets` installed. Requirements are at the bottom.
+Governed by PREREGISTERED.md, written and committed before any model was loaded.
+Nothing here may be changed in a way that alters a preregistered quantity: the
+token budget, the check 1 tolerance, the weights convention, the breakdown
+tolerance and the bootstrap are all fixed there.
 
-Why this ladder. The paper's empirical base is 18 chess models between 3.4M and
-39.9M parameters, a 12-fold span, used to discuss forecasts read far beyond it. That
-is the weakest part of the argument. Pythia offers checkpoints from 70M to 12B
-trained on the Pile, a roughly 170-fold span reaching the scales we extrapolate to,
-and the Pile is a partition into named sources that we did not define. Per-source
-loss over that ladder gives exactly the configuration the paper is about: a
-per-category curve per source, and an aggregate.
+The identity under test is the token-weighted MEAN of per-source loss, not a sum,
+because loss is not an error rate. Everything else follows the paper unchanged: a
+per-category curve per source, a separately fitted aggregate, and the question of
+whether the two can both be right.
 
-One adjustment. Loss is not an error rate, so the identity being tested is not a
-sum. The aggregate loss is the token-weighted MEAN of the per-source losses,
-
-    L(N) = sum_s w_s L_s(N),     w_s = (tokens from source s) / (total tokens),
-
-with the weights fixed by the evaluation mixture rather than by the model. That is
-still a linear identity in the parts, so everything in the paper goes through with
-the sum replaced by a weighted sum: fitting each L_s as a power law and L as a
-separate power law over-determines the same relation, and the largest per-source
-exponent still bounds the aggregate's asymptotic slope from above. The weights must
-be reported, because unlike the error-rate case they are a choice.
-
-What to check when it runs:
-  1. Do the weighted per-source losses reproduce the measured aggregate in range?
-     If not, the weights are wrong and nothing downstream means anything.
-  2. Does the fitted aggregate exponent differ from the largest per-source exponent?
-  3. Is there a breakdown scale INSIDE Pythia's own observed range? If so, that is
-     the paper's headline and it no longer rests on chess.
-  4. Is the aggregate detectably curved in log-log, as it is on our ladder?
+Output is appended to results/pythia_partition.csv after every model, one row per
+model per source, carrying summed negative log likelihood and token counts rather
+than means, so that any later re-weighting is possible without rerunning and so a
+partial ladder is never silently averaged.
 """
-import os, json, sys, argparse
+import os, sys, csv, json, argparse, time
 
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+ROOT = os.path.join(HERE, "..")
+RES = os.path.join(ROOT, "results")
+CSV = os.path.join(RES, "pythia_partition.csv")
+VAL_URL = "hf://datasets/monology/pile-uncopyrighted/val.jsonl.zst"
 
-# Pythia's deduplicated suite. Sizes are the published parameter counts.
+TOKEN_BUDGET = 200_000        # per source per model, preregistered
+MAX_LEN = 1024                # per document, preregistered
+CHECK1_TOL = 1e-6             # relative, preregistered
+
 LADDER = {
     "EleutherAI/pythia-70m-deduped": 70_426_624,
     "EleutherAI/pythia-160m-deduped": 162_322_944,
@@ -52,120 +40,134 @@ LADDER = {
     "EleutherAI/pythia-12b-deduped": 11_846_072_320,
 }
 
+FIELDS = ["model", "params", "source", "sum_nll", "tokens", "n_docs",
+          "device", "dtype", "timestamp"]
 
-def per_source_loss(model, tok, texts, device, max_len=1024):
-    """Mean token-level cross entropy and the token count, for one source.
 
-    Returns both because the aggregate is a token-weighted mean: summing losses
-    without their token counts would silently weight a short source equally with
-    a long one and break the identity the whole exercise is testing.
+# ----------------------------------------------------------------- corpus
+def collect(tok, budget=TOKEN_BUDGET, max_len=MAX_LEN, limit_sources=None):
+    """Stream the validation file once, tokenise, and hold documents per source
+    until each source's token budget is met.
+
+    Tokenising here rather than per model matters: all Pythia models share one
+    tokenizer, so doing it once guarantees every rung sees exactly the same token
+    sequences, which is what makes the weights constant and check 1b meaningful.
     """
+    from datasets import load_dataset
+
+    ds = load_dataset("json", data_files=VAL_URL, split="train", streaming=True)
+    per_source, done = {}, set()
+    scanned = 0
+    for rec in ds:
+        scanned += 1
+        meta = rec.get("meta") or {}
+        src = meta.get("pile_set_name")
+        if not src:
+            continue
+        if limit_sources and src not in limit_sources:
+            continue
+        bucket = per_source.setdefault(src, {"ids": [], "tokens": 0})
+        if bucket["tokens"] >= budget:
+            done.add(src)
+            # Stop when every source seen so far is satisfied and we have scanned
+            # enough to be confident no new source is still to appear.
+            if scanned > 20000 and done == set(per_source):
+                break
+            continue
+        ids = tok(rec["text"], truncation=True, max_length=max_len).input_ids
+        if len(ids) < 2:
+            continue
+        bucket["ids"].append(ids)
+        bucket["tokens"] += len(ids) - 1     # predicted tokens
+        if scanned % 5000 == 0:
+            filled = sum(1 for v in per_source.values() if v["tokens"] >= budget)
+            print(f"    scanned {scanned:,}; {filled}/{len(per_source)} sources full")
+    return per_source, scanned
+
+
+# ------------------------------------------------------------------ model
+def score(model, docs, device):
+    """Summed NLL and predicted-token count over one source's documents."""
     import torch
 
     total_nll, total_tok = 0.0, 0
     model.eval()
     with torch.no_grad():
-        for t in texts:
-            ids = tok(t, return_tensors="pt", truncation=True,
-                      max_length=max_len).input_ids.to(device)
-            if ids.shape[1] < 2:
-                continue
-            out = model(ids, labels=ids)
-            n = ids.shape[1] - 1           # labels are shifted internally
+        for ids in docs:
+            t = torch.tensor([ids], device=device)
+            out = model(t, labels=t)
+            n = t.shape[1] - 1
             total_nll += float(out.loss) * n
             total_tok += n
-    return (total_nll / total_tok if total_tok else float("nan")), total_tok
+    return total_nll, total_tok
+
+
+def append_rows(rows):
+    new = not os.path.exists(CSV)
+    with open(CSV, "a", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=FIELDS)
+        if new:
+            w.writeheader()
+        for r in rows:
+            w.writerow(r)
+
+
+def already_done(name):
+    if not os.path.exists(CSV):
+        return False
+    with open(CSV, encoding="utf-8") as fh:
+        return any(r["model"] == name for r in csv.DictReader(fh))
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--models", nargs="*", default=list(LADDER)[:5])
-    ap.add_argument("--docs-per-source", type=int, default=200)
-    ap.add_argument("--out", default="results/pythia_partition.json")
-    a = ap.parse_args()
+    ap.add_argument("--models", nargs="*", default=list(LADDER)[:3])
+    ap.add_argument("--budget", type=int, default=TOKEN_BUDGET)
+    ap.add_argument("--dtype", default="auto")
+    args = ap.parse_args()
 
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
-    from datasets import load_dataset
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    if device == "cpu":
-        print("WARNING: no GPU. This will be slow and the larger rungs are "
-              "impractical. Results from a truncated ladder are not a "
-              "substitute for the full one.")
+    print(f"device: {device}")
 
-    # Per-source validation text. The original Pile is no longer distributed in
-    # full; the uncopyrighted mirror keeps the source labels, which is what the
-    # partition needs. Any mirror is acceptable provided every document carries
-    # its source and the mirror is named in the output.
-    ds = load_dataset("monology/pile-uncopyrighted", split="validation",
-                      streaming=True)
-    by_source = {}
-    for rec in ds:
-        src = rec.get("meta", {}).get("pile_set_name")
-        if not src:
+    tok = AutoTokenizer.from_pretrained("EleutherAI/pythia-70m-deduped")
+    print("collecting corpus (once, shared by every rung)")
+    t0 = time.time()
+    per_source, scanned = collect(tok, budget=args.budget)
+    print(f"  {len(per_source)} sources, {scanned:,} records scanned, "
+          f"{time.time() - t0:.0f}s")
+    for s, v in sorted(per_source.items()):
+        print(f"    {s:24s} {len(v['ids']):5d} docs  {v['tokens']:8,d} tokens")
+
+    for name in args.models:
+        if already_done(name):
+            print(f"{name}: already in the CSV, skipping")
             continue
-        bucket = by_source.setdefault(src, [])
-        if len(bucket) < a.docs_per_source:
-            bucket.append(rec["text"])
-        if all(len(v) >= a.docs_per_source for v in by_source.values()) \
-                and len(by_source) > 10:
-            break
-    print(f"{len(by_source)} sources, "
-          f"{sum(len(v) for v in by_source.values())} documents")
-
-    out = {"ladder": {}, "sources": sorted(by_source),
-           "docs_per_source": a.docs_per_source,
-           "corpus": "monology/pile-uncopyrighted validation split"}
-
-    for name in a.models:
-        print(f"loading {name}")
-        tok = AutoTokenizer.from_pretrained(name)
-        model = AutoModelForCausalLM.from_pretrained(
-            name, torch_dtype=torch.float16 if device == "cuda" else torch.float32
-        ).to(device)
-        row = {"params": LADDER[name], "per_source": {}}
-        for src, texts in sorted(by_source.items()):
-            loss, ntok = per_source_loss(model, tok, texts, device)
-            row["per_source"][src] = {"loss": loss, "tokens": ntok}
-            print(f"  {src:24s} loss {loss:.4f} over {ntok:,} tokens")
-        tot_tok = sum(v["tokens"] for v in row["per_source"].values())
-        row["aggregate_loss"] = sum(
-            v["loss"] * v["tokens"] for v in row["per_source"].values()) / tot_tok
-        row["weights"] = {s: v["tokens"] / tot_tok
-                          for s, v in row["per_source"].items()}
-        out["ladder"][name] = row
+        print(f"\n{name}")
+        t0 = time.time()
+        dt = torch.float16 if (device == "cuda" and args.dtype != "float32") \
+            else torch.float32
+        model = AutoModelForCausalLM.from_pretrained(name, dtype=dt).to(device)
+        stamp = time.strftime("%Y-%m-%d %H:%M")
+        rows = []
+        for src, v in sorted(per_source.items()):
+            nll, ntok = score(model, v["ids"], device)
+            rows.append({"model": name, "params": LADDER[name], "source": src,
+                         "sum_nll": f"{nll:.6f}", "tokens": ntok,
+                         "n_docs": len(v["ids"]), "device": device,
+                         "dtype": str(dt).replace("torch.", ""),
+                         "timestamp": stamp})
+            print(f"  {src:24s} loss {nll / ntok:.4f}  over {ntok:,} tokens")
+        append_rows(rows)
+        print(f"  appended {len(rows)} rows in {time.time() - t0:.0f}s")
         del model
         if device == "cuda":
             torch.cuda.empty_cache()
 
-    # Now the actual test, reusing the paper's own checker.
-    import closure_check as C
-    names = [n for n in a.models if n in out["ladder"]]
-    N = [out["ladder"][n]["params"] for n in names]
-    srcs = out["sources"]
-    parts = {s: [out["ladder"][n]["per_source"][s]["loss"] for n in names]
-             for s in srcs}
-    # weighted parts, so the identity is sum_s w_s L_s = L
-    w = out["ladder"][names[-1]]["weights"]
-    weighted = {s: [w[s] * v for v in vals] for s, vals in parts.items()}
-    total = [out["ladder"][n]["aggregate_loss"] for n in names]
-
-    fitted = C.from_points(N, weighted, total)
-    rep = C.check(**fitted, report_at=(max(N), 1e11))
-    out["check"] = dict(rep)
-    print()
-    print(rep)
-
-    json.dump(out, open(os.path.join(HERE, "..", a.out), "w"), indent=1)
+    print(f"\nCSV now at {CSV}")
 
 
 if __name__ == "__main__":
     main()
-
-# Requirements, none of which are satisfied on the machine this was written on:
-#   pip install "torch>=2.4" --index-url https://download.pytorch.org/whl/cu121
-#   pip install transformers datasets accelerate
-#   a GPU with at least 24 GB to reach the 6.9B rung in fp16, or CPU and patience
-#   roughly 60 GB of disk for the checkpoints through 12B
-# Run the small rungs first and confirm check 1 above before spending on the rest.
