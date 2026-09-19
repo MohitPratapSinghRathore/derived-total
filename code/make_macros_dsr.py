@@ -130,6 +130,19 @@ _span = S.PARAMS[S.RUNGS[-1]] / S.PARAMS[S.RUNGS[0]]
 put("admLadderWide", _span, LAD, "{:.0f}")
 put("admForecastBeyond", 1e9 / S.PARAMS[S.RUNGS[-1]], LAD, "{:.0f}")
 
+# ----------------------------------------------------- in-range curvature
+cv = S.load("curvature.json")
+CV = "results/curvature.json"
+put("curvQ", f"{cv['q_ols']:+.4f}", CV)
+put("curvQLo", f"{cv['q_boot_lo']:+.4f}", CV)
+put("curvQHi", f"{cv['q_boot_hi']:+.4f}", CV)
+put("curvQFracNeg", 100 * cv["q_boot_frac_neg"], CV, "{:.1f}")
+put("curvT", cv["q_t"], CV, "{:.2f}")
+put("curvDof", cv["q_dof"], CV, "{:d}")
+put("curvRmseLin", cv["rmse_linear"], CV, "{:.4f}")
+put("curvRmseQuad", cv["rmse_quadratic"], CV, "{:.4f}")
+put("curvQImplied", f"{cv['implied_q']:+.4f}", CV)
+
 # ----------------------------------------------------- literature audit
 la = S.load("literature_audit.json")
 LA = "results/literature_audit.json"

@@ -375,6 +375,42 @@
   "value": "25",
   "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
  },
+ "curvQ": {
+  "value": "+0.0403",
+  "source": "results/curvature.json"
+ },
+ "curvQLo": {
+  "value": "+0.0194",
+  "source": "results/curvature.json"
+ },
+ "curvQHi": {
+  "value": "+0.0599",
+  "source": "results/curvature.json"
+ },
+ "curvQFracNeg": {
+  "value": "1.0",
+  "source": "results/curvature.json"
+ },
+ "curvT": {
+  "value": "8.61",
+  "source": "results/curvature.json"
+ },
+ "curvDof": {
+  "value": "15",
+  "source": "results/curvature.json"
+ },
+ "curvRmseLin": {
+  "value": "0.0280",
+  "source": "results/curvature.json"
+ },
+ "curvRmseQuad": {
+  "value": "0.0115",
+  "source": "results/curvature.json"
+ },
+ "curvQImplied": {
+  "value": "+0.0146",
+  "source": "results/curvature.json"
+ },
  "audRows": {
   "value": "11",
   "source": "results/literature_audit.json"

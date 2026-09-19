@@ -1,0 +1,20 @@
+{
+ "n_runs": 18,
+ "n_rungs": 6,
+ "q_ols": 0.04034684206047456,
+ "q_se": 0.004687990479916005,
+ "q_t": 8.606425766717312,
+ "q_dof": 15,
+ "q_boot_lo": 0.019380540134096517,
+ "q_boot_hi": 0.05986677232737777,
+ "q_boot_frac_neg": 0.009706257982120051,
+ "q_boot_n": 3915,
+ "curvature_detected": true,
+ "rmse_linear": 0.0279741385971465,
+ "rmse_quadratic": 0.01147982451873672,
+ "aic_linear": -124.75309341698971,
+ "aic_quadratic": -154.81791026514745,
+ "aic_prefers_quadratic": true,
+ "implied_slope_change": 0.07135661329304988,
+ "implied_q": 0.01455964803241214
+}

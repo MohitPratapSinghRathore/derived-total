@@ -23,6 +23,20 @@ prose = re.sub(r"\\begin\{(table|figure)\}.*?\\end\{\1\}", " ", body, flags=re.S
 prose = re.sub(r"(?m)%.*$", " ", prose)
 prose_nomac = re.sub(r"\\result\{[^}]*\}", " ", prose)
 
+# A mangled \result leaves the macro name as bare prose, which compiles cleanly and
+# prints "esult{key}" in the PDF. This happened once, from a shell heredoc turning
+# \r into a carriage return, and passed every other gate. Catch the whole class:
+# any fragment of a known control sequence appearing without its backslash.
+leaked = []
+for stem in ("result", "cite", "citep", "citet", "ref", "label", "textbf",
+             "emph", "paragraph", "section", "item"):
+    for tail in (stem[1:], stem[2:]):
+        leaked += [f"{tail}{{" for _ in re.findall(r"(?<![\\\w])" + tail + r"\{", body)]
+gate(not leaked, "no de-escaped control sequences in source",
+     sorted(set(leaked))[:5])
+gate(b"\r" not in open(SRC, "rb").read().replace(b"\r\n", b""),
+     "no bare carriage returns in source")
+
 gate("---" not in body, "no em-dash markup")
 gate(not re.search(r"\s--\s", prose_nomac), "no bare -- as punctuation")
 gate("robust" not in src.lower(), "no 'robust'")
