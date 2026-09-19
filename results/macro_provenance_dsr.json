@@ -1,0 +1,358 @@
+{
+ "nRuns": {
+  "value": "18",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "nRungs": {
+  "value": "6",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "nSeeds": {
+  "value": "3",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "paramsSmall": {
+  "value": "3.4M",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "paramsLarge": {
+  "value": "39.9M",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "spanLadder": {
+  "value": "11.6",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromEmpty": {
+  "value": "$-$0.574",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromEmptyLo": {
+  "value": "$-$0.748",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromEmptyHi": {
+  "value": "$-$0.331",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expGeometry": {
+  "value": "$-$0.207",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expGeometryLo": {
+  "value": "$-$0.287",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expGeometryHi": {
+  "value": "$-$0.150",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expLeavesCheck": {
+  "value": "$-$0.112",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expLeavesCheckLo": {
+  "value": "$-$0.153",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expLeavesCheckHi": {
+  "value": "$-$0.066",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expToOwn": {
+  "value": "$-$0.474",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expToOwnLo": {
+  "value": "$-$0.492",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expToOwnHi": {
+  "value": "$-$0.452",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromOpp": {
+  "value": "$-$0.437",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromOppLo": {
+  "value": "$-$0.586",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expFromOppHi": {
+  "value": "$-$0.255",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expIllegal": {
+  "value": "$-$0.267",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expIllegalLo": {
+  "value": "$-$0.307",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expIllegalHi": {
+  "value": "$-$0.216",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expCorrLocal": {
+  "value": "+0.023",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expCorrLocalLo": {
+  "value": "$-$0.005",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "expCorrLocalHi": {
+  "value": "+0.066",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFree": {
+  "value": "+0.461",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFreeLo": {
+  "value": "+0.259",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "diffProbeFreeHi": {
+  "value": "+0.599",
+  "source": "results/attn_*_{structure,natdiv}.json via ds_stats"
+ },
+ "cmpAstar": {
+  "value": "$-$0.112",
+  "source": "results/compositional.json"
+ },
+ "cmpBtotal": {
+  "value": "$-$0.267",
+  "source": "results/compositional.json"
+ },
+ "cmpWeighted": {
+  "value": "$-$0.266",
+  "source": "results/compositional.json"
+ },
+ "cmpDiverge": {
+  "value": "+0.154",
+  "source": "results/compositional.json"
+ },
+ "cmpBreakdown": {
+  "value": "174M",
+  "source": "results/compositional.json"
+ },
+ "cmpOverLarge": {
+  "value": "1.02",
+  "source": "results/compositional.json"
+ },
+ "cmpOverBn": {
+  "value": "1.27",
+  "source": "results/compositional.json"
+ },
+ "cmpOverTn": {
+  "value": "2.82",
+  "source": "results/compositional.json"
+ },
+ "cmpOverBnLo": {
+  "value": "1.13",
+  "source": "results/compositional.json"
+ },
+ "cmpOverBnHi": {
+  "value": "1.57",
+  "source": "results/compositional.json"
+ },
+ "cmpOverBnFrac": {
+  "value": "100",
+  "source": "results/compositional.json"
+ },
+ "cmpRmseSimplex": {
+  "value": "0.01251",
+  "source": "results/compositional.json"
+ },
+ "cmpRmseIndep": {
+  "value": "0.01322",
+  "source": "results/compositional.json"
+ },
+ "cmpRmseGain": {
+  "value": "5.4",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckLarge": {
+  "value": "0.444",
+  "source": "results/compositional.json"
+ },
+ "cmpEmptyLarge": {
+  "value": "0.093",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomLarge": {
+  "value": "0.354",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckBn": {
+  "value": "0.588",
+  "source": "results/compositional.json"
+ },
+ "cmpEmptyBn": {
+  "value": "0.025",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomBn": {
+  "value": "0.341",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckTn": {
+  "value": "0.769",
+  "source": "results/compositional.json"
+ },
+ "cmpEmptyTn": {
+  "value": "0.001",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomTn": {
+  "value": "0.225",
+  "source": "results/compositional.json"
+ },
+ "cmpCheckMax": {
+  "value": "0.871",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicySlope": {
+  "value": "+0.372",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyLarge": {
+  "value": "0.308",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyBn": {
+  "value": "0.596",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyTn": {
+  "value": "0.951",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyObsLo": {
+  "value": "0.148",
+  "source": "results/compositional.json"
+ },
+ "cmpPolicyObsHi": {
+  "value": "0.321",
+  "source": "results/compositional.json"
+ },
+ "cmpExtDiverge": {
+  "value": "+0.234",
+  "source": "results/compositional.json"
+ },
+ "cmpExtAstar": {
+  "value": "$-$1.044",
+  "source": "results/compositional.json"
+ },
+ "cmpExtB": {
+  "value": "$-$1.278",
+  "source": "results/compositional.json"
+ },
+ "cmpExtOverBn": {
+  "value": "1.28",
+  "source": "results/compositional.json"
+ },
+ "cmpExtBreakdown": {
+  "value": "243M",
+  "source": "results/compositional.json"
+ },
+ "cmpExtNclass": {
+  "value": "4",
+  "source": "results/compositional.json"
+ },
+ "cmpCompTV": {
+  "value": "0.490",
+  "source": "results/compositional.json"
+ },
+ "cmpSizeTV": {
+  "value": "0.100",
+  "source": "results/compositional.json"
+ },
+ "cmpBaseTV": {
+  "value": "0.115",
+  "source": "results/compositional.json"
+ },
+ "kParamsSix": {
+  "value": "1.3M",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kIllSix": {
+  "value": "0.1253",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kParamsEight": {
+  "value": "25.8M",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kIllEight": {
+  "value": "0.0028",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kParamsSixteen": {
+  "value": "51.0M",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kIllSixteen": {
+  "value": "0.0012",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "kSpan": {
+  "value": "38",
+  "source": "results/chessgpt_structure_lichess_{6L,8L,16L}.json"
+ },
+ "envGpu": {
+  "value": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "source": "results/environment.json"
+ },
+ "envGpuMem": {
+  "value": "4",
+  "source": "results/environment.json"
+ },
+ "envHostMem": {
+  "value": "15",
+  "source": "results/environment.json"
+ },
+ "envOs": {
+  "value": "Windows 11",
+  "source": "results/environment.json"
+ },
+ "envPython": {
+  "value": "3.12.10",
+  "source": "results/environment.json"
+ },
+ "envTorch": {
+  "value": "2.5.1+cu121",
+  "source": "results/environment.json"
+ },
+ "envNumpy": {
+  "value": "2.4.6",
+  "source": "results/environment.json"
+ },
+ "envScipy": {
+  "value": "1.18.1",
+  "source": "results/environment.json"
+ },
+ "acAlignSites": {
+  "value": "4,081",
+  "source": "results/adapter_checks.json"
+ },
+ "acAlignProblems": {
+  "value": "0",
+  "source": "results/adapter_checks.json"
+ },
+ "acVocab": {
+  "value": "32",
+  "source": "results/adapter_checks.json"
+ },
+ "acOthLegal": {
+  "value": "672",
+  "source": "results/adapter_checks.json"
+ },
+ "acOthTotal": {
+  "value": "672",
+  "source": "results/adapter_checks.json"
+ }
+}
