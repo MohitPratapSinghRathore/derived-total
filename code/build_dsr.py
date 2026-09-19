@@ -81,7 +81,9 @@ def main():
     try:
         import fitz
         t = "".join(p.get_text() for p in fitz.open(os.path.join(BUILD, "main_anon.pdf")))
-        leaks = [n for n in ("Rathore", "Kalsi", "Meduri", "Oviqo") if n in t.split("References")[0]]
+        leaks = [n for n in ("Rathore", "Kalsi", "Meduri", "Mandal", "Oviqo",
+                             "Shillong", "github.com", "MohitPratapSinghRathore")
+                 if n.lower() in t.split("References")[0].lower()]
         print(f"  [{'PASS' if not leaks else 'FAIL'}] anonymous PDF body has no "
               f"identity leaks {leaks}")
         rc |= int(bool(leaks))

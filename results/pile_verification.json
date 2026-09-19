@@ -1,0 +1,31 @@
+{
+ "rows_inspected": 100,
+ "records_without_label": 0,
+ "sources_seen": {
+  "PubMed Abstracts": 14,
+  "Github": 16,
+  "StackExchange": 11,
+  "Enron Emails": 2,
+  "FreeLaw": 4,
+  "USPTO Backgrounds": 5,
+  "Pile-CC": 27,
+  "Wikipedia (en)": 11,
+  "PubMed Central": 5,
+  "HackerNews": 2,
+  "Gutenberg (PG-19)": 1,
+  "DM Mathematics": 1,
+  "NIH ExPorter": 1
+ },
+ "absent_from_sample": [
+  "ArXiv",
+  "BookCorpus2",
+  "Books3",
+  "EuroParl",
+  "OpenSubtitles",
+  "OpenWebText2",
+  "PhilPapers",
+  "Ubuntu IRC",
+  "YoutubeSubtitles"
+ ],
+ "corpus": "hf://datasets/monology/pile-uncopyrighted/val.jsonl.zst"
+}

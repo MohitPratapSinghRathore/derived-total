@@ -106,7 +106,7 @@ nothing from doing so.""", "soften hfid")
 # -------------------------------------------------------- 10. data availability
 once(r"""from which every reported value is generated are available from the authors.""",
      r"""from which every reported value is generated are available at
-\url{https://github.com/MohitPratapSinghRathore/content-rot}.""",
+\url{https://github.com/MohitPratapSinghRathore/derived-total}.""",
      "data availability")
 
 open(p, "w", encoding="utf-8").write(s)
