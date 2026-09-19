@@ -58,6 +58,7 @@ def main():
     os.makedirs(BUILD, exist_ok=True)
     rc = 0
     rc |= run([PY, os.path.join(ROOT, "code", "make_macros_dsr.py")])
+    rc |= run([PY, os.path.join(ROOT, "code", "figures_dsr.py")])
     rc |= run([TECTONIC, "-X", "compile", "main.tex", "--outdir", BUILD],
               cwd=PAPER, quiet=True)
     anon = os.path.join(PAPER, "main_anon.tex")

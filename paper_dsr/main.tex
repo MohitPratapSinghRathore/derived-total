@@ -157,13 +157,30 @@ that turned out to rest on nothing.
 \paragraph{Scaling laws and what is fitted to them.}
 Power-law relationships between model scale and loss \citep{kaplan2020scaling} and
 their compute-optimal refinement \citep{hoffmann2022training} established the
-practice of extrapolating fitted curves to scales not yet trained. Those studies fit
-a single aggregate quantity, for which no partition identity exists and the
-criticism here does not apply. The difficulty arrives when the same machinery is
-applied category by category to a decomposed error, which is what practitioners
-want because it is category-level behaviour that determines where to spend. We
-differ from this literature by asking not how accurate such fits are but whether
-they are admissible at all.
+practice of extrapolating fitted curves to scales not yet trained. Our argument is
+in tension with how those results are often read, and it is worth being exact about
+where the tension does and does not lie, because we are not disputing them.
+
+Both studies fit a single aggregate quantity that is not presented as a sum of
+separately modelled parts. For such a quantity no partition identity exists, nothing
+in this paper applies, and their exponents are not in question. The tension is with
+a reading rather than a result: that an aggregate exponent is a stable property of a
+model family, so that decomposing the aggregate afterwards and fitting the pieces is
+a refinement of the same picture. It is not. The moment the pieces are given
+exponents of their own and those exponents differ, the aggregate they compose has a
+slope that moves, and the original exponent is revealed as a local summary over the
+range it was fitted on. A practitioner may keep the aggregate exponent, or the
+decomposition, and the choice is substantive rather than presentational: the first
+answers how fast total error falls near the observed range, the second answers which
+errors are disappearing, and only the second survives extrapolation. This also means
+the criticism cannot be escaped by fitting the aggregate more carefully. There is no
+power law for it to be a careful estimate of.
+
+The difficulty therefore arrives exactly when the machinery is applied category by
+category, which is what practitioners want because category-level behaviour is what
+determines where to spend. We differ from this literature by asking not how accurate
+such fits are but whether a decomposition and an aggregate can be reported together
+at all.
 
 \paragraph{Metric artefacts in scale measurement.}
 \citet{schaeffer2023emergent} showed that apparently discontinuous capability gains
@@ -526,8 +543,9 @@ aggregate is not that it fits badly, which it does not, but that it asserts
 something the categories contradict.
 
 \paragraph{What the repair costs, measured.}
-Table~\ref{tab:drift} gives the effective slope of the derived total. Within the
-observed range it moves by \result{admDriftRange}, and by one billion parameters it
+Table~\ref{tab:drift} gives the effective slope of the derived total, and
+Figure~\ref{fig:derived} shows why no single number replaces it. Within the observed
+range it moves by \result{admDriftRange}, and by one billion parameters it
 has moved \result{admDriftBn} from where it started, which is \result{admDriftPct}\%
 of the \result{admSpan} separating our steepest and shallowest category exponents.
 An analyst who quoted \result{admBfitted} as the aggregate exponent was quoting a
@@ -554,6 +572,22 @@ Separately fitted aggregate exponent & \result{admBfitted} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{derived_vs_fitted.pdf}
+\caption{The two objects the paper says cannot both be reported. Panel A: on
+log-log axes a power law is a straight line, so the fitted aggregate is straight by
+construction while the derived total, the sum of the same category curves, bends.
+Both agree with the observed runs, which is why nothing in range distinguishes them;
+the gap opens only in the shaded extrapolation region where the forecast was
+actually read. Panel B: the same fact as a slope. A power law contributes one
+exponent everywhere, shown flat, while the derived total's slope drifts across a
+substantial part of the band spanned by the category exponents, drawn as rules at
+the left. The aggregate exponent is the height of the dashed line; it is a local
+property of the fitted range, not of the system.}
+\label{fig:derived}
+\end{figure}
 
 \paragraph{Published decompositions: who already does this right.}
 We applied the check to published error decompositions, which
