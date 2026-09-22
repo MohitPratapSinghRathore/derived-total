@@ -1,0 +1,48 @@
+{
+ "model": "Karvonen 8L ChessGPT2",
+ "params": 25760256,
+ "n_positions": 1043,
+ "n_failures": 3,
+ "n_games": 3,
+ "illegal_rate": 0.0028763183125599234,
+ "shares": {
+  "malformed": {
+   "mean": 0.0,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0
+  },
+  "to_own": {
+   "mean": 0.0,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0
+  },
+  "unreachable": {
+   "mean": 0.6846666666666668,
+   "ci_lo": 0.1583333333333338,
+   "ci_hi": 1.0
+  },
+  "leaves_check": {
+   "mean": 0.31533333333333335,
+   "ci_lo": 0.0,
+   "ci_hi": 0.841666666666659
+  },
+  "ambiguous": {
+   "mean": 0.0,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0
+  },
+  "other": {
+   "mean": 0.0,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0
+  }
+ },
+ "absolute": {
+  "malformed": 0.0,
+  "to_own": 0.0,
+  "unreachable": 0.0019693192713326944,
+  "leaves_check": 0.0009069990412272292,
+  "ambiguous": 0.0,
+  "other": 0.0
+ }
+}

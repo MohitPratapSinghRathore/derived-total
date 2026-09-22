@@ -378,6 +378,12 @@ if _sq:
             put(_name, _v["auc"], _src)
             put(_name + "Lo", _v["ci_lo"], _src)
             put(_name + "Hi", _v["ci_hi"], _src)
+        # the same quantity within depth bucket, which is how the rest of the
+        # paper compares predictors; the pooled figure carries the depth confound
+        _vals = [_b[_k] for _b in _sq.get("per_bucket", {}).values() if _k in _b]
+        if _vals:
+            put(_name + "WDLo", min(_vals), _src)
+            put(_name + "WDHi", max(_vals), _src)
 
 _r = load("attn_8L256_s0")
 if _r:

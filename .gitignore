@@ -12,3 +12,4 @@ tools/
 *.out
 build*/log.txt
 smoke.log
+cpu_run.log

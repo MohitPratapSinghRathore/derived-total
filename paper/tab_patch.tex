@@ -3,16 +3,18 @@
 \caption{Causal intervention at the calibrated edit strength. Editing the
 state direction removes probability mass from moves out of the affected
 square; a norm-matched random direction does not. The manipulation check
-reports how often the edit actually changed the decoded belief.}
+reports how often the edit actually changed the decoded belief. The two
+removed columns are computed from the unrounded masses, so they do not
+reproduce exactly from the rounded columns beside them.}
 \label{tab:patch}
-\begin{tabular}{lccccc}
+\begin{tabular}{lccccccc}
 \toprule
-Model & $n$ & belief flipped & mass before & mass after & random edit after \\
+Model & $n$ & belief flipped & mass before & mass after & removed & random edit after & random removed \\
 \midrule
-Attention-only & 700 & 1.000 & 0.071 & \textbf{0.005} & 0.065 \\
-Attention-only, parameter-matched & 600 & 1.000 & 0.074 & \textbf{0.004} & 0.066 \\
-Recurrent channel ($\lambda{=}0$) & 600 & 1.000 & 0.070 & \textbf{0.004} & 0.064 \\
-Recurrent channel ($\lambda{=}1$) & 600 & 1.000 & 0.067 & \textbf{0.004} & 0.062 \\
+Attention-only & 700 & 1.000 & 0.0710 & \textbf{0.0046} & \textbf{0.934} & 0.0655 & 0.077 \\
+Attention-only, parameter-matched & 600 & 1.000 & 0.0736 & \textbf{0.0044} & \textbf{0.940} & 0.0659 & 0.104 \\
+Recurrent channel ($\lambda{=}0$) & 600 & 1.000 & 0.0701 & \textbf{0.0042} & \textbf{0.940} & 0.0641 & 0.086 \\
+Recurrent channel ($\lambda{=}1$) & 600 & 1.000 & 0.0674 & \textbf{0.0035} & \textbf{0.948} & 0.0623 & 0.076 \\
 \bottomrule
 \end{tabular}
 \end{table}

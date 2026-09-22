@@ -8,7 +8,9 @@ conditioning lowers the loss, so part of what looks like degraded judgement
 is state loss elsewhere on the board. Loss still grows with depth at fixed
 conditioning, so part of it is not. Cells with fewer than thirty scored
 positions are reported as n/a, and that scarcity is itself the finding:
-at depth a nearly intact board is rare.}
+at depth a nearly intact board is rare. The columns are different
+subpopulations rather than nested samples, which is why the ply 40 to 50
+row is not monotone across them.}
 \label{tab:strict}
 \begin{tabular}{lcccccc}
 \toprule

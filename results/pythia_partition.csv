@@ -1,0 +1,18 @@
+model,params,source,sum_nll,tokens,n_docs,device,dtype,timestamp
+EleutherAI/pythia-70m-deduped,70426624,ArXiv,604845.837455,200761,204,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,DM Mathematics,312249.754715,200508,196,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,Enron Emails,651559.574815,200662,611,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,EuroParl,319331.384609,102826,133,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,FreeLaw,507990.569064,200735,262,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,Github,352416.501649,200022,346,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,Gutenberg (PG-19),218871.011512,61380,60,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,HackerNews,712336.158465,200581,378,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,NIH ExPorter,685247.983707,200190,483,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,PhilPapers,234468.385415,62284,61,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,Pile-CC,720692.701258,200142,395,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,PubMed Abstracts,640151.294656,200133,748,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,PubMed Central,562437.665219,200785,216,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,StackExchange,540757.829588,200258,395,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,USPTO Backgrounds,611731.800631,200168,353,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,Ubuntu IRC,46502.363381,16048,21,cpu,float32,2026-09-19 15:27
+EleutherAI/pythia-70m-deduped,70426624,Wikipedia (en),651058.707333,200357,447,cpu,float32,2026-09-19 15:27

@@ -135,7 +135,9 @@ def horizon_table():
          "the ply at which the illegal-move rate first crosses five percent,",
          "interpolated between bucket midpoints because the bucketed read-off returns",
          "the same bucket for every condition and so discriminates nothing.",
-         "Mean\\,$\\pm$\\,s.d.\\ over seeds where more than one was run.}",
+         "Mean\\,$\\pm$\\,s.d.\\ over seeds where more than one was run. The lower",
+         "block is the scale ladder; its 8L/256 rung is the baseline condition of the",
+         "upper block, the same model with the same numbers, and is marked as such.}",
          "\\label{tab:horizon}", "\\begin{tabular}{lrcccc}", "\\toprule",
          "Model & Params & seeds & occ.\\ acc.\\ @40--50 & illegal @40--50 "
          "& $H_{\\mathrm{ill}}(.05)$ \\\\", "\\midrule"]
@@ -166,7 +168,10 @@ def horizon_table():
         if not st:
             continue
         any_ = True
-        L.append(f"\\quad {label} & {fnum(st['params'])} & {st['n']} & "
+        # 8L/256 is the baseline condition in the block above; the row is the same
+        # model and the same numbers, and is marked rather than repeated silently
+        mark = " (the baseline condition above)" if cond == "attn_8L256" else ""
+        L.append(f"\\quad {label}{mark} & {fnum(st['params'])} & {st['n']} & "
                  f"{lfmt(st['occ40'], 3)} & {lfmt(st['ill40'], 3)} & "
                  f"{lfmt(st['h_ill'], 1)} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
@@ -208,15 +213,20 @@ def patch_table():
          "\\caption{Causal intervention at the calibrated edit strength. Editing the",
          "state direction removes probability mass from moves out of the affected",
          "square; a norm-matched random direction does not. The manipulation check",
-         "reports how often the edit actually changed the decoded belief.}",
-         "\\label{tab:patch}", "\\begin{tabular}{lccccc}", "\\toprule",
-         "Model & $n$ & belief flipped & mass before & mass after "
-         "& random edit after \\\\", "\\midrule"]
+         "reports how often the edit actually changed the decoded belief. The two",
+         "removed columns are computed from the unrounded masses, so they do not",
+         "reproduce exactly from the rounded columns beside them.}",
+         "\\label{tab:patch}", "\\begin{tabular}{lccccccc}", "\\toprule",
+         "Model & $n$ & belief flipped & mass before & mass after & removed "
+         "& random edit after & random removed \\\\", "\\midrule"]
     for label, d in rows:
         se, rd = d["state_edit_all"], d["norm_matched_random_edit"]
+        removed = 1 - se["mass_after"] / se["mass_before"]
+        rand_removed = 1 - rd["mass_after"] / se["mass_before"]
         L.append(f"{label} & {d['n']} & {d['manipulation_check_flip_rate']:.3f} & "
-                 f"{se['mass_before']:.3f} & \\textbf{{{se['mass_after']:.3f}}} & "
-                 f"{rd['mass_after']:.3f} \\\\")
+                 f"{se['mass_before']:.4f} & \\textbf{{{se['mass_after']:.4f}}} & "
+                 f"\\textbf{{{removed:.3f}}} & "
+                 f"{rd['mass_after']:.4f} & {rand_removed:.3f} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L
 
@@ -294,7 +304,9 @@ def strictness_table():
          "is state loss elsewhere on the board. Loss still grows with depth at fixed",
          "conditioning, so part of it is not. Cells with fewer than thirty scored",
          "positions are reported as n/a, and that scarcity is itself the finding:",
-         "at depth a nearly intact board is rare.}",
+         "at depth a nearly intact board is rare. The columns are different",
+         "subpopulations rather than nested samples, which is why the ply 40 to 50",
+         "row is not monotone across them.}",
          "\\label{tab:strict}",
          "\\begin{tabular}{l" + "c" * len(tols) + "}", "\\toprule",
          "Ply & " + " & ".join(("any" if t >= 64 else "$\\leq " + str(t) + "$")
@@ -461,18 +473,27 @@ def sqcontrol_table():
          "positions, since positions within a game are not independent. Two random",
          "occupied squares are a partial match to a move's endpoints, the origin being",
          "occupied by the mover while the destination is usually empty or held by the",
-         "opponent, so this control equalises count and occupancy only in part. It",
-         "performs like the whole board; the squares the move actually touches do",
-         "not, so the advantage is about which squares rather than how many.}",
-         "\\label{tab:sqcontrol}", "\\begin{tabular}{lc}", "\\toprule",
-         "Squares scored & AUC [95\\% CI] \\\\", "\\midrule"]
+         "opponent, so this control equalises count and occupancy only in part. The",
+         "pooled column mixes depths and is inflated by the confound the rest of the",
+         "paper removes, so the within-depth range is given beside it. Read within",
+         "depth, both random-pair controls collapse towards chance while the squares",
+         "the move touches hold up, which is the comparison the row set was built to",
+         "make. The whole board also holds up at the shallowest depths, where little",
+         "of it is yet wrong, and separates from the move-touched rows as depth",
+         "grows.}",
+         "\\label{tab:sqcontrol}", "\\begin{tabular}{lcc}", "\\toprule",
+         "Squares scored & pooled AUC [95\\% CI] & within depth, range \\\\",
+         "\\midrule"]
+    per = d.get("per_bucket", {})
     for k, lab in order:
         v = d["pooled"].get(k)
         if not v:
             continue
         bold = "\\textbf{%s}" % f"{v['auc']:.3f}" if k == "move_touched" \
             else f"{v['auc']:.3f}"
-        L.append(f"{lab} & {bold} [{v['ci_lo']:.3f}, {v['ci_hi']:.3f}] \\\\")
+        vals = [b[k] for b in per.values() if k in b]
+        wd = f"{min(vals):.3f} to {max(vals):.3f}" if vals else "n/a"
+        L.append(f"{lab} & {bold} [{v['ci_lo']:.3f}, {v['ci_hi']:.3f}] & {wd} \\\\")
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     return L
 

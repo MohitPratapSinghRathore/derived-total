@@ -136,8 +136,19 @@ src = re.sub(r"\\begin\{description\}(?:\[[^\]]*\])?(.*?)\\end\{description\}",
              desc, src, flags=re.S)
 
 # ------------------------------------------------------------- figures
-src = re.sub(r"\\includegraphics\[[^\]]*\]\{([^}]*)\}",
-             r"\\includegraphics[width=6in]{\1}", src)
+# pandoc resolves the path relative to its working directory and does not read
+# \graphicspath, so the directory is written into every path here. Without this
+# the DOCX comes out with captions and no images.
+def _fig(m):
+    name = m.group(1)
+    if not name.startswith("figures/"):
+        name = "figures/" + name
+    if not os.path.splitext(name)[1]:
+        name += ".png"
+    return "\\includegraphics[width=6in]{%s}" % name
+
+
+src = re.sub(r"\\includegraphics\[[^\]]*\]\{([^}]*)\}", _fig, src)
 src = src.replace(r"\graphicspath{{figures/}}", "")
 
 # ------------------------------------------------- bibliography as paragraphs
@@ -158,6 +169,80 @@ else:
     bib = ""
 src = re.sub(r"\\bibliographystyle\{[^}]*\}\s*\\bibliography\{[^}]*\}",
              lambda _m: bib, src)
+
+# ------------------------------------------- numbering that pandoc will not do
+# Sections and subsections are numbered in document order, and every table and
+# figure caption is prefixed with its number, so the DOCX can be read on its own
+# and every cross-reference in it resolves.
+def _number_sections(text):
+    out, counters = [], [0, 0]
+    for line in text.split("\n"):
+        m = re.match(r"\\section\{(.*)\}\s*$", line)
+        if m and "*" not in line:
+            counters[0] += 1
+            counters[1] = 0
+            out.append("\\section{%d. %s}" % (counters[0], m.group(1)))
+            continue
+        m = re.match(r"\\subsection\{(.*)\}\s*$", line)
+        if m and "*" not in line:
+            counters[1] += 1
+            out.append("\\subsection{%d.%d. %s}"
+                       % (counters[0], counters[1], m.group(1)))
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
+def _number_floats(text):
+    """Prefix each caption with Table N. / Figure N., in document order."""
+    counts = {"table": 0, "figure": 0}
+    out, i = [], 0
+    pat = re.compile(r"\\begin\{(table|figure|longtable)\}")
+    while True:
+        m = pat.search(text, i)
+        if not m:
+            out.append(text[i:])
+            break
+        kind = "table" if m.group(1) in ("table", "longtable") else "figure"
+        end = text.find("\\end{%s}" % m.group(1), m.end())
+        end = len(text) if end < 0 else end
+        body = text[m.start():end]
+        counts[kind] += 1
+        label = "Table" if kind == "table" else "Figure"
+        prefix = "\\caption{%s %d. " % (label, counts[kind])
+        body = re.sub(r"\\caption\{", lambda _m: prefix, body, count=1)
+        out.append(text[i:m.start()])
+        out.append(body)
+        i = end
+    return "".join(out)
+
+
+def _flatten_headers(text):
+    r"""pandoc drops \multicolumn, which leaves a short header row over a wide
+    table. The spanning row is folded into the header beneath it instead."""
+    def one(m):
+        span, head = m.group(1), m.group(2)
+        groups = re.findall(r"\\multicolumn\{(\d+)\}\{[^}]*\}\{([^}]*)\}", span)
+        if not groups:
+            return m.group(0)
+        names = []
+        for n, title in groups:
+            names.extend([title.strip()] * int(n))
+        cells = [c.strip() for c in head.split("&")]
+        lead = len(cells) - len(names)
+        merged = cells[:max(lead, 0)] + [
+            (f"{names[k]}: {cells[lead + k]}" if lead + k < len(cells) else names[k])
+            for k in range(len(names))]
+        return "\\midrule\n" + " & ".join(merged) + " \\\\\n"
+
+    return re.sub(r"(?:\\midrule\n)?([^\n]*\\multicolumn[^\n]*)\\\\\n"
+                  r"(?:\\cmidrule[^\n]*\n)?([^\n]*)\\\\\n",
+                  one, text)
+
+
+src = _number_sections(src)
+src = _number_floats(src)
+src = _flatten_headers(src)
 
 # ------------------------------------------------------------- tidy up
 src = src.replace(r"\clearpage", "").replace(r"\newpage", "")

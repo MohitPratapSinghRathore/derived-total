@@ -10,6 +10,8 @@
 
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
 
 \newif\ifanon
 \ifdefined\ANON\anontrue\else\anonfalse\fi
@@ -20,11 +22,14 @@
   \author{\normalsize\itshape Author names and affiliations removed for double-anonymous peer review}
 \else
   \author{
-    Mohit Pratap Singh Rathore\\ \small Oviqo Private Limited
+    Mohit Pratap Singh Rathore\thanks{Corresponding author:
+    \texttt{mohitpratapsinghr@gmail.com}.}\\ \small Oviqo Research
     \and
-    Gunveer Sinh Kalsi\\ \small Oviqo Private Limited
+    Gunveer Singh Kalsi\\ \small Oviqo Research
     \and
-    Sriharsha Meduri\\ \small Oviqo Private Limited
+    Sriharsha Meduri\\ \small Oviqo Research
+    \and
+    Pratap Chandra Mandal\\ \small Indian Institute of Management Shillong
   }
 \fi
 \date{}
@@ -102,7 +107,7 @@ the paper tests how far they reach.
 \item \textbf{The errors are coherent.} We reconstruct the board the model
 appears to believe and ask whether its illegal move is legal there. It is, for
 \result{belIllAttn} of illegal moves, with a bootstrap interval of
-[\result{belIllLoAttn}, \result{belIllHiAttn}]. The same move scored against
+[\result{pcBelLo}, \result{pcBelHi}]. The same move scored against
 another position's believed board at equal depth is legal \result{belMisAttn} of
 the time, and an arbitrary illegal move scored against the model's own believed
 board is legal \result{belRandAttn} of the time. Lossy decoding caps what is
@@ -158,18 +163,17 @@ Deliberation over candidates \citep{yao2023tree}, process supervision
 \citep{lightman2024lets}, and sampling with a vote
 \citep{wang2023selfconsistency}, built on chain-of-thought prompting
 \citep{wei2022chain}, buy accuracy with inference compute and take the base
-policy as given. Our concern is the base policy: a verifier that spends its
-budget repairing state-tracking errors compensates for a representational defect
-at a recurring cost. We diagnose which defect is present before recommending a
-remedy.
+policy as given. Our concern is the base policy: a verifier spending its budget
+repairing state-tracking errors pays a recurring cost for a representational
+defect, so we diagnose which defect is present before recommending a remedy.
 
 \paragraph{Long-context evaluation.}
 Position-dependent retrieval failure \citep{liu2024lost} and effective-context
-measurement \citep{hsieh2024ruler} show usable context is shorter than advertised
-context. Both measure retrieval of material present in the prefix. Long-horizon
+measurement \citep{hsieh2024ruler} show usable context is shorter than advertised,
+but both measure retrieval of material present in the prefix. Long-horizon
 reasoning failure is different: the needed quantity was never written down, only
-implied, and has to be maintained through composition. A model can attend to
-every token of a sixty-ply game and still not know where the pieces are.
+implied, and must be maintained through composition. A model can attend to every
+token of a sixty-ply game and still not know where the pieces are.
 
 \paragraph{World models and probing.}
 Linear probes recover board state from game transcripts \citep{li2023emergent}
@@ -309,14 +313,15 @@ failures. We do not call them planning errors.
 \section{The State-Space Bottleneck}
 \label{sec:bottleneck}
 
-\begin{proposition}[Cost mismatch]
+\begin{remark}[Cost mismatch]
 Under full attention each new token reads an $O(t)$ key-value history and
 retains $O(t)$ cached memory, while the task state has description length
 $O(1)$. A key-value cache amortises the computation of earlier activations, so
 the cost is not recomputation from scratch; what the architecture lacks is a
 bounded mutable state that could carry $s_t$ forward and be updated in place.
-This is a motivating cost mismatch, not a proof that fidelity must decay.
-\end{proposition}
+This is a motivating cost mismatch, not a proof that fidelity must decay, which
+is why it is stated as a remark.
+\end{remark}
 
 Two consequences were testable. Fidelity should fall with depth even well inside
 the context window, because the re-derivation circuit must compose more updates
@@ -367,20 +372,27 @@ architecture, bounding what probe capacity alone extracts.
 \paragraph{Behavioural measures.} Illegal top-1 move rate against depth, and the
 probability mass on legal continuations, both read against the oracle.
 
+\paragraph{Pre-registered hypotheses.} Five predictions were fixed before the
+measurements they concern; Section~\ref{sec:verdict} gives the verdict on each.
+
+\begin{description}[nosep]
+\item[H1.] State fidelity declines with depth, and no majority predictor,
+label-permutation control or randomised-weight model explains the decline.
+\item[H2.] The depth at which behaviour fails grows with model scale, but slowly.
+\item[H3.] A supervised recurrent state channel raises state fidelity and, through
+it, the behavioural horizon.
+\item[H4.] An intervention that improves state tracking improves behaviour in
+proportion, the two gains moving together.
+\item[H5.] The same separation appears in a second domain with an exact state
+oracle, including a natural-language setting.
+\end{description}
+
 \section{Results}
 \label{sec:results}
 
 \subsection{State and behaviour both decay with depth}
 \label{sec:decay}
 
-\input{tab_controls}
-\input{tab_auc}
-\input{tab_mechanism}
-\input{tab_patch}
-\input{tab_horizon}
-\input{tab_scale}
-\input{tab_strictness}
-\input{tab_boxes}
 
 \begin{figure}[t]
 \centering
@@ -404,6 +416,8 @@ Table~\ref{tab:controls} reports in full at every depth. There is a real state
 representation, and it becomes progressively less recoverable by a linear
 decoder. Section~\ref{sec:drift} tests whether that reflects loss or a moving
 basis.
+
+\input{tab_controls}
 
 \subsection{Aggregate fidelity is the weaker signal}
 \label{sec:coupling}
@@ -439,6 +453,8 @@ footing, as predictors of the same outcome.}
 \label{fig:coupling}
 \end{figure}
 
+\input{tab_auc}
+
 The claim we can defend is therefore narrower than the one we first wrote, and it
 is still a claim about a standard practice. Whole-board probe accuracy is a
 usable but weak proxy for whether a world model is load-bearing, it degrades as a
@@ -454,15 +470,14 @@ whether it has lost the part it is about to use.
 \label{sec:drift}
 
 Every fidelity number so far comes from one decoder fitted across all depths, and
-a falling number has been read as the state becoming less available. A single
-global decoder cannot distinguish that from an alternative: the state might stay
-equally present while its linear basis moves with depth, so that one fixed
-decoder simply transfers badly. The reversible-cycle experiment holds the
-position fixed but still uses the global probe, so it inherits the same
-ambiguity.
+a falling number has been read as the state becoming less available. A single global
+decoder cannot distinguish that from an alternative: the state might stay equally
+present while its linear basis moves with depth, so one fixed decoder transfers
+badly. The reversible-cycle experiment holds the position fixed but uses the same
+global probe, inheriting the ambiguity.
 
 We fit a separate linear probe inside each depth bucket and evaluate every probe
-on every bucket.
+on every bucket (Table~\ref{tab:drift}).
 
 \input{tab_drift}
 
@@ -490,17 +505,24 @@ already runs the wrong way for it.
 
 Move-touched fidelity scores two squares where the aggregate averages
 sixty-four, and a statistic over two concentrated variables can look sharper than
-one over sixty-four diluted ones for reasons unrelated to relevance. The control
-that separates those explanations is a random pair.
+one over sixty-four diluted ones for reasons unrelated to relevance alone. The control
+that separates those explanations is a random pair (Table~\ref{tab:sqcontrol}).
 
 \input{tab_sqcontrol}
 
-Two randomly chosen squares predict an illegal move at an AUC of
+Two randomly chosen squares predict an illegal move at a pooled AUC of
 \result{sqTwoRandom}, well below the whole board at \result{sqWholeBoard}. Two
 squares drawn at random from those actually \emph{occupied} reach
-\result{sqTwoRandomOcc}, statistically indistinguishable from the whole board.
-The squares a move touches reach \result{sqMoveTouched}, with a game-clustered
-interval that does not overlap either control. The advantage is therefore about
+\result{sqTwoRandomOcc} pooled, statistically indistinguishable from the whole
+board. The squares a move touches reach \result{sqMoveTouched}, with a
+game-clustered interval that does not overlap either control. Those are pooled figures, carrying the depth
+confound removed elsewhere in this paper, so the table gives the within-depth
+range beside each. Within depth both random-pair controls fall towards chance,
+\result{sqTwoRandomWDLo} to \result{sqTwoRandomWDHi} and
+\result{sqTwoRandomOccWDLo} to \result{sqTwoRandomOccWDHi}, while the squares the
+move touches hold up at \result{sqMoveTouchedWDLo} to
+\result{sqMoveTouchedWDHi}. The whole board holds up only at the shallowest
+depths, where little of it is yet wrong. The advantage is therefore about
 which squares are read, not how many, and it is not an artifact of averaging
 fewer variables. That control equalises count and occupancy only in part: a
 move's origin is occupied by the side to move, while its destination is usually
@@ -515,6 +537,12 @@ the model has misremembered as occupied.
 
 \subsection{The errors are coherent}
 \label{sec:belief}
+
+Table~\ref{tab:mechanism} collects the three measures for every condition: the
+aggregate predictor, the move-touched one, and the belief consistency introduced
+here.
+
+\input{tab_mechanism}
 
 If state loss drives the failure, an invalid action should be valid in the state
 the model believes it is in. We reconstruct that believed position from the probe
@@ -564,26 +592,28 @@ state-consistent failure. It does not assign the remainder.
 \subsection{Inducing a false belief changes the action}
 \label{sec:causal}
 
+\input{tab_patch}
+
 Belief consistency is observational. It shows the model errs coherently with a
 decayed state without showing that the state representation drives the action.
 We therefore intervene. At a position where the side to move genuinely occupies a
 square, we push the residual stream along the probe direction encoding "this
 square is empty" and ask whether the model stops proposing moves from it.
 
-Two safeguards decide whether such an experiment means anything, and both are
+Two safeguards decide whether such an experiment means anything and both are
 reported. The manipulation check asks whether the edit changed the decoded belief
 at all: at the strength we use it does, in \result{patchFlipAttn} of cases. The
-norm-matched control applies a random direction of identical magnitude at the
-same position, which separates belief from mere perturbation sensitivity.
+norm-matched control applies a random direction of the same magnitude at the same
+position, separating belief from perturbation sensitivity.
 
-Edit strength has to be calibrated rather than chosen, because a large enough
-push degrades the forward pass and will move behaviour for reasons having nothing
-to do with state. Figure~\ref{fig:patchcal} reports the sweep. Below a quarter of
+Edit strength has to be calibrated rather than chosen: a large enough push
+degrades the forward pass and moves behaviour for reasons unrelated to state. Figure~\ref{fig:patchcal} reports the sweep. Below a quarter of
 the residual-stream magnitude the edit does not reliably flip the belief; above
 roughly one, the random control also starts destroying the output distribution,
 so any effect there is damage rather than belief. We report the intervention at
 \result{patchAlphaAttn}, inside the window where the manipulation succeeds and
-the control does not.
+the control does not. Table~\ref{tab:patch} gives every condition, the
+removed fractions computed from the unrounded masses.
 
 \begin{figure}[t]
 \centering
@@ -618,10 +648,18 @@ median centipawn loss falls from \result{epsMed30to40tol64} with the board
 unconstrained to \result{epsMed30to40tol4} when at most four other squares may be
 wrong, and the blunder rate from \result{epsBl30to40tol64} to
 \result{epsBl30to40tol4}. Roughly half of what a naive reading would call
-degraded judgement is misattributed memory failure. The strictest cells are
-thinly populated at depth however many games we scan, since a nearly intact board
-becomes rare exactly where we would most like to condition on one; cells with
-fewer than thirty scored positions are reported as n/a.
+degraded judgement is misattributed memory failure. The strictest cells are thinly
+populated at depth however many games we scan, a nearly intact board becoming
+rare exactly where we would most like to condition on one; cells with fewer than
+thirty scored positions read n/a.
+
+\input{tab_strictness}
+
+The trend is not monotone everywhere: at ply 40 to 50 the cell allowing at most
+sixteen wrong squares reports a higher median loss than the unconstrained cell
+beside it. Those cells are different subpopulations, not nested samples, each
+capped at the same number of scored positions. We report the reversal and read
+nothing from it.
 
 The trend does not go to zero. Holding the conditioning at four wrong squares,
 the median loss still grows with depth, from \result{epsMed20to30tol4} at ply 20
@@ -641,11 +679,17 @@ conditioning should be reported whenever either is quoted.
 \subsection{Scale}
 \label{sec:scale}
 
+Table~\ref{tab:horizon} reports the horizon and the fidelity behind it for every
+condition and rung.
+
+\input{tab_horizon}
+\input{tab_scale}
+
 The behavioural horizon is read off the illegal-move curve at the ply where it
 first crosses five percent, interpolated between bucket midpoints because the
 bucketed read-off returns the same bucket for every condition and so cannot
-discriminate between them. A second horizon defined on the representation is
-introduced in supplementary material, where both are tabulated together.
+discriminate between them. A second horizon defined on the representation,
+$H_{\mathrm{fid}}(.5)$, is reported beside it in Table~\ref{tab:scale}.
 
 Across the ladder the behavioural horizon grows with scale and grows slowly,
 from \result{hintRung1} ply at \result{paramsSmall} parameters to
@@ -852,28 +896,26 @@ proved a weaker predictor of behaviour than the same measure restricted to the
 state an action consumes, by a margin that grows with depth
 (Section~\ref{sec:coupling}).
 
-If we could keep only one result it would be belief consistency together with the
-causal edit, which say that these models act coherently on a state they are
-losing.
+If we could keep one result it would be belief consistency with the causal edit:
+these models act coherently on a state they are losing.
 
 \section{Discussion}
 
 The practical content of this paper is a change in what to measure. That a probe
 recovers a world model at some aggregate accuracy is weak evidence that the model
 is load-bearing: aggregate accuracy predicts the validity of the next action
-poorly, and worse with depth. Measuring the same representation on the components
-an action depends on is substantially more informative from the same activations.
-Any team instrumenting a system for long-horizon reliability should condition on
-the state the action uses.
+poorly, and worse with depth. Read on the components an action depends on, the
+same activations are substantially more informative, so a team instrumenting a
+system for long-horizon reliability should condition on the state the action
+uses.
 
 The belief-consistency result reframes the failure. A model that plays a coherent
-move in a misremembered position is not behaving erratically, and treatments that
-assume erratic behaviour are aimed at the wrong target. Sampling several chains
-and voting may offer limited benefit when independently sampled continuations
-share the same state distortion, though we did not test repeated sampling or how
-far drift is correlated across samples. A verifier that scores outputs is well
-placed to catch the error and badly placed to prevent it, at a cost paid on every
-query.
+move in a misremembered position is not behaving erratically, so treatments that
+assume erratic behaviour aim at the wrong target. Sampling several chains and
+voting may help little when independently sampled continuations share the same
+state distortion, though we tested neither repeated sampling nor how far drift is
+correlated across samples. A verifier that scores outputs is well placed to catch
+the error and badly placed to prevent it, at a cost paid on every query.
 
 The protocol generalises past chess. Anywhere an external checker can reconstruct
 the intended intermediate state, program execution traces, spreadsheet
@@ -897,10 +939,13 @@ but the horizon values describe these models. Section~\ref{sec:scale} estimates
 the trend rather than assuming it away.
 \item[L2] \textbf{One domain family.} Chess carries an exact oracle by
 construction, which is what makes it measurable and also what makes it
-unrepresentative of open-ended reasoning. The second domain reaches a measurable
-regime (supplementary material), but only its supervised condition maintains a
-decodable state, so the attention-only replication we wanted is not available
-there. The central findings rest on one instrument.
+unrepresentative of open-ended reasoning. The second domain reaches a measurable regime,
+summarised in Table~\ref{tab:boxes} and reported in full in the supplementary
+material, but only its supervised condition holds a decodable state, so the
+attention-only replication we wanted is unavailable there. The central findings
+rest on one instrument.
+
+\input{tab_boxes}
 \item[L3] \textbf{Probe decoding is lossy.} The believed board is an
 approximation, which is why we report the legal-move recovery rate as an explicit
 reference rather than treating the decoded state as ground truth.
@@ -923,16 +968,15 @@ approximated.
 \section{Avenues of Future Research}
 
 The most useful next steps are to extend the scale ladder far enough to estimate
-how the horizon grows with parameters and data, and to test whether the
-belief-consistency rate is scale-invariant where the horizon moves; to replicate
-the measurements in domains that were not designed as benchmarks, such as program
-execution or ledger reconciliation, where an oracle exists but the data is not
-constructed; to run the natural-language transfer test with matched pre-training,
-the experiment that decides whether this line of work reaches practice; and to
-develop state supervision that does not require an oracle, for example from
-execution traces or agreement between sampled continuations. Move-touched
-fidelity is also a candidate live confidence signal, for abstaining or escalating
-when the state an action depends on is poorly determined.
+how the horizon grows with parameters and data, and whether belief consistency is
+scale-invariant where the horizon moves; to replicate the measurements where an
+oracle exists but the data was not constructed as a benchmark, such as program
+execution or ledger reconciliation; to run the natural-language transfer test
+with matched pre-training, which decides whether this line of work reaches
+practice; and to develop state supervision that needs no oracle, from execution
+traces or agreement between sampled continuations. Move-touched fidelity is also
+a candidate live confidence signal, for abstaining when the state an action
+depends on is poorly determined.
 
 \section{Conclusion}
 
@@ -982,8 +1026,10 @@ commercial, or not-for-profit sectors.
 The code and evaluation artifacts will be made available upon acceptance.
 \else
 The training and evaluation code, the measurement pipeline, and the result files
-from which every reported value is generated are available at
-\url{https://github.com/MohitPratapSinghRathore/derived-total}.
+from which every reported value is generated are public at
+\url{https://github.com/MohitPratapSinghRathore/derived-total}, where
+\texttt{code/make\_tables.py} and \texttt{code/make\_macros.py} regenerate every
+table and every number in this paper from those files.
 \fi
 
 \paragraph{AI usage declaration.}
@@ -1021,7 +1067,9 @@ move-touched recovery, with a strictness ladder showing what the choice costs.
 incommensurable statistics, a correlation against a conditional probability. Both
 are now scored as predictors of the same outcome.
 \item The layer-profile prediction was falsified and is retained as such.
-\item The second domain required seven designs. All are reported.
+\item The second domain required seven designs, all reported in the supplementary
+material, where that domain is presented; this manuscript reports the chess
+domain.
 \end{enumerate}
 
 \bibliographystyle{apalike}
