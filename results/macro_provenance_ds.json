@@ -1287,6 +1287,90 @@
   "value": "0.115",
   "source": "results/compositional.json"
  },
+ "locGames": {
+  "value": "150",
+  "source": "results/locality_index.json"
+ },
+ "locMoves": {
+  "value": "3,942",
+  "source": "results/locality_index.json"
+ },
+ "locKEmpty": {
+  "value": "0.00",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxEmpty": {
+  "value": "0",
+  "source": "results/locality_index.json"
+ },
+ "locNEmpty": {
+  "value": "900",
+  "source": "results/locality_index.json"
+ },
+ "locKOpp": {
+  "value": "0.00",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxOpp": {
+  "value": "0",
+  "source": "results/locality_index.json"
+ },
+ "locNOpp": {
+  "value": "900",
+  "source": "results/locality_index.json"
+ },
+ "locKOwn": {
+  "value": "0.08",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxOwn": {
+  "value": "48",
+  "source": "results/locality_index.json"
+ },
+ "locNOwn": {
+  "value": "892",
+  "source": "results/locality_index.json"
+ },
+ "locKGeom": {
+  "value": "0.01",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxGeom": {
+  "value": "1",
+  "source": "results/locality_index.json"
+ },
+ "locNGeom": {
+  "value": "900",
+  "source": "results/locality_index.json"
+ },
+ "locKCheck": {
+  "value": "18.33",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxCheck": {
+  "value": "58",
+  "source": "results/locality_index.json"
+ },
+ "locNCheck": {
+  "value": "350",
+  "source": "results/locality_index.json"
+ },
+ "locCheckSd": {
+  "value": "11.9",
+  "source": "results/locality_index.json"
+ },
+ "locGeomImposs": {
+  "value": "98.1",
+  "source": "results/locality_index.json"
+ },
+ "locGeomBlocked": {
+  "value": "1.9",
+  "source": "results/locality_index.json"
+ },
+ "locGeomN": {
+  "value": "900",
+  "source": "results/locality_index.json"
+ },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",
   "source": "results/environment.json"

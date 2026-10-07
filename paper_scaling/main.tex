@@ -175,8 +175,57 @@ class, in priority order, by what made it illegal:
 \emph{geometry} (a piece of the right colour is present but cannot reach the
 destination, or its path is blocked), and
 \emph{leaves check} (pseudo-legal, rejected only because the king would be in
-check). The first three are decidable from the two named squares. Geometry
-depends on intervening squares, and check on the positions of every attacker.
+check). The first three are decidable from the two named squares. The ordering
+of the remaining two is measured rather than asserted, below, because an exponent
+is a measurement and relating it to an ordering we merely argued for would be the
+weaker half of the comparison.
+
+\paragraph{How much board each class actually depends on.}
+For a position and an illegal move, call a square a \emph{dependency} if altering
+its contents alone can change whether the move is legal, and let $k$ count such
+squares, excluding the two the move names because every class depends on those by
+construction. The definition is causal: it asks what the verdict turns on, not what
+the rule text mentions. It is computed by brute force over all 64 squares and all 12
+piece types, on positions from real games with no model involved, so $k$ is a
+property of the rules and the position rather than of any network. Over \result{locGames} games
+and \result{locMoves} sampled illegal moves:
+
+\begin{center}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Class} & \textbf{mean $k$} & \textbf{max $k$} \\
+\midrule
+empty source      & \result{locKEmpty} & \result{locKMaxEmpty} \\
+opponent source   & \result{locKOpp} & \result{locKMaxOpp} \\
+own destination   & \result{locKOwn} & \result{locKMaxOwn} \\
+geometry          & \result{locKGeom} & \result{locKMaxGeom} \\
+leaves check      & \result{locKCheck} & \result{locKMaxCheck} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two things follow, and the second is inconvenient for us. The local and global
+distinction this paper rests on is confirmed, and is now a measurement rather than
+an argument: the check class depends on \result{locKCheck} squares on average, with a
+standard deviation of \result{locCheckSd} and a maximum of \result{locKMaxCheck}, while every other
+class depends on essentially none. That separation is not a matter of degree.
+
+But $k$ does \emph{not} explain the ordering of the exponents. Geometry has an
+exponent of \result{expGeometry}, roughly halfway between the local classes and the check
+class, and a dependency set indistinguishable from the local ones. The reason lies in
+the taxonomy rather than in the models: of \result{locGeomN} geometry errors sampled,
+\result{locGeomImposs} percent are moves the piece cannot make under any arrangement of the
+other squares, and only \result{locGeomBlocked} percent are genuinely blocked paths. The label
+covers two mechanically different errors, and the description of geometry as depending
+on intervening squares holds for a fiftieth of the cases carrying it.
+
+We report this rather than choose $k$ to fit. Hand-assigned values of $k$ produce a
+coefficient of determination anywhere from about two thirds to about seven eighths
+depending on which values are assigned, which measures the freedom in the assignment
+and not a relationship in the data. The ordinal claim is supported at the extremes,
+where it is now measured. A continuous law predicting an exponent from locality is
+not supported, and we assert none.
 Across all \result{nRuns} runs the residual class that none of these rules catch
 has a maximum share of \result{shareOtherMax}, which confirms the taxonomy is
 exhaustive and the parser correct; it is a quality check, not a finding.

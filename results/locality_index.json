@@ -1,0 +1,58 @@
+{
+ "games": 150,
+ "seed": 20260919,
+ "per_class": 2,
+ "definition": "squares whose contents can flip is_legal, move squares excluded",
+ "classes": {
+  "from_empty": {
+   "n": 900,
+   "mean": 0,
+   "median": 0.0,
+   "sd": 0.0,
+   "min": 0,
+   "max": 0
+  },
+  "from_opponent": {
+   "n": 900,
+   "mean": 0,
+   "median": 0.0,
+   "sd": 0.0,
+   "min": 0,
+   "max": 0
+  },
+  "to_own": {
+   "n": 892,
+   "mean": 0.08408071748878924,
+   "median": 0.0,
+   "sd": 1.8420517495969562,
+   "min": 0,
+   "max": 48
+  },
+  "geometry": {
+   "n": 900,
+   "mean": 0.011111111111111112,
+   "median": 0.0,
+   "sd": 0.1048220125784067,
+   "min": 0,
+   "max": 1
+  },
+  "leaves_check": {
+   "n": 350,
+   "mean": 18.325714285714287,
+   "median": 18.0,
+   "sd": 11.89920388350517,
+   "min": 0,
+   "max": 58
+  }
+ },
+ "geometry_kinds": {
+  "impossible": {
+   "n": 883,
+   "share": 0.9811111111111112
+  },
+  "blocked": {
+   "n": 17,
+   "share": 0.01888888888888889
+  }
+ }
+}

@@ -354,6 +354,25 @@ put("cmpSizeTV", cp["covariate_tv"]["size"], CP, "{:.3f}")
 put("cmpBaseTV", cp["covariate_tv"]["baseline"], CP, "{:.3f}")
 
 
+li = S.load("locality_index.json")
+LI = "results/locality_index.json"
+put("locGames", li["games"], LI, "{:d}")
+put("locMoves", sum(v["n"] for v in li["classes"].values()), LI, "{:,d}")
+for c, tag in (("from_empty", "Empty"), ("from_opponent", "Opp"),
+               ("to_own", "Own"), ("geometry", "Geom"),
+               ("leaves_check", "Check")):
+    r = li["classes"][c]
+    put("locK" + tag, r["mean"], LI, "{:.2f}")
+    put("locKMax" + tag, r["max"], LI, "{:d}")
+    put("locN" + tag, r["n"], LI, "{:,d}")
+put("locCheckSd", li["classes"]["leaves_check"]["sd"], LI, "{:.1f}")
+_g = li.get("geometry_kinds", {})
+if _g:
+    put("locGeomImposs", 100 * _g["impossible"]["share"], LI, "{:.1f}")
+    put("locGeomBlocked", 100 * _g["blocked"]["share"], LI, "{:.1f}")
+    put("locGeomN", sum(v["n"] for v in _g.values()), LI, "{:,d}")
+
+
 env = S.load("environment.json")
 EV = "results/environment.json"
 put("envGpu", env["gpu_name"], EV)
