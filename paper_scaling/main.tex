@@ -723,6 +723,55 @@ decomposition is available, and the question of which violations scale removes c
 be asked without any access to model internals.
 
 % ====================================================================
+\section{Implications for Individuals, Organisations, and Society}
+\label{sec:implications}
+
+\paragraph{For the people on the receiving end of a long-horizon failure.}
+The errors this paper separates are not equally visible to the person affected. An
+error decidable from the move's own squares is the kind a user can usually catch:
+it contradicts something in front of them. An error that is locally consistent and
+globally wrong is not, because every part of it looks right. Our measurements say
+scale removes the first kind several times faster than the second, so the errors
+that survive in larger systems are disproportionately the ones a non-expert cannot
+see. That shifts the burden of catching mistakes from the person who can check a
+detail to the person who can check the whole, and in most deployments those are not
+the same person and the second is not present.
+
+\paragraph{For managers and organisations.}
+The practical reading is about where a mitigation budget goes. A class of failure
+that scale removes on its own is a poor target for engineering effort, and a class
+with an exponent near zero will still be there after the next model upgrade. Our
+estimate is that errors surviving a correct local belief have an exponent of
+\result{expCorrLocal}, which is indistinguishable from no improvement at all.
+An organisation deciding between waiting for the next generation and funding a
+mitigation can, in a domain with a checker, measure which class its own failures
+fall into rather than arguing about it. The second lesson is about measurement:
+illegal-move rate, the metric most readily available, ranks a norm-matched random
+edit above a correct repair in \result{invCount} of \result{invN} models, because
+hedging lowers it. An intervention scored that way can look effective while making
+the system worse.
+
+\paragraph{Strategic implications.}
+Treat the composition of failure, rather than its rate, as the quantity worth
+tracking. A falling error rate is compatible with the dangerous share of errors
+rising, and our ladder shows exactly that: the total falls while the fraction that
+is globally rather than locally wrong increases. An organisation that reports only
+the aggregate will see improvement in the period when its remaining failures are
+becoming harder to detect. The capability to decompose is cheap where an oracle
+exists and needs no access to model internals, so it is available to a buyer as well
+as to a vendor, which matters when the two disagree about whether a known defect
+will be fixed by scale.
+
+\paragraph{For society and the public record.}
+The decomposition used here needs a checker that can say not only that an output is
+wrong but which constraint it violated. Chess has one for free. Program execution,
+spreadsheet recalculation and formal proof have one too, and in those domains the
+same question can be asked by anyone, at no cost, without the cooperation of whoever
+built the system. Where no such checker exists, and most consequential deployments
+are in that position, claims about which errors scale away cannot currently be
+audited by anybody. We would rather state that plainly than let a result measured in
+a game stand in for domains that cannot yet be measured.
+% ====================================================================
 \section{Limitations}
 \label{sec:limits}
 
@@ -794,9 +843,12 @@ to distribute with the repository. External checkpoints are public.
 \fi
 
 \paragraph{AI usage declaration.}
-During preparation the authors used a generative AI tool to assist with analysis
-code and language editing. The authors reviewed and edited all output and take full
-responsibility for the content.
+During the preparation of this manuscript the authors used a generative AI tool to
+assist with language editing and refinement of the text, and with writing analysis
+code. The authors reviewed and edited all output and take full responsibility for
+the content of the paper. Generative AI was not used to generate or analyse the
+study's data, which were produced entirely by the measurement pipeline described in
+the paper.
 
 \appendix
 
