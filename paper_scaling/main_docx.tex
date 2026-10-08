@@ -158,6 +158,48 @@ trained on human games, with evaluation on held-out games and no search at infer
 width vary together along the ladder, so a size exponent here is not a pure
 depth or width exponent (Section~\ref{sec:limits}).
 
+
+\paragraph{Training.}
+Every figure in this paragraph is read out of the checkpoints rather than
+transcribed, by the same macro pipeline as the results, so a hyperparameter
+cannot quietly stop describing the run it labels.
+
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Rung} & \textbf{Layers} & \textbf{Width} & \textbf{Heads} & \textbf{Params (M)} & \textbf{Val.\ loss} \\
+\midrule
+6L192 & 6 & 192 & 6 & 3.4 & 3.342 \\
+8L256 & 8 & 256 & 8 & 7.3 & 3.029 \\
+12L256 & 12 & 256 & 8 & 10.5 & 2.917 \\
+8L384 & 8 & 384 & 8 & 15.7 & 2.840 \\
+12L384 & 12 & 384 & 8 & 22.8 & 2.754 \\
+12L512 & 12 & 512 & 8 & 39.9 & 2.709 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+All 18 runs share one recipe: AdamW at learning rate $3\times10^{-4}$, weight decay
+0.01, $\beta = (0.9, 0.95)$, a one-cycle schedule with
+5 percent warmup, gradient norm clipped to 1, and mixed precision with
+loss scaling. Each run takes
+12,000 updates at batch size 32, which is 30.0 million supervised tokens
+over a corpus of 96,000 games of mean length 78 tokens, or about
+4.0 epochs. Validation loss is evaluated every 500 updates on held-out games.
+
+Two consequences deserve stating because they bound what the exponents mean. The
+token budget is held fixed across the ladder, so larger models are not given
+proportionally more data: these are parameter exponents at constant data, not
+compute-optimal scaling exponents, and they are not comparable to exponents fitted
+along a compute-optimal frontier. And the reported checkpoint is the final one, with
+no early stopping and no best-validation selection. That choice is innocuous here
+rather than by assumption: the final checkpoint is also the lowest-validation-loss
+checkpoint in 18 of 18 runs, so selection cannot be carrying any part of
+the result. Validation loss falls monotonically along the ladder, from 3.349 at the
+smallest rung to 2.700 at the largest, which confirms the ladder is one of capability
+and not merely of parameter count.
+
 \paragraph{Failure taxonomy.}
 At every position from ply 20 onward we take the model's top-1 move and ask the
 rules engine whether it is legal. Each illegal move is assigned to exactly one
@@ -180,39 +222,74 @@ squares, excluding the two the move names because every class depends on those b
 construction. The definition is causal: it asks what the verdict turns on, not what
 the rule text mentions. It is computed by brute force over all 64 squares and all 12
 piece types, on positions from real games with no model involved, so $k$ is a
-property of the rules and the position rather than of any network. Over 150 games
-and 3,942 sampled illegal moves:
+property of the rules and the position rather than of any network. Over 120 games
+and 4,204 sampled illegal moves:
 
 \begin{center}
 \small
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-\textbf{Class} & \textbf{mean $k$} & \textbf{max $k$} \\
+\textbf{Class} & \textbf{$n$} & \textbf{mean $k$} & \textbf{max $k$} \\
 \midrule
-empty source      & 0.00 & 0 \\
-opponent source   & 0.00 & 0 \\
-own destination   & 0.08 & 48 \\
-geometry          & 0.01 & 1 \\
-leaves check      & 18.33 & 58 \\
+empty source           & 960 & 0.00 & 0 \\
+opponent source        & 960 & 0.00 & 0 \\
+own destination        & 949 & 0.00 & 0 \\
+\midrule
+geometry, impossible   & 932 & 0.00 & 0 \\
+geometry, blocked path & 28 & 0.64 & 1 \\
+castling               & 603 & 0.13 & 7 \\
+\midrule
+leaves check           & 375 & 17.49 & 55 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Two things follow, and the second is inconvenient for us. The local and global
 distinction this paper rests on is confirmed, and is now a measurement rather than
-an argument: the check class depends on 18.33 squares on average, with a
-standard deviation of 11.9 and a maximum of 58, while every other
-class depends on essentially none. That separation is not a matter of degree.
+an argument: the check class depends on 17.49 squares on average, with a
+standard deviation of 11.3 and a maximum of 55, while every other
+class depends on at most one. That separation is not a matter of degree.
 
 But $k$ does \emph{not} explain the ordering of the exponents. Geometry has an
 exponent of $-$0.207, roughly halfway between the local classes and the check
 class, and a dependency set indistinguishable from the local ones. The reason lies in
-the taxonomy rather than in the models: of 900 geometry errors sampled,
-98.1 percent are moves the piece cannot make under any arrangement of the
-other squares, and only 1.9 percent are genuinely blocked paths. The label
-covers two mechanically different errors, and the description of geometry as depending
-on intervening squares holds for a fiftieth of the cases carrying it.
+the taxonomy rather than in the models, and the table above splits it: of
+960 geometry errors sampled, 97.1 percent are moves the piece cannot
+make under any arrangement of the other squares, with $k$ exactly zero, and only
+2.9 percent are genuinely blocked paths. One label covered two mechanically
+different errors, and the usual description of geometry as depending on intervening
+squares holds for the smaller part of the cases carrying it.
 
+\paragraph{An audit of the own-destination maximum, and what it found.}
+An earlier version of this table reported a maximum of 48 for the own-destination
+class, which should be decidable from the destination square alone and so should
+have a maximum of zero. The discrepancy was real and it was ours. King onto one's
+own rook is how both UCI and Chess960 encode castling, so a destination-occupancy
+test collects castling attempts; and because \texttt{python-chess} enumerates
+castling as 	exttt{e1g1} while also accepting the 	exttt{e1h1} form, a
+membership test against the legal moves let a genuinely \emph{legal} castling move
+into a sample of illegal ones. Nearly any edit to such a board removes castling
+rights, blocks the path, or places the king in check, which is where 48 came from.
+Castling is now its own class, legality is tested directly rather than by
+membership, and the own-destination maximum is 0 over 949 moves, as the
+definition requires. We report the defect because the same classifier labels the
+model-generated failures in Table~\ref{tab:exponents}: an illegal castling attempt there
+is counted as an own-destination error. The individual moves were not retained, so
+the affected share cannot be recovered without regenerating the failure sets, and
+we flag it as a known mislabel rather than correct it silently.
+
+\paragraph{What $k$ measures, and what it does not.}
+The statistic counts squares whose alteration \emph{alone} flips the verdict, which is
+single-square sufficiency and not the information the rule reads. The gap is not
+hypothetical and it has a predictable shape: a path held by two pieces flips on
+neither one alone, so it scores zero while plainly depending on both. That is a
+testable prediction about which moves score zero, and it holds exactly. Among the
+28 blocked-path moves, those with a single blocker have $k=1$ in 18 of
+19 cases, and every one of the 9 moves with two or more blockers has
+$k=0$. So $k$ is a lower bound on dependence, its deficit is characterised rather
+than unknown, and in this class the deficit is fully accounted for by blocker count.
+This strengthens the separation rather than weakening it: the check class reaches
+17.49 under a measure that systematically undercounts.
 We report this rather than choose $k$ to fit. Hand-assigned values of $k$ produce a
 coefficient of determination anywhere from about two thirds to about seven eighths
 depending on which values are assigned, which measures the freedom in the assignment
@@ -237,6 +314,14 @@ fitted to all runs. Intervals resample the 6 rungs with
 replacement, since seeds within a rung are not independent draws of the
 architecture. A differential between two classes is bootstrapped on paired
 resamples, so its interval is on the difference itself.
+
+A resampling interval over 6 rungs does not show whether one rung carries the
+result, so we also refit with each rung deleted in turn. The headline differential
+between the check class and empty-source errors is +0.461 on the full ladder and
+stays within [+0.360, +0.539] under every single-rung deletion, the largest shift
+being 0.101. The sign is the same in all 6 refits. Both the smallest and the
+largest rung can be removed without changing the conclusion, which is the specific
+worry a short ladder invites.
 
 \paragraph{Computing environment.}
 Every run in this paper, training and analysis alike, fits on a single
@@ -447,9 +532,12 @@ data, so only exponents are comparable and never levels.
 \begin{table}[t]
 \centering\small
 \caption{Independent ladder. Absolute rates per scored position. With three
-checkpoints the uncertainty in the fit itself is poorly determined; the intervals
-propagate only each checkpoint's sampling noise in class shares and should be read
-as a lower bound on uncertainty, not as a confidence statement about the slope.}
+checkpoints the uncertainty in the fit itself is poorly determined, and the intervals
+propagate only each checkpoint's sampling noise in class shares, so they are a lower
+bound on uncertainty rather than a confidence statement about the slope. Deleting
+each checkpoint in turn leaves three two-point fits whose differential spans
+[+0.303, +0.381], same sign throughout; we report that spread in place of an
+interval we cannot honestly construct.}
 \label{tab:external}
 \begin{tabular}{lcccc}
 \toprule
@@ -765,8 +853,12 @@ the same person and the second is not present.
 The practical reading is about where a mitigation budget goes. A class of failure
 that scale removes on its own is a poor target for engineering effort, and a class
 with an exponent near zero will still be there after the next model upgrade. Our
-estimate is that errors surviving a correct local belief have an exponent of
-+0.023, which is indistinguishable from no improvement at all.
+estimate is that errors surviving a correct local belief have a flat joint rate,
+exponent +0.023, which decomposes into a rising chance of decoding the
+position correctly and a conditional failure rate falling with exponent $-$0.125.
+The planning-level improvement is real but is cancelled in the headline number, so an
+organisation reading only the joint rate will conclude wrongly that scale does nothing
+for this class.
 An organisation deciding between waiting for the next generation and funding a
 mitigation can, in a domain with a checker, measure which class its own failures
 fall into rather than arguing about it. The second lesson is about measurement:
@@ -831,6 +923,36 @@ makes them measurable and what makes them unrepresentative of open-ended reasoni
 \end{description}
 
 % ====================================================================
+
+\paragraph{What the intervals cover, and the unit of variation.}
+Intervals on the main ladder resample rungs, because seeds within a rung share an
+architecture and are not independent draws of it. This makes the rung the unit of
+variation and leaves within-run sampling noise over games and positions outside the
+interval rather than inside it. We take rung-level variation to be the larger term,
+but we have not decomposed the two, and a reader who wants a game-clustered interval
+on a single run will not find one here. The external ladder differs: its per-
+checkpoint class shares are bootstrapped clustering on games, so game-level noise is
+propagated there and the fit uncertainty is what is missing instead.
+
+The sign tests over the 18 runs treat runs as exchangeable. Seeds within a rung
+satisfy that by construction, differing only in initialisation and batch order.
+Rungs do not: they differ systematically in size, which is the very thing under
+study. A sign test pooled across rungs therefore tests whether an effect holds at
+every size, which is what we claim, and not whether it holds for a random model
+drawn from some population of architectures, which we do not claim and could not
+support from 6 sizes.
+
+\paragraph{Unequal scored sets in the external table.}
+The external checkpoints were not all scored on the same number of positions. The
+two larger ones share an identical set of 84,557 positions, while the smallest was
+scored on 22,634. The sets are nested rather than disjoint, the smaller being a
+prefix of the same held-out corpus, so this is a difference in sample size and not
+in sampling population. It still means the three rows of that table rest on unequal
+precision, and the smallest checkpoint is also the one with by far the most failures,
+so its shares are the best determined despite the smaller set. We also note that the
+game count reported for each checkpoint is the number of games contributing at least
+one failure, not the number scored, which is why it falls as the models improve.
+
 \section{Conclusion}
 
 Scale does not remove long-horizon errors evenly. In chess transformers it removes

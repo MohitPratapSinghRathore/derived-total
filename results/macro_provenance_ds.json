@@ -1336,11 +1336,11 @@
   "source": "results/joint_vs_conditional.json"
  },
  "locGames": {
-  "value": "150",
+  "value": "120",
   "source": "results/locality_index.json"
  },
  "locMoves": {
-  "value": "3,942",
+  "value": "4,204",
   "source": "results/locality_index.json"
  },
  "locKEmpty": {
@@ -1352,7 +1352,7 @@
   "source": "results/locality_index.json"
  },
  "locNEmpty": {
-  "value": "900",
+  "value": "960",
   "source": "results/locality_index.json"
  },
  "locKOpp": {
@@ -1364,23 +1364,23 @@
   "source": "results/locality_index.json"
  },
  "locNOpp": {
-  "value": "900",
+  "value": "960",
   "source": "results/locality_index.json"
  },
  "locKOwn": {
-  "value": "0.08",
+  "value": "0.00",
   "source": "results/locality_index.json"
  },
  "locKMaxOwn": {
-  "value": "48",
+  "value": "0",
   "source": "results/locality_index.json"
  },
  "locNOwn": {
-  "value": "892",
+  "value": "949",
   "source": "results/locality_index.json"
  },
  "locKGeom": {
-  "value": "0.01",
+  "value": "0.02",
   "source": "results/locality_index.json"
  },
  "locKMaxGeom": {
@@ -1388,36 +1388,268 @@
   "source": "results/locality_index.json"
  },
  "locNGeom": {
-  "value": "900",
+  "value": "960",
+  "source": "results/locality_index.json"
+ },
+ "locKGeomImp": {
+  "value": "0.00",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxGeomImp": {
+  "value": "0",
+  "source": "results/locality_index.json"
+ },
+ "locNGeomImp": {
+  "value": "932",
+  "source": "results/locality_index.json"
+ },
+ "locKGeomBlk": {
+  "value": "0.64",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxGeomBlk": {
+  "value": "1",
+  "source": "results/locality_index.json"
+ },
+ "locNGeomBlk": {
+  "value": "28",
+  "source": "results/locality_index.json"
+ },
+ "locKCastle": {
+  "value": "0.13",
+  "source": "results/locality_index.json"
+ },
+ "locKMaxCastle": {
+  "value": "7",
+  "source": "results/locality_index.json"
+ },
+ "locNCastle": {
+  "value": "603",
   "source": "results/locality_index.json"
  },
  "locKCheck": {
-  "value": "18.33",
+  "value": "17.49",
   "source": "results/locality_index.json"
  },
  "locKMaxCheck": {
-  "value": "58",
+  "value": "55",
   "source": "results/locality_index.json"
  },
  "locNCheck": {
-  "value": "350",
+  "value": "375",
   "source": "results/locality_index.json"
  },
  "locCheckSd": {
-  "value": "11.9",
+  "value": "11.3",
   "source": "results/locality_index.json"
  },
  "locGeomImposs": {
-  "value": "98.1",
+  "value": "97.1",
   "source": "results/locality_index.json"
  },
  "locGeomBlocked": {
-  "value": "1.9",
+  "value": "2.9",
   "source": "results/locality_index.json"
  },
  "locGeomN": {
-  "value": "900",
+  "value": "960",
   "source": "results/locality_index.json"
+ },
+ "blkN": {
+  "value": "28",
+  "source": "results/blocker_check.json"
+ },
+ "blkOneN": {
+  "value": "19",
+  "source": "results/blocker_check.json"
+ },
+ "blkOneK1": {
+  "value": "18",
+  "source": "results/blocker_check.json"
+ },
+ "blkManyN": {
+  "value": "9",
+  "source": "results/blocker_check.json"
+ },
+ "blkManyK0": {
+  "value": "9",
+  "source": "results/blocker_check.json"
+ },
+ "loroFull": {
+  "value": "+0.461",
+  "source": "results/robustness_checks.json"
+ },
+ "loroMin": {
+  "value": "+0.360",
+  "source": "results/robustness_checks.json"
+ },
+ "loroMax": {
+  "value": "+0.539",
+  "source": "results/robustness_checks.json"
+ },
+ "loroShift": {
+  "value": "0.101",
+  "source": "results/robustness_checks.json"
+ },
+ "extLooMin": {
+  "value": "+0.303",
+  "source": "results/robustness_checks.json"
+ },
+ "extLooMax": {
+  "value": "+0.381",
+  "source": "results/robustness_checks.json"
+ },
+ "trnRuns": {
+  "value": "18",
+  "source": "results/training_table.json"
+ },
+ "trnSteps": {
+  "value": "12,000",
+  "source": "results/training_table.json"
+ },
+ "trnBs": {
+  "value": "32",
+  "source": "results/training_table.json"
+ },
+ "trnLr": {
+  "value": "$3\\times10^{-4}$",
+  "source": "results/training_table.json"
+ },
+ "trnTokens": {
+  "value": "30.0",
+  "source": "results/training_table.json"
+ },
+ "trnEpochs": {
+  "value": "4.0",
+  "source": "results/training_table.json"
+ },
+ "trnGames": {
+  "value": "96,000",
+  "source": "results/training_table.json"
+ },
+ "trnMeanLen": {
+  "value": "78",
+  "source": "results/training_table.json"
+ },
+ "trnWidthMax": {
+  "value": "161",
+  "source": "results/training_table.json"
+ },
+ "trnEvalEvery": {
+  "value": "500",
+  "source": "results/training_table.json"
+ },
+ "trnWd": {
+  "value": "0.01",
+  "source": "results/training_table.json"
+ },
+ "trnBetaOne": {
+  "value": "0.9",
+  "source": "results/training_table.json"
+ },
+ "trnBetaTwo": {
+  "value": "0.95",
+  "source": "results/training_table.json"
+ },
+ "trnClip": {
+  "value": "1",
+  "source": "results/training_table.json"
+ },
+ "trnWarmup": {
+  "value": "5",
+  "source": "results/training_table.json"
+ },
+ "trnFinalIsBest": {
+  "value": "18",
+  "source": "results/training_table.json"
+ },
+ "trnValMax": {
+  "value": "3.349",
+  "source": "results/training_table.json"
+ },
+ "trnValMin": {
+  "value": "2.700",
+  "source": "results/training_table.json"
+ },
+ "trnVal6x192": {
+  "value": "3.342",
+  "source": "results/training_table.json"
+ },
+ "trnPar6x192": {
+  "value": "3.4",
+  "source": "results/training_table.json"
+ },
+ "trnHeads6x192": {
+  "value": "6",
+  "source": "results/training_table.json"
+ },
+ "trnVal8x256": {
+  "value": "3.029",
+  "source": "results/training_table.json"
+ },
+ "trnPar8x256": {
+  "value": "7.3",
+  "source": "results/training_table.json"
+ },
+ "trnHeads8x256": {
+  "value": "8",
+  "source": "results/training_table.json"
+ },
+ "trnVal12x256": {
+  "value": "2.917",
+  "source": "results/training_table.json"
+ },
+ "trnPar12x256": {
+  "value": "10.5",
+  "source": "results/training_table.json"
+ },
+ "trnHeads12x256": {
+  "value": "8",
+  "source": "results/training_table.json"
+ },
+ "trnVal8x384": {
+  "value": "2.840",
+  "source": "results/training_table.json"
+ },
+ "trnPar8x384": {
+  "value": "15.7",
+  "source": "results/training_table.json"
+ },
+ "trnHeads8x384": {
+  "value": "8",
+  "source": "results/training_table.json"
+ },
+ "trnVal12x384": {
+  "value": "2.754",
+  "source": "results/training_table.json"
+ },
+ "trnPar12x384": {
+  "value": "22.8",
+  "source": "results/training_table.json"
+ },
+ "trnHeads12x384": {
+  "value": "8",
+  "source": "results/training_table.json"
+ },
+ "trnVal12x512": {
+  "value": "2.709",
+  "source": "results/training_table.json"
+ },
+ "trnPar12x512": {
+  "value": "39.9",
+  "source": "results/training_table.json"
+ },
+ "trnHeads12x512": {
+  "value": "8",
+  "source": "results/training_table.json"
+ },
+ "kPosSmall": {
+  "value": "22,634",
+  "source": "results/chessgpt_structure_*.json"
+ },
+ "kPosLarge": {
+  "value": "84,557",
+  "source": "results/chessgpt_structure_*.json"
  },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",

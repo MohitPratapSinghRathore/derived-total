@@ -1,0 +1,26 @@
+{
+ "n_blocked": 28,
+ "by_blocker_count": {
+  "1": {
+   "n": 19,
+   "mean_k": 0.9473684210526315,
+   "n_k_zero": 1
+  },
+  "2": {
+   "n": 6,
+   "mean_k": 0.0,
+   "n_k_zero": 6
+  },
+  "3": {
+   "n": 3,
+   "mean_k": 0.0,
+   "n_k_zero": 3
+  }
+ },
+ "single_blocker_k_one": 18,
+ "single_blocker_n": 19,
+ "single_blocker_exceptions": 1,
+ "multi_blocker_k_zero": 9,
+ "multi_blocker_n": 9,
+ "deficit_fully_explained": true
+}

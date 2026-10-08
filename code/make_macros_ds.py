@@ -4,6 +4,7 @@ No number reaches the manuscript except through a \result{} macro written here,
 each tagged with the results file it came from, so every figure in the prose is
 traceable and none can go stale silently.
 """
+import math
 import os, json
 import numpy as np
 import ds_stats as S
@@ -369,9 +370,14 @@ put("jcMargLast", jc["marginal_last"], JC, "{:.3f}")
 li = S.load("locality_index.json")
 LI = "results/locality_index.json"
 put("locGames", li["games"], LI, "{:d}")
-put("locMoves", sum(v["n"] for v in li["classes"].values()), LI, "{:,d}")
+_PARTITION = ("from_empty", "from_opponent", "to_own", "geometry",
+              "leaves_check")
+put("locMoves", sum(li["classes"][c]["n"] for c in _PARTITION), LI, "{:,d}")
 for c, tag in (("from_empty", "Empty"), ("from_opponent", "Opp"),
                ("to_own", "Own"), ("geometry", "Geom"),
+               ("geometry_impossible", "GeomImp"),
+               ("geometry_blocked", "GeomBlk"),
+               ("castling", "Castle"),
                ("leaves_check", "Check")):
     r = li["classes"][c]
     put("locK" + tag, r["mean"], LI, "{:.2f}")
@@ -384,6 +390,70 @@ if _g:
     put("locGeomBlocked", 100 * _g["blocked"]["share"], LI, "{:.1f}")
     put("locGeomN", sum(v["n"] for v in _g.values()), LI, "{:,d}")
 
+
+bc = S.load("blocker_check.json")
+BC = "results/blocker_check.json"
+if bc:
+    put("blkN", bc["n_blocked"], BC, "{:d}")
+    put("blkOneN", bc["single_blocker_n"], BC, "{:d}")
+    put("blkOneK1", bc["single_blocker_k_one"], BC, "{:d}")
+    put("blkManyN", bc["multi_blocker_n"], BC, "{:d}")
+    put("blkManyK0", bc["multi_blocker_k_zero"], BC, "{:d}")
+
+rb = S.load("robustness_checks.json")
+RB = "results/robustness_checks.json"
+if rb:
+    lo = rb["leave_one_rung_out"]
+    put("loroFull", lo["full"]["diff"], RB, "{:+.3f}")
+    put("loroMin", lo["diff_min"], RB, "{:+.3f}")
+    put("loroMax", lo["diff_max"], RB, "{:+.3f}")
+    put("loroShift", lo["max_shift"], RB, "{:.3f}")
+    ex = rb.get("external_loo", {})
+    if ex:
+        put("extLooMin", ex["loo_min"], RB, "{:+.3f}")
+        put("extLooMax", ex["loo_max"], RB, "{:+.3f}")
+
+tt = S.load("training_table.json")
+TT = "results/training_table.json"
+if tt:
+    put("trnRuns", tt["n_runs"], TT, "{:d}")
+    put("trnSteps", tt["distinct"]["steps"][0], TT, "{:,d}")
+    put("trnBs", tt["distinct"]["bs"][0], TT, "{:d}")
+    # Typeset the learning rate as mathematics rather than as "3e-04".
+    _lr = tt["distinct"]["lr"][0]
+    _ex = int(math.floor(math.log10(_lr)))
+    _ma = _lr / (10 ** _ex)
+    put("trnLr", "$%g%s%s10^{%d}$" % (_ma, chr(92) + "times", "", _ex), TT)
+    put("trnTokens", tt["rows"][0]["tokens"] / 1e6, TT, "{:.1f}")
+    put("trnEpochs", tt["rows"][0]["tokens"] / tt["corpus"]["total_tokens"],
+        TT, "{:.1f}")
+    put("trnGames", tt["corpus"]["n_seqs"], TT, "{:,d}")
+    put("trnMeanLen", tt["corpus"]["mean_len"], TT, "{:.0f}")
+    put("trnWidthMax", tt["corpus"]["width"], TT, "{:d}")
+    put("trnEvalEvery", tt["eval_every"], TT, "{:d}")
+    _sh = tt["shared"]
+    put("trnWd", _sh["weight_decay"], TT, "{:g}")
+    put("trnBetaOne", _sh["betas"][0], TT, "{:g}")
+    put("trnBetaTwo", _sh["betas"][1], TT, "{:g}")
+    put("trnClip", _sh["grad_clip"], TT, "{:g}")
+    put("trnWarmup", 100 * _sh["pct_start"], TT, "{:g}")
+    put("trnFinalIsBest", tt["n_final_is_best"], TT, "{:d}")
+    _vf = [r["val_final"] for r in tt["rows"]]
+    put("trnValMax", max(_vf), TT, "{:.3f}")
+    put("trnValMin", min(_vf), TT, "{:.3f}")
+    for r in tt["rows"]:
+        if r["seed"] != 0:
+            continue
+        _t = r["rung"].replace("L", "x")
+        put("trnVal" + _t, r["val_final"], TT, "{:.3f}")
+        put("trnPar" + _t, r["params"] / 1e6, TT, "{:.1f}")
+        put("trnHeads" + _t, r["heads"] or 0, TT, "{:d}")
+
+_ext = S.external_rows()
+if _ext:
+    _np = sorted(r["n_positions"] for r in _ext)
+    put("kPosSmall", _np[0], "results/chessgpt_structure_*.json", "{:,d}")
+    put("kPosLarge", _np[-1], "results/chessgpt_structure_*.json", "{:,d}")
 
 env = S.load("environment.json")
 EV = "results/environment.json"

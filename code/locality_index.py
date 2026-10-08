@@ -61,6 +61,14 @@ def classify(board: chess.Board, mv: chess.Move) -> str:
         return "from_opponent"
     dst = board.piece_at(mv.to_square)
     if dst is not None and dst.color == board.turn:
+        # King onto one's own rook is how UCI and Chess960 encode castling, so a
+        # naive destination-occupancy test captures castling attempts here. They
+        # are not destination errors: whether the move is legal turns on rights,
+        # the intervening squares and three check conditions, none of which live
+        # on the destination square. Auditing the own-destination class is what
+        # surfaced this; the paper's model-side classifier shares the defect.
+        if pc.piece_type == chess.KING and dst.piece_type == chess.ROOK:
+            return "castling"
         return "to_own"
     if not board.is_pseudo_legal(mv):
         return "geometry"
@@ -129,6 +137,14 @@ def illegal_moves_of_each_class(board: chess.Board, rng, per_class=2):
                 continue
             mv = chess.Move(a, b)
             if mv in legal:
+                continue
+            # Membership is not sufficient. python-chess enumerates castling as
+            # e1g1 yet is_legal also accepts the e1h1 rook-square encoding, so a
+            # legal castling move passes the membership test. Ask directly.
+            try:
+                if board.is_legal(mv):
+                    continue
+            except Exception:                              # noqa: BLE001
                 continue
             try:
                 c = classify(board, mv)
@@ -205,9 +221,12 @@ def main() -> int:
                     found = illegal_moves_of_each_class(board, rng, a.per_class)
                     for cls, moves in found.items():
                         for m in moves:
-                            sizes[cls].append(dependency_size(board.copy(), m))
+                            k = dependency_size(board.copy(), m)
+                            sizes[cls].append(k)
                             if cls == "geometry":
-                                geom[geometry_kind(board, m)] += 1
+                                kind = geometry_kind(board, m)
+                                geom[kind] += 1
+                                sizes["geometry_" + kind].append(k)
                 board.push(mv)
             if seen_games % 20 == 0:
                 print(f"  {seen_games} games, "
@@ -219,17 +238,18 @@ def main() -> int:
            "definition": "squares whose contents can flip is_legal, move squares excluded",
            "classes": {}}
     print(f"\n{'class':16s} {'n':>6s} {'mean k':>8s} {'median':>7s} {'sd':>7s} {'min':>4s} {'max':>4s}")
-    for cls in ("from_empty", "from_opponent", "to_own", "geometry",
-                "leaves_check"):
+    for cls in ("from_empty", "from_opponent", "to_own",
+                "geometry", "geometry_impossible", "geometry_blocked",
+                "castling", "leaves_check"):
         v = sizes.get(cls, [])
         if not v:
-            print(f"{cls:16s} {'0':>6s}   (none sampled)")
+            print(f"{cls:20s} {'0':>6s}   (none sampled)")
             continue
         rec = {"n": len(v), "mean": st.mean(v), "median": st.median(v),
                "sd": st.pstdev(v) if len(v) > 1 else 0.0,
                "min": min(v), "max": max(v)}
         out["classes"][cls] = rec
-        print(f"{cls:16s} {rec['n']:6d} {rec['mean']:8.2f} {rec['median']:7.1f} "
+        print(f"{cls:20s} {rec['n']:6d} {rec['mean']:8.2f} {rec['median']:7.1f} "
               f"{rec['sd']:7.2f} {rec['min']:4d} {rec['max']:4d}")
 
     tot = sum(geom.values())
