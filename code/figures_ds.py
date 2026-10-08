@@ -57,7 +57,7 @@ def main():
         from regen_exponents import rows as regen_rows
         rows = regen_rows()
         for q in rows:
-            q["corr_local"] = q["policy_share"] * q["illegal_rate"]
+            q["corr_local"] = q["correct_local_belief"]
         assert rows, "no regenerated records"
         src = "corrected pass"
     except Exception as exc:                               # noqa: BLE001

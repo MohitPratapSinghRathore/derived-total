@@ -1152,15 +1152,15 @@
   "source": "results/adapter_checks.json"
  },
  "cmpRmseSimplex": {
-  "value": "0.01071",
+  "value": "0.00754",
   "source": "results/compositional.json"
  },
  "cmpRmseIndep": {
-  "value": "0.01115",
+  "value": "0.00854",
   "source": "results/compositional.json"
  },
  "cmpAstar": {
-  "value": "$-$0.053",
+  "value": "$-$0.069",
   "source": "results/compositional.json"
  },
  "cmpAstarClass": {
@@ -1168,7 +1168,7 @@
   "source": "results/compositional.json"
  },
  "cmpBtotal": {
-  "value": "$-$0.267",
+  "value": "$-$0.266",
   "source": "results/compositional.json"
  },
  "cmpWeighted": {
@@ -1176,11 +1176,11 @@
   "source": "results/compositional.json"
  },
  "cmpDiverge": {
-  "value": "+0.214",
+  "value": "+0.197",
   "source": "results/compositional.json"
  },
  "cmpBreakdown": {
-  "value": "148M",
+  "value": "124M",
   "source": "results/compositional.json"
  },
  "cmpOverLarge": {
@@ -1188,19 +1188,19 @@
   "source": "results/compositional.json"
  },
  "cmpOverBn": {
-  "value": "1.31",
+  "value": "1.35",
   "source": "results/compositional.json"
  },
  "cmpOverTn": {
-  "value": "3.33",
+  "value": "3.63",
   "source": "results/compositional.json"
  },
  "cmpOverBnLo": {
-  "value": "1.13",
+  "value": "1.11",
   "source": "results/compositional.json"
  },
  "cmpOverBnHi": {
-  "value": "1.86",
+  "value": "1.75",
   "source": "results/compositional.json"
  },
  "cmpOverBnFrac": {
@@ -1208,39 +1208,39 @@
   "source": "results/compositional.json"
  },
  "cmpCheckLarge": {
-  "value": "0.443",
+  "value": "0.430",
   "source": "results/compositional.json"
  },
  "cmpEmptyLarge": {
-  "value": "0.093",
+  "value": "0.095",
   "source": "results/compositional.json"
  },
  "cmpGeomImpLarge": {
-  "value": "0.253",
+  "value": "0.258",
   "source": "results/compositional.json"
  },
  "cmpGeomBlkLarge": {
-  "value": "0.101",
+  "value": "0.100",
   "source": "results/compositional.json"
  },
  "cmpCheckBn": {
-  "value": "0.574",
+  "value": "0.562",
   "source": "results/compositional.json"
  },
  "cmpEmptyBn": {
-  "value": "0.025",
+  "value": "0.023",
   "source": "results/compositional.json"
  },
  "cmpGeomImpBn": {
-  "value": "0.208",
+  "value": "0.227",
   "source": "results/compositional.json"
  },
  "cmpGeomBlkBn": {
-  "value": "0.145",
+  "value": "0.141",
   "source": "results/compositional.json"
  },
  "cmpCheckTn": {
-  "value": "0.685",
+  "value": "0.680",
   "source": "results/compositional.json"
  },
  "cmpEmptyTn": {
@@ -1248,39 +1248,39 @@
   "source": "results/compositional.json"
  },
  "cmpGeomImpTn": {
-  "value": "0.093",
+  "value": "0.117",
   "source": "results/compositional.json"
  },
  "cmpGeomBlkTn": {
-  "value": "0.215",
+  "value": "0.197",
   "source": "results/compositional.json"
  },
  "cmpCheckMax": {
-  "value": "0.696",
+  "value": "0.709",
   "source": "results/compositional.json"
  },
  "cmpPolicySlope": {
-  "value": "+0.378",
+  "value": "+0.298",
   "source": "results/compositional.json"
  },
  "cmpPolicyObsLo": {
-  "value": "0.148",
+  "value": "0.162",
   "source": "results/compositional.json"
  },
  "cmpPolicyObsHi": {
-  "value": "0.321",
+  "value": "0.305",
   "source": "results/compositional.json"
  },
  "cmpPolicyLarge": {
-  "value": "0.307",
+  "value": "0.294",
   "source": "results/compositional.json"
  },
  "cmpPolicyBn": {
-  "value": "0.600",
+  "value": "0.521",
   "source": "results/compositional.json"
  },
  "cmpPolicyTn": {
-  "value": "0.953",
+  "value": "0.895",
   "source": "results/compositional.json"
  },
  "cmpExtDiverge": {
@@ -1300,15 +1300,15 @@
   "source": "results/compositional.json"
  },
  "cmpCompTV": {
-  "value": "0.489",
+  "value": "0.491",
   "source": "results/compositional.json"
  },
  "cmpSizeTV": {
-  "value": "0.100",
+  "value": "0.091",
   "source": "results/compositional.json"
  },
  "cmpBaseTV": {
-  "value": "0.115",
+  "value": "0.112",
   "source": "results/compositional.json"
  },
  "jcMarg": {
@@ -1324,27 +1324,27 @@
   "source": "results/joint_vs_conditional.json"
  },
  "jcJoint": {
-  "value": "+0.027",
+  "value": "$-$0.036",
   "source": "results/joint_vs_conditional.json"
  },
  "jcJointLo": {
-  "value": "$-$0.008",
+  "value": "$-$0.094",
   "source": "results/joint_vs_conditional.json"
  },
  "jcJointHi": {
-  "value": "+0.097",
+  "value": "+0.031",
   "source": "results/joint_vs_conditional.json"
  },
  "jcCond": {
-  "value": "$-$0.121",
-  "source": "results/joint_vs_conditional.json"
- },
- "jcCondLo": {
   "value": "$-$0.184",
   "source": "results/joint_vs_conditional.json"
  },
+ "jcCondLo": {
+  "value": "$-$0.276",
+  "source": "results/joint_vs_conditional.json"
+ },
  "jcCondHi": {
-  "value": "$-$0.034",
+  "value": "$-$0.091",
   "source": "results/joint_vs_conditional.json"
  },
  "jcRuns": {
@@ -1500,19 +1500,19 @@
   "source": "results/blocker_check.json"
  },
  "loroFull": {
-  "value": "+0.456",
+  "value": "+0.492",
   "source": "results/robustness_checks.json"
  },
  "loroMin": {
-  "value": "+0.347",
+  "value": "+0.357",
   "source": "results/robustness_checks.json"
  },
  "loroMax": {
-  "value": "+0.537",
+  "value": "+0.582",
   "source": "results/robustness_checks.json"
  },
  "loroShift": {
-  "value": "0.109",
+  "value": "0.135",
   "source": "results/robustness_checks.json"
  },
  "extLooMin": {
@@ -1680,19 +1680,19 @@
   "source": "results/regen_exponents.json"
  },
  "rgExpEmpty": {
-  "value": "-0.570",
+  "value": "-0.589",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoEmpty": {
-  "value": "-0.756",
+  "value": "-0.754",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiEmpty": {
-  "value": "-0.319",
+  "value": "-0.385",
   "source": "results/regen_exponents.json"
  },
  "rgFirstEmpty": {
-  "value": "0.0583",
+  "value": "0.0624",
   "source": "results/regen_exponents.json"
  },
  "rgLastEmpty": {
@@ -1700,31 +1700,31 @@
   "source": "results/regen_exponents.json"
  },
  "rgFoldEmpty": {
-  "value": "4.0",
+  "value": "4.3",
   "source": "results/regen_exponents.json"
  },
  "rgExpOpp": {
-  "value": "-0.412",
+  "value": "-0.537",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoOpp": {
-  "value": "-0.595",
+  "value": "-0.613",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiOpp": {
-  "value": "-0.187",
+  "value": "-0.449",
   "source": "results/regen_exponents.json"
  },
  "rgFirstOpp": {
-  "value": "0.0092",
+  "value": "0.0128",
   "source": "results/regen_exponents.json"
  },
  "rgLastOpp": {
-  "value": "0.0031",
+  "value": "0.0035",
   "source": "results/regen_exponents.json"
  },
  "rgFoldOpp": {
-  "value": "3.0",
+  "value": "3.7",
   "source": "results/regen_exponents.json"
  },
  "rgExpOwn": {
@@ -1732,39 +1732,39 @@
   "source": "results/regen_exponents.json"
  },
  "rgExpLoOwn": {
-  "value": "-0.462",
+  "value": "-0.508",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiOwn": {
-  "value": "-0.442",
+  "value": "-0.425",
   "source": "results/regen_exponents.json"
  },
  "rgFirstOwn": {
-  "value": "0.0320",
+  "value": "0.0344",
   "source": "results/regen_exponents.json"
  },
  "rgLastOwn": {
-  "value": "0.0106",
+  "value": "0.0117",
   "source": "results/regen_exponents.json"
  },
  "rgFoldOwn": {
-  "value": "3.0",
+  "value": "2.9",
   "source": "results/regen_exponents.json"
  },
  "rgExpCastle": {
-  "value": "-0.778",
+  "value": "-0.415",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoCastle": {
-  "value": "-1.068",
+  "value": "-0.597",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiCastle": {
-  "value": "-0.436",
+  "value": "-0.150",
   "source": "results/regen_exponents.json"
  },
  "rgFirstCastle": {
-  "value": "0.0037",
+  "value": "0.0014",
   "source": "results/regen_exponents.json"
  },
  "rgLastCastle": {
@@ -1772,75 +1772,75 @@
   "source": "results/regen_exponents.json"
  },
  "rgFoldCastle": {
-  "value": "7.0",
+  "value": "2.6",
   "source": "results/regen_exponents.json"
  },
  "rgExpGeomImp": {
-  "value": "-0.254",
+  "value": "-0.222",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoGeomImp": {
-  "value": "-0.313",
+  "value": "-0.266",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiGeomImp": {
-  "value": "-0.220",
+  "value": "-0.181",
   "source": "results/regen_exponents.json"
  },
  "rgFirstGeomImp": {
-  "value": "0.0590",
+  "value": "0.0569",
   "source": "results/regen_exponents.json"
  },
  "rgLastGeomImp": {
-  "value": "0.0323",
+  "value": "0.0335",
   "source": "results/regen_exponents.json"
  },
  "rgFoldGeomImp": {
-  "value": "1.8",
+  "value": "1.7",
   "source": "results/regen_exponents.json"
  },
  "rgExpGeomBlk": {
-  "value": "-0.053",
+  "value": "-0.069",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoGeomBlk": {
-  "value": "-0.228",
+  "value": "-0.118",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiGeomBlk": {
-  "value": "+0.126",
+  "value": "-0.015",
   "source": "results/regen_exponents.json"
  },
  "rgFirstGeomBlk": {
-  "value": "0.0127",
+  "value": "0.0148",
   "source": "results/regen_exponents.json"
  },
  "rgLastGeomBlk": {
-  "value": "0.0118",
+  "value": "0.0126",
   "source": "results/regen_exponents.json"
  },
  "rgFoldGeomBlk": {
-  "value": "1.1",
+  "value": "1.2",
   "source": "results/regen_exponents.json"
  },
  "rgExpCheck": {
-  "value": "-0.114",
+  "value": "-0.097",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoCheck": {
-  "value": "-0.153",
+  "value": "-0.114",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiCheck": {
-  "value": "-0.066",
+  "value": "-0.085",
   "source": "results/regen_exponents.json"
  },
  "rgFirstCheck": {
-  "value": "0.0779",
+  "value": "0.0701",
   "source": "results/regen_exponents.json"
  },
  "rgLastCheck": {
-  "value": "0.0593",
+  "value": "0.0557",
   "source": "results/regen_exponents.json"
  },
  "rgFoldCheck": {
@@ -1848,7 +1848,7 @@
   "source": "results/regen_exponents.json"
  },
  "rgExpAllIll": {
-  "value": "-0.267",
+  "value": "-0.266",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoAllIll": {
@@ -1872,47 +1872,47 @@
   "source": "results/regen_exponents.json"
  },
  "rgExpCorrLoc": {
-  "value": "+0.027",
+  "value": "-0.036",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoCorrLoc": {
-  "value": "-0.008",
+  "value": "-0.094",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiCorrLoc": {
-  "value": "+0.097",
+  "value": "+0.031",
   "source": "results/regen_exponents.json"
  },
  "rgFirstCorrLoc": {
-  "value": "0.0388",
+  "value": "0.0436",
   "source": "results/regen_exponents.json"
  },
  "rgLastCorrLoc": {
-  "value": "0.0404",
+  "value": "0.0395",
   "source": "results/regen_exponents.json"
  },
  "rgFoldCorrLoc": {
-  "value": "1.0",
+  "value": "1.1",
   "source": "results/regen_exponents.json"
  },
  "rgExpLocalPooled": {
-  "value": "-0.394",
+  "value": "-0.397",
   "source": "results/regen_exponents.json"
  },
  "rgExpLoLocalPooled": {
-  "value": "-0.439",
+  "value": "-0.460",
   "source": "results/regen_exponents.json"
  },
  "rgExpHiLocalPooled": {
-  "value": "-0.336",
+  "value": "-0.318",
   "source": "results/regen_exponents.json"
  },
  "rgFirstLocalPooled": {
-  "value": "0.1584",
+  "value": "0.1665",
   "source": "results/regen_exponents.json"
  },
  "rgLastLocalPooled": {
-  "value": "0.0606",
+  "value": "0.0634",
   "source": "results/regen_exponents.json"
  },
  "rgFoldLocalPooled": {
@@ -1920,67 +1920,67 @@
   "source": "results/regen_exponents.json"
  },
  "rgDiffCheckLocal": {
-  "value": "+0.279",
+  "value": "+0.301",
   "source": "results/regen_exponents.json"
  },
  "rgDiffLoCheckLocal": {
-  "value": "+0.263",
+  "value": "+0.213",
   "source": "results/regen_exponents.json"
  },
  "rgDiffHiCheckLocal": {
-  "value": "+0.293",
+  "value": "+0.375",
   "source": "results/regen_exponents.json"
  },
  "rgDiffCorrLocEmpty": {
-  "value": "+0.597",
+  "value": "+0.553",
   "source": "results/regen_exponents.json"
  },
  "rgDiffLoCorrLocEmpty": {
-  "value": "+0.355",
+  "value": "+0.416",
   "source": "results/regen_exponents.json"
  },
  "rgDiffHiCorrLocEmpty": {
-  "value": "+0.770",
+  "value": "+0.659",
   "source": "results/regen_exponents.json"
  },
  "rgDiffCheckEmpty": {
-  "value": "+0.456",
+  "value": "+0.492",
   "source": "results/regen_exponents.json"
  },
  "rgDiffLoCheckEmpty": {
-  "value": "+0.250",
+  "value": "+0.278",
   "source": "results/regen_exponents.json"
  },
  "rgDiffHiCheckEmpty": {
-  "value": "+0.604",
+  "value": "+0.670",
   "source": "results/regen_exponents.json"
  },
  "rgDiffCheckOpp": {
-  "value": "+0.298",
+  "value": "+0.441",
   "source": "results/regen_exponents.json"
  },
  "rgDiffLoCheckOpp": {
-  "value": "+0.065",
+  "value": "+0.341",
   "source": "results/regen_exponents.json"
  },
  "rgDiffHiCheckOpp": {
-  "value": "+0.484",
+  "value": "+0.518",
   "source": "results/regen_exponents.json"
  },
  "rgDiffCheckGeomImp": {
-  "value": "+0.139",
+  "value": "+0.126",
   "source": "results/regen_exponents.json"
  },
  "rgDiffLoCheckGeomImp": {
-  "value": "+0.069",
+  "value": "+0.103",
   "source": "results/regen_exponents.json"
  },
  "rgDiffHiCheckGeomImp": {
-  "value": "+0.234",
+  "value": "+0.156",
   "source": "results/regen_exponents.json"
  },
  "rgShareEmptyFirst": {
-  "value": "0.230",
+  "value": "0.247",
   "source": "results/regen_exponents.json"
  },
  "rgShareEmptyLast": {
@@ -1988,35 +1988,35 @@
   "source": "results/regen_exponents.json"
  },
  "rgShareCheckFirst": {
-  "value": "0.308",
+  "value": "0.277",
   "source": "results/regen_exponents.json"
  },
  "rgShareCheckLast": {
-  "value": "0.449",
+  "value": "0.421",
   "source": "results/regen_exponents.json"
  },
  "rgShareGeomImpFirst": {
-  "value": "0.233",
+  "value": "0.225",
   "source": "results/regen_exponents.json"
  },
  "rgShareGeomImpLast": {
-  "value": "0.244",
+  "value": "0.254",
   "source": "results/regen_exponents.json"
  },
  "rgShareGeomBlkFirst": {
-  "value": "0.050",
+  "value": "0.059",
   "source": "results/regen_exponents.json"
  },
  "rgShareGeomBlkLast": {
-  "value": "0.089",
+  "value": "0.095",
   "source": "results/regen_exponents.json"
  },
  "rgShareGeomFirst": {
-  "value": "0.284",
+  "value": "0.283",
   "source": "results/regen_exponents.json"
  },
  "rgShareGeomLast": {
-  "value": "0.333",
+  "value": "0.349",
   "source": "results/regen_exponents.json"
  },
  "rgDepthRises": {
@@ -2024,11 +2024,11 @@
   "source": "results/regen_exponents.json"
  },
  "rgDepthEarly": {
-  "value": "0.261",
+  "value": "0.287",
   "source": "results/regen_exponents.json"
  },
  "rgDepthLate": {
-  "value": "0.527",
+  "value": "0.492",
   "source": "results/regen_exponents.json"
  },
  "rgNClasses": {
@@ -2036,15 +2036,15 @@
   "source": "results/regen_exponents.json"
  },
  "rgPolCheck": {
-  "value": "0.476",
+  "value": "0.473",
   "source": "results/regen_exponents.json"
  },
  "rgPolGeom": {
-  "value": "0.286",
+  "value": "0.280",
   "source": "results/regen_exponents.json"
  },
  "rgPolLargest": {
-  "value": "16",
+  "value": "15",
   "source": "results/regen_exponents.json"
  },
  "rgPolModels": {
@@ -2085,6 +2085,10 @@
  },
  "rcDriftMean": {
   "value": "0.0011",
+  "source": "results/regen_compare.json"
+ },
+ "sampShareCheckFirst": {
+  "value": "0.308",
   "source": "results/regen_compare.json"
  },
  "rcSupersededDiff": {
@@ -2172,8 +2176,24 @@
   "source": "results/aggregate_gate_check.json"
  },
  "jvAddErr": {
-  "value": "4e-17",
+  "value": "2e-16",
   "source": "results/joint_vs_conditional.json"
+ },
+ "fcFailures": {
+  "value": "110,545",
+  "source": "results/full_classification.json"
+ },
+ "fcPositions": {
+  "value": "622,998",
+  "source": "results/full_classification.json"
+ },
+ "fcLegalInSet": {
+  "value": "0",
+  "source": "results/full_classification.json"
+ },
+ "wordCount": {
+  "value": "12,438",
+  "source": "paper_scaling/main.tex"
  },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",

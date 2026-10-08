@@ -24,7 +24,8 @@
   \author{\normalsize\itshape Author names and affiliations removed for double-anonymous peer review}
 \else
   \author{
-    Mohit Pratap Singh Rathore\\ \small Oviqo Private Limited
+    Mohit Pratap Singh Rathore\thanks{Corresponding author:
+      \texttt{mohitpratapsinghr@gmail.com}}\\ \small Oviqo Private Limited
     \and
     Gunveer Sinh Kalsi\\ \small Oviqo Private Limited
     \and
@@ -46,7 +47,7 @@ from the move's own two squares fall, pooled, with exponent \result{rgExpLocalPo
 moves illegal only because they leave the king in check fall with exponent
 \result{rgExpCheck}: a paired differential of \result{rgDiffCheckLocal} [\result{rgDiffLoCheckLocal},
 \result{rgDiffHiCheckLocal}]. Every
-class has a negative fitted slope, and the rates differ. Failures occurring despite
+class improves, every interval excluding zero; the rates differ. Failures occurring despite
 correctly decoded local state have a nearly flat joint rate, because improving
 decoding offsets a conditional failure rate falling with exponent \result{jcCond}. The
 ordering replicates on an independent character-level ladder spanning a
@@ -102,8 +103,8 @@ intervention, or interpretability method enters this result.
 independent ladder with different data, notation, and training code, and in a
 game whose legality is non-local by construction.
 \item \textbf{The slowest-improving component is the one local correction cannot
-reach.} Every disjoint failure class has a negative fitted slope, significantly so for all
-but blocked paths; what differs is the rate.
+reach.} Every disjoint failure class has a negative exponent whose interval excludes zero;
+what differs is the rate.
 Internal belief is causally coupled to action at the squares a move touches, the
 repair procedure we test installs about two squares reliably and whole-board
 correction not at all, and failures occurring despite correct belief at those squares
@@ -423,17 +424,31 @@ The difference between the two labels is then caused by the classifier alone, an
 cannot be confounded with any numerical difference between this pass and the original.
 
 \paragraph{No legal move was ever counted as a failure.}
-The audited set is a fixed-size sample: the pass records the first \result{rcPerRun} failures
-each model makes on the evaluation split, \result{rcFailures} across all \result{rcRuns} runs, which is
-the same sampling rule the original pass used and so the same population Table~\ref{tab:exponents}
-describes. Of those, \result{rcLegal} were legal under the corrected gate.
+Two populations are involved and it matters which is which. The relabelling audit
+uses a fixed-size sample, the first \result{rcPerRun} failures each model makes while the
+evaluation games are read in corpus order, \result{rcFailures} across all \result{rcRuns} runs, and that
+sample exists because it carries both labels for every move and is the record of what
+the classifier change did. The rates in Table~\ref{tab:exponents} do not come from it.
 
-A sample can only support a statement about the sample, and the aggregate rate is
-computed over every scored position rather than over sampled failures, so we checked
-the whole set as well. Scoring all \result{agPos} positions of the evaluation split for each
-of the \result{agRuns} runs under both gates, the membership test and the direct legality test,
-the two disagree at \result{agDisagree} positions. The aggregate illegal-move rate is therefore
-unaffected over the full set and not merely in the audited sample. The failure mode that would have been most damaging, legal moves
+An earlier version of this section did use that sample for the rates, multiplying its
+class shares by the full-set illegal-move rate. That makes each class rate an estimate
+whose validity rests on the first \result{rcPerRun} failures being representative of all of them,
+and corpus order is not random: a model failing more often in early games reaches its
+\result{rcPerRun}th failure sooner and is then described by a narrower slice of the corpus. The
+assumption was avoidable, so we removed it rather than stating it. Every failure at
+every scored position is now classified: \result{fcFailures} failures over \result{fcPositions}
+positions, so each class rate is a direct count. The difference is not negligible.
+The check class holds \result{rgShareCheckFirst} of failures at the smallest rung on the full set
+against \result{sampShareCheckFirst} in the sample, which is the corpus-order effect the estimate was
+exposed to.
+
+\paragraph{No legal move was counted as a failure, over the whole set.}
+Of the \result{rcFailures} audited moves, \result{rcLegal} were legal under the corrected gate. A sample
+can only support a statement about the sample, so we checked the whole set directly:
+scoring all \result{agPos} positions for each of the \result{agRuns} runs under both gates, the
+membership test and the direct legality test, the two disagree at \result{agDisagree} positions.
+No legal move entered any failure set anywhere in the evaluation data, and the
+aggregate illegal-move rate is unaffected over the full set rather than in a sample. The failure mode that would have been most damaging, legal moves
 inflating the failure counts and with them the aggregate rates, did not occur. The
 reason is visible once the mechanism is stated: for the defect to bite, a model must
 emit the king-onto-rook form while castling is actually available, and these models
@@ -599,17 +614,19 @@ willing to project, from \result{cmpCheckLarge} at our largest rung, while the l
 decidable categories decline. It does not rise to one, and here the corrected
 partition changes the picture rather than merely refining it. Whichever category has
 the shallowest exponent must eventually take the whole share, and before geometry was
-split that category was the check class. It is now blocked paths, at
-\result{cmpAstar} against the check class's \result{rgExpCheck}, so the check share turns over at a
-maximum of \result{cmpCheckMax} and declines thereafter. The paper's qualitative claim about
-the observed range is unchanged, and the trajectory is now bounded by construction
-rather than unbounded as in the earlier projection.
+split that category was the check class. It is now blocked paths, at \result{cmpAstar}
+against the check class's \result{rgExpCheck}. The two are close enough that the crossing
+falls outside the range we project at all: the check share rises monotonically to
+\result{cmpCheckMax} across it, and blocked paths overtake it only further out. The paper's
+qualitative claim about the observed range is unchanged, and the trajectory is now
+bounded by construction rather than unbounded as in the earlier projection.
 
 We put little weight on that asymptotic reordering, and say so here rather than
 letting the appendix imply otherwise. It is decided entirely by the blocked-path
-exponent, which is the least well determined number in the partition: its interval
-includes zero, and it is fitted on a category whose rate barely moves across the
-ladder, from \result{rgFirstGeomBlk} to \result{rgLastGeomBlk}. The claim we defend is the ordering in range; which class wins at
+exponent. On the full set that exponent is \result{rgExpGeomBlk} [\result{rgExpLoGeomBlk},
+\result{rgExpHiGeomBlk}], separated from the check class's \result{rgExpCheck} by less than the width
+of either interval. Which of the two is shallower decides the entire asymptotic
+story, and the data do not resolve it. The claim we defend is the ordering in range; which class wins at
 scales far beyond the data is determined by the least well measured number we have.
 
 We no longer report projected class shares at specific far-off scales in the main
@@ -625,7 +642,8 @@ so the in-range slope is already not a constant. The projected values are given 
 Appendix~\ref{app:proj} for readers who want them, as an illustration of the closed
 model's shape rather than as a prediction.
 
-The same discipline applies to the policy share, the fraction of illegal moves
+The same discipline applies to the failure share despite correct local decoding,
+the fraction of illegal moves
 occurring despite correctly decoded local belief. It is not a member of the
 partition, since it cuts across the classes, but it is a proportion, and fitting a
 proportion linearly in $\log N$ is unbounded in exactly the same way. Fitted on the
@@ -1349,7 +1367,7 @@ check share & \result{cmpCheckLarge} & \result{cmpCheckBn} & \result{cmpCheckTn}
 geometry, impossible & \result{cmpGeomImpLarge} & \result{cmpGeomImpBn} & \result{cmpGeomImpTn} \\
 geometry, blocked path & \result{cmpGeomBlkLarge} & \result{cmpGeomBlkBn} & \result{cmpGeomBlkTn} \\
 empty source & & & \result{cmpEmptyTn} \\
-policy share (own logit model) & \result{cmpPolicyLarge} & \result{cmpPolicyBn} & \result{cmpPolicyTn} \\
+share despite correct local decoding & \result{cmpPolicyLarge} & \result{cmpPolicyBn} & \result{cmpPolicyTn} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1361,7 +1379,8 @@ which is the bounded behaviour the simplex parameterisation guarantees and the
 property the earlier unbounded fit lacked. We stress again that the reordering
 between the check class and blocked paths is governed by an exponent whose interval
 includes zero, so it should be read as what the fitted model implies and not as a
-finding about large models. The policy share is modelled on its own logit rather
+finding about large models. The share despite correct local decoding is modelled on
+its own logit rather
 than inside the simplex, because it cuts across the partition rather than belonging
 to it.
 

@@ -1,6 +1,7 @@
 {
  "n_failures": 16200,
  "n_runs": 18,
+ "sample_check_share_first": 0.3081481481481481,
  "superseded_differential": 0.46130014968135696,
  "n_truly_legal": 0,
  "flow": {

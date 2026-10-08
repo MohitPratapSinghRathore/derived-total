@@ -66,6 +66,13 @@ def main():
     rc |= run([TECTONIC, "-X", "compile", "main_anon.tex", "--outdir", BUILD],
               cwd=PAPER, quiet=True)
 
+    # The title page carries the corresponding author's contact details, which
+    # submission portals require on page one. It was previously compiled by hand
+    # and had gone stale, still naming a different corresponding author, so it is
+    # built here with everything else.
+    rc |= run([TECTONIC, "-X", "compile", "titlepage.tex", "--outdir", BUILD],
+              cwd=PAPER, quiet=True)
+
     if shutil.which("pandoc"):
         for is_anon, name in ((False, "ScaleFixesLocalErrorsFirst.docx"),
                               (True, "ScaleFixesLocalErrorsFirst_anon.docx")):
@@ -75,7 +82,14 @@ def main():
             rc |= run(["pandoc", os.path.basename(flat), "--citeproc",
                        "--bibliography=refs.bib", "--resource-path=figures",
                        "-o", os.path.join(BUILD, name)], cwd=PAPER, quiet=True)
+        rc |= run(["pandoc", "titlepage.tex",
+                   "-o", os.path.join(BUILD,
+                                      "ScaleFixesLocalErrorsFirst_TitlePage.docx")],
+                  cwd=PAPER, quiet=True)
     rc |= run([PY, os.path.join(ROOT, "code", "qa_ds.py")])
+    # The LaTeX source archive, verified by compiling its own contents.
+    rc |= run([PY, os.path.join(ROOT, "code", "make_submission_zip.py")])
+    rc |= run([PY, os.path.join(ROOT, "code", "consistency_audit.py")])
 
     # anonymous build must not carry author identity
     try:

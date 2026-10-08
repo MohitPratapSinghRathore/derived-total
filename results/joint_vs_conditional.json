@@ -9,18 +9,18 @@
   "excludes_zero": true
  },
  "joint": {
-  "point": 0.027274699990366344,
-  "lo": -0.007630188732901201,
-  "hi": 0.09727800882197363,
+  "point": -0.036476336424533164,
+  "lo": -0.09429596460019236,
+  "hi": 0.031424272900053236,
   "excludes_zero": false
  },
  "conditional": {
-  "point": -0.12062717271321194,
-  "lo": -0.18388671370976112,
-  "hi": -0.033834563040380176,
+  "point": -0.18437820912811173,
+  "lo": -0.27559548429657704,
+  "hi": -0.09077832435972741,
   "excludes_zero": true
  },
  "identity_max_abs_error": 0.0,
- "slope_additivity_error": 4.163336342344337e-17,
+ "slope_additivity_error": 2.42861286636753e-16,
  "interpretation_supported": false
 }

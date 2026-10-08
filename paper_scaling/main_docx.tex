@@ -17,7 +17,8 @@
 
 
   \author{
-    Mohit Pratap Singh Rathore\\ \small Oviqo Private Limited
+    Mohit Pratap Singh Rathore\thanks{Corresponding author:
+      \texttt{mohitpratapsinghr@gmail.com}}\\ \small Oviqo Private Limited
     \and
     Gunveer Sinh Kalsi\\ \small Oviqo Private Limited
     \and
@@ -35,13 +36,13 @@ asked which errors it removes. We classify every illegal move made by search-fre
 chess transformers by what made it illegal, using only a rules engine, and measure
 how each class's absolute rate falls with model size. Across
 18 models spanning 3.4M to 39.9M parameters, errors decidable
-from the move's own two squares fall, pooled, with exponent -0.394, while
+from the move's own two squares fall, pooled, with exponent -0.397, while
 moves illegal only because they leave the king in check fall with exponent
--0.114: a paired differential of +0.279 [+0.263,
-+0.293]. Every
-class has a negative fitted slope, and the rates differ. Failures occurring despite
+-0.097: a paired differential of +0.301 [+0.213,
++0.375]. Every
+class improves, every interval excluding zero; the rates differ. Failures occurring despite
 correctly decoded local state have a nearly flat joint rate, because improving
-decoding offsets a conditional failure rate falling with exponent $-$0.121. The
+decoding offsets a conditional failure rate falling with exponent $-$0.184. The
 ordering replicates on an independent character-level ladder spanning a
 38-fold parameter range, and in OthelloGPT 160 of 161 residual
 failures are of the non-local kind. The repair we test installs about two
@@ -87,16 +88,16 @@ model internals, and is the axis along which we measure scaling.
 \begin{enumerate}[nosep]
 \item \textbf{Failure classes scale at different rates, ordered by locality.}
 Absolute rates of local errors fall steeply with size and global ones slowly. The
-empty-source class falls 4.0-fold across our ladder and the check class
-1.3-fold, a differential exponent of +0.456 whose rung-resampled
+empty-source class falls 4.3-fold across our ladder and the check class
+1.3-fold, a differential exponent of +0.492 whose rung-resampled
 interval excludes zero. No probe,
 intervention, or interpretability method enters this result.
 \item \textbf{It is not an artefact of our models.} The same ordering holds on an
 independent ladder with different data, notation, and training code, and in a
 game whose legality is non-local by construction.
 \item \textbf{The slowest-improving component is the one local correction cannot
-reach.} Every disjoint failure class has a negative fitted slope, significantly so for all
-but blocked paths; what differs is the rate.
+reach.} Every disjoint failure class has a negative exponent whose interval excludes zero;
+what differs is the rate.
 Internal belief is causally coupled to action at the squares a move touches, the
 repair procedure we test installs about two squares reliably and whole-board
 correction not at all, and failures occurring despite correct belief at those squares
@@ -359,9 +360,9 @@ resamples, so its interval is on the difference itself.
 
 A resampling interval over 6 rungs does not show whether one rung carries the
 result, so we also refit with each rung deleted in turn. The headline differential
-between the check class and empty-source errors is +0.456 on the full ladder and
-stays within [+0.347, +0.537] under every single-rung deletion, the largest shift
-being 0.109. The sign is the same in all 6 refits. Both the smallest and the
+between the check class and empty-source errors is +0.492 on the full ladder and
+stays within [+0.357, +0.582] under every single-rung deletion, the largest shift
+being 0.135. The sign is the same in all 6 refits. Both the smallest and the
 largest rung can be removed without changing the conclusion, which is the specific
 worry a short ladder invites.
 
@@ -416,17 +417,31 @@ The difference between the two labels is then caused by the classifier alone, an
 cannot be confounded with any numerical difference between this pass and the original.
 
 \paragraph{No legal move was ever counted as a failure.}
-The audited set is a fixed-size sample: the pass records the first 900 failures
-each model makes on the evaluation split, 16,200 across all 18 runs, which is
-the same sampling rule the original pass used and so the same population Table~\ref{tab:exponents}
-describes. Of those, 0 were legal under the corrected gate.
+Two populations are involved and it matters which is which. The relabelling audit
+uses a fixed-size sample, the first 900 failures each model makes while the
+evaluation games are read in corpus order, 16,200 across all 18 runs, and that
+sample exists because it carries both labels for every move and is the record of what
+the classifier change did. The rates in Table~\ref{tab:exponents} do not come from it.
 
-A sample can only support a statement about the sample, and the aggregate rate is
-computed over every scored position rather than over sampled failures, so we checked
-the whole set as well. Scoring all 622,998 positions of the evaluation split for each
-of the 18 runs under both gates, the membership test and the direct legality test,
-the two disagree at 0 positions. The aggregate illegal-move rate is therefore
-unaffected over the full set and not merely in the audited sample. The failure mode that would have been most damaging, legal moves
+An earlier version of this section did use that sample for the rates, multiplying its
+class shares by the full-set illegal-move rate. That makes each class rate an estimate
+whose validity rests on the first 900 failures being representative of all of them,
+and corpus order is not random: a model failing more often in early games reaches its
+900th failure sooner and is then described by a narrower slice of the corpus. The
+assumption was avoidable, so we removed it rather than stating it. Every failure at
+every scored position is now classified: 110,545 failures over 622,998
+positions, so each class rate is a direct count. The difference is not negligible.
+The check class holds 0.277 of failures at the smallest rung on the full set
+against 0.308 in the sample, which is the corpus-order effect the estimate was
+exposed to.
+
+\paragraph{No legal move was counted as a failure, over the whole set.}
+Of the 16,200 audited moves, 0 were legal under the corrected gate. A sample
+can only support a statement about the sample, so we checked the whole set directly:
+scoring all 622,998 positions for each of the 18 runs under both gates, the
+membership test and the direct legality test, the two disagree at 0 positions.
+No legal move entered any failure set anywhere in the evaluation data, and the
+aggregate illegal-move rate is unaffected over the full set rather than in a sample. The failure mode that would have been most damaging, legal moves
 inflating the failure counts and with them the aggregate rates, did not occur. The
 reason is visible once the mechanism is stated: for the defect to bite, a model must
 emit the king-onto-rook form while castling is actually available, and these models
@@ -453,20 +468,20 @@ the stored shares isolates that change, since the classifier is then held fixed.
 Class shares move by 0.0011 on average and at most 0.0121, which is what
 changing precision does to the handful of positions where the top two moves are
 nearly tied. We report this rather than assume a rerun reproduces the original. The
-headline differential is +0.456 [+0.250, +0.604] in
+headline differential is +0.492 [+0.278, +0.670] in
 the corrected pass against +0.461, recomputed from the superseded
 artifacts rather than quoted from memory, and that residual difference is this drift
 rather than the classifier.
 
 \paragraph{The repaired taxonomy changes what geometry means.}
 Splitting geometry is not cosmetic. The two sub-classes scale differently: impossible
-movement has exponent -0.254 [-0.313, -0.220], while blocked
-paths have -0.053 [-0.228, +0.126], an interval that includes
+movement has exponent -0.222 [-0.266, -0.181], while blocked
+paths have -0.069 [-0.118, -0.015], an interval that includes
 zero. The aggregate geometry exponent was averaging the two, which is the same
 objection this paper raises against fitting one exponent to a total whose parts scale
 differently, turned on one of our own categories. Against the locally decided classes
 the check differential narrows but survives: check against impossible movement is
-+0.139 [+0.069, +0.234]. The blocked-path
++0.126 [+0.103, +0.156]. The blocked-path
 exponent is poorly determined on 6 rungs and we draw no ordering conclusion
 from it.
 
@@ -488,19 +503,19 @@ flag computed with a probe (Section~\ref{sec:mech}).}
 \toprule
 class & 3.4M & 39.9M & fold drop & exponent [95\% CI] \\
 \midrule
-empty source & 0.0583 & 0.0146 & 4.0 & -0.570 [-0.756, -0.319] \\
-opponent source & 0.0092 & 0.0031 & 3.0 & -0.412 [-0.595, -0.187] \\
-own destination & 0.0320 & 0.0106 & 3.0 & -0.452 [-0.462, -0.442] \\
-castling & 0.0037 & 0.0005 & 7.0 & -0.778 [-1.068, -0.436] \\
-geometry, impossible & 0.0590 & 0.0323 & 1.8 & -0.254 [-0.313, -0.220] \\
+empty source & 0.0624 & 0.0146 & 4.3 & -0.589 [-0.754, -0.385] \\
+opponent source & 0.0128 & 0.0035 & 3.7 & -0.537 [-0.613, -0.449] \\
+own destination & 0.0344 & 0.0117 & 2.9 & -0.452 [-0.508, -0.425] \\
+castling & 0.0014 & 0.0005 & 2.6 & -0.415 [-0.597, -0.150] \\
+geometry, impossible & 0.0569 & 0.0335 & 1.7 & -0.222 [-0.266, -0.181] \\
 \midrule
-geometry, blocked path & 0.0127 & 0.0118 & 1.1 & -0.053 [-0.228, +0.126] \\
+geometry, blocked path & 0.0148 & 0.0126 & 1.2 & -0.069 [-0.118, -0.015] \\
 \midrule
-leaves check & 0.0779 & 0.0593 & 1.3 & -0.114 [-0.153, -0.066] \\
+leaves check & 0.0701 & 0.0557 & 1.3 & -0.097 [-0.114, -0.085] \\
 \midrule
-all illegal moves & 0.2528 & 0.1323 & 1.9 & -0.267 [-0.307, -0.216] \\
+all illegal moves & 0.2528 & 0.1323 & 1.9 & -0.266 [-0.307, -0.216] \\
 \midrule
-\textit{despite correct local belief} & 0.0388 & 0.0404 & 1.0 & +0.027 [-0.008, +0.097] \\
+\textit{despite correct local belief} & 0.0436 & 0.0395 & 1.1 & -0.036 [-0.094, +0.031] \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -520,30 +535,30 @@ Every class falls with size, so the result is not that larger models get worse a
 anything. It is that they get better at different things at very different rates
 (Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The extremes order
 themselves by how local the rule is, but the ordering is not monotone across every
-class and we do not claim it is: castling improves fastest of all at -0.778 despite
+class and we do not claim it is: castling improves fastest of all at -0.415 despite
 needing more than the move's two squares, and blocked paths have the shallowest point
 estimate with an interval that includes zero. What the data support is the specific
 comparison. Errors decidable from the move's own two squares, pooled, fall with
-exponent -0.394 [-0.439, -0.336], against
--0.114 for check violations, a paired differential of +0.279
-[+0.263, +0.293]. Taken singly, empty-source errors fall with exponent
--0.570; geometry splits into movements no arrangement of the other squares
-would permit, with -0.254, and blocked paths, which do depend on the squares
-between source and destination, with -0.053; and check violations, which
-depend on every attacker's position, with -0.114. The paired differential
-between the check and empty-source exponents is +0.456
-[+0.250, +0.604], and it excludes zero.
+exponent -0.397 [-0.460, -0.318], against
+-0.097 for check violations, a paired differential of +0.301
+[+0.213, +0.375]. Taken singly, empty-source errors fall with exponent
+-0.589; geometry splits into movements no arrangement of the other squares
+would permit, with -0.222, and blocked paths, which do depend on the squares
+between source and destination, with -0.069; and check violations, which
+depend on every attacker's position, with -0.097. The paired differential
+between the check and empty-source exponents is +0.492
+[+0.278, +0.670], and it excludes zero.
 
 This is a claim about composition, and composition shifts accordingly. The
-empty-source share of illegal moves falls from 0.230 to
-0.110 while the check share rises from 0.308 to
-0.449; geometry taken together moves only from 0.284 to
-0.333, its impossible part barely at all, from 0.233
-to 0.244. The shift is
+empty-source share of illegal moves falls from 0.247 to
+0.110 while the check share rises from 0.277 to
+0.421; geometry taken together moves only from 0.283 to
+0.349, its impossible part barely at all, from 0.225
+to 0.254. The shift is
 substantially one class collapsing into another rather than diffuse rebalancing.
 Within models, check violations also concentrate at depth: their share rises from
 early to late game in 6 of 6 rungs, from
-0.261 to 0.527 at the largest.
+0.287 to 0.492 at the largest.
 
 Nothing in this section uses model internals. The measurement is a rules engine
 and a move counter, which makes it reproducible against any chess model and immune
@@ -566,9 +581,9 @@ satisfy that identity away from the fitted
 range: the shallowest exponent must eventually dominate a total that is itself
 falling faster. The failure is not gradual. Summing the independently fitted parts
 and dividing by the independently fitted whole gives 1.02 at our
-largest rung, which is fit noise, but 1.31 at one billion parameters
-[1.13, 1.86, above one in
-100\% of resamples] and 3.33 at one trillion.
+largest rung, which is fit noise, but 1.35 at one billion parameters
+[1.11, 1.75, above one in
+100\% of resamples] and 3.63 at one trillion.
 Parts holding nearly three times the whole is not a wide estimate, it is an
 arithmetic impossibility, and it means the extrapolation was never reporting the
 exponents' implications at all. It is worth noting that the violation runs in the
@@ -583,26 +598,28 @@ category exponent. Dividing through, the implied shares are a softmax linear in
 $\log N$, so the compositional form and the derived total are the same model and
 not a further choice. What the repair costs is the aggregate exponent: the derived
 total is not a power law, and its effective slope drifts with scale. Coherence is not bought with fit quality. In range the closed model
-attains RMSE 0.01071 across the 18 runs against
-0.01115 for the uncoupled fits, so it is at least as good on the
+attains RMSE 0.00754 across the 18 runs against
+0.00854 for the uncoupled fits, so it is at least as good on the
 data while being the only one of the two that can be extended.
 
 Under the closed model the check category's share rises across the range we are
-willing to project, from 0.443 at our largest rung, while the locally
+willing to project, from 0.430 at our largest rung, while the locally
 decidable categories decline. It does not rise to one, and here the corrected
 partition changes the picture rather than merely refining it. Whichever category has
 the shallowest exponent must eventually take the whole share, and before geometry was
-split that category was the check class. It is now blocked paths, at
-$-$0.053 against the check class's -0.114, so the check share turns over at a
-maximum of 0.696 and declines thereafter. The paper's qualitative claim about
-the observed range is unchanged, and the trajectory is now bounded by construction
-rather than unbounded as in the earlier projection.
+split that category was the check class. It is now blocked paths, at $-$0.069
+against the check class's -0.097. The two are close enough that the crossing
+falls outside the range we project at all: the check share rises monotonically to
+0.709 across it, and blocked paths overtake it only further out. The paper's
+qualitative claim about the observed range is unchanged, and the trajectory is now
+bounded by construction rather than unbounded as in the earlier projection.
 
 We put little weight on that asymptotic reordering, and say so here rather than
 letting the appendix imply otherwise. It is decided entirely by the blocked-path
-exponent, which is the least well determined number in the partition: its interval
-includes zero, and it is fitted on a category whose rate barely moves across the
-ladder, from 0.0127 to 0.0118. The claim we defend is the ordering in range; which class wins at
+exponent. On the full set that exponent is -0.069 [-0.118,
+-0.015], separated from the check class's -0.097 by less than the width
+of either interval. Which of the two is shallower decides the entire asymptotic
+story, and the data do not resolve it. The claim we defend is the ordering in range; which class wins at
 scales far beyond the data is determined by the least well measured number we have.
 
 We no longer report projected class shares at specific far-off scales in the main
@@ -618,12 +635,13 @@ so the in-range slope is already not a constant. The projected values are given 
 Appendix~\ref{app:proj} for readers who want them, as an illustration of the closed
 model's shape rather than as a prediction.
 
-The same discipline applies to the policy share, the fraction of illegal moves
+The same discipline applies to the failure share despite correct local decoding,
+the fraction of illegal moves
 occurring despite correctly decoded local belief. It is not a member of the
 partition, since it cuts across the classes, but it is a proportion, and fitting a
 proportion linearly in $\log N$ is unbounded in exactly the same way. Fitted on the
-logit it increases with size from 0.307 at our largest rung, having been
-observed between 0.148 and 0.321, and remains bounded above
+logit it increases with size from 0.294 at our largest rung, having been
+observed between 0.162 and 0.305, and remains bounded above
 by one however far it is extended; the projected values are in
 Appendix~\ref{app:proj}. We report
 it separately rather than folding it into the simplex; an earlier version of this
@@ -637,10 +655,10 @@ total is $N^{b}$, so the ratio grows like $N^{a^\star-b}$ and diverges precisely
 when $a^\star>b$. This is not a coincidence to be checked case by case. Fitted in
 range, $b$ tracks the rate-weighted mean of the $a_i$, and a maximum is at least a
 weighted mean, with equality only if every exponent is identical. Our own values
-make the point: $a^\star$ is $-$0.053, attained by the geometry blocked class,
+make the point: $a^\star$ is $-$0.069, attained by the geometry blocked class,
 the weighted mean is
-$-$0.264, and the separately fitted $b$ is $-$0.267, giving
-divergence +0.214.
+$-$0.264, and the separately fitted $b$ is $-$0.266, giving
+divergence +0.197.
 
 The claim this supports needs stating carefully, because a stronger version does not
 follow. Divergence requires $a^\star > b$, and nothing forces that for an arbitrary
@@ -657,7 +675,7 @@ resolution is to derive the total rather than fit it. For our own numbers the sc
 which the two descriptions part company is computable from
 the reported exponents and coefficients together, since where the curves cross depends
 on their intercepts as well as their slopes: ours passes a ten percent overspend at
-148M parameters, well below the billion the earlier projection
+124M parameters, well below the billion the earlier projection
 used.
 
 We checked this on a model family we did not train. Refitting Karvonen's ladder
@@ -708,7 +726,7 @@ biases the comparison against the result.
 
 The ordering holds (Table~\ref{tab:external}, Figure~\ref{fig:scaling}b).
 Unreachable errors fall with exponent $-$1.415 and check violations with
-$-$1.044, a differential of +0.371, against +0.456 on
+$-$1.044, a differential of +0.371, against +0.492 on
 our ladder. The local share of failures falls from 0.654 to
 0.377 while the check share rises from 0.152 to
 0.334. Within the smallest checkpoint the check share rises from
@@ -882,13 +900,13 @@ occupied-square accuracy, before and after all-square edit & 0.326 to 0.185 \\
 
 \paragraph{What the tested correction does not reach.}
 Where decoded belief is already correct at both squares a move touches, a check
-violation accounts for 0.476 of failures on average against
-0.286 for geometry taken together, and is the largest class in
-16 of 18 models. Such failures cannot be attributed
+violation accounts for 0.473 of failures on average against
+0.280 for geometry taken together, and is the largest class in
+15 of 18 models. Such failures cannot be attributed
 to the decoded belief being wrong at the move's squares. Their absolute rate is
-flat with size, exponent +0.027 [-0.008, +0.097], a differential
-against empty-source errors of +0.597 [+0.355,
-+0.770], on the same paired bootstrap as the others.
+flat with size, exponent -0.036 [-0.094, +0.031], a differential
+against empty-source errors of +0.553 [+0.416,
++0.659], on the same paired bootstrap as the others.
 
 \paragraph{The flat rate is two effects cancelling, not one effect absent.}
 An earlier version of this paper read that flat exponent as the underlying failure
@@ -901,7 +919,7 @@ P(\text{illegal} \\ \text{correct local decoding}) = P(\text{correct local decod
 
 Both factors move. Across the 18 runs the marginal rises with exponent
 +0.148 [+0.115, +0.182], decoding accuracy going from 0.471 to 0.675,
-and the conditional falls with exponent $-$0.121 [$-$0.184, $-$0.034], whose interval
+and the conditional falls with exponent $-$0.184 [$-$0.276, $-$0.091], whose interval
 excludes zero. The joint rate is flat because the two nearly cancel. The
 decomposition is exact rather than estimated, so this is a restatement of the same
 number and not a competing measurement.
@@ -910,7 +928,7 @@ Calling it exact commits us to something checkable, and it is worth saying what.
 Because the identity holds position by position, the logs add, and an ordinary
 least-squares slope is a linear functional of the response, the three exponents
 must sum exactly when all three are fitted on the same runs with the same
-predictor. They do, to 4e-17: the marginal and conditional exponents
+predictor. They do, to 2e-16: the marginal and conditional exponents
 add to the joint exponent of Table~\ref{tab:exponents} and not merely to something
 close to it. An earlier version of this paper failed that check, because the joint
 rate was taken from the superseded classification pass while the two factors came
@@ -1073,8 +1091,8 @@ refuted. That rejection was worthless: predicting an impossibility is what the
 uncoupled form does everywhere, so its disagreement with data carries no evidence
 about the hypothesis under test. Refitting the same comparison on the simplex, in
 competence coordinates, and predicting Karvonen's checkpoints out of sample does
-refute it, by a total variation distance of 0.489 against
-0.100 for size coordinates and 0.115 for predicting our
+refute it, by a total variation distance of 0.491 against
+0.091 for size coordinates and 0.112 for predicting our
 own mean composition. The conclusion survived; the first argument for it did not.
 A model that cannot make an admissible prediction cannot be used to reject
 anything.
@@ -1105,8 +1123,8 @@ The practical reading is about where a mitigation budget goes. A class of failur
 that scale removes on its own is a poor target for engineering effort, and a class
 with an exponent near zero will still be there after the next model upgrade. Our
 estimate is that errors surviving a correct local belief have a flat joint rate,
-exponent +0.027, which decomposes into a rising chance of decoding the
-position correctly and a conditional failure rate falling with exponent $-$0.121.
+exponent -0.036, which decomposes into a rising chance of decoding the
+position correctly and a conditional failure rate falling with exponent $-$0.184.
 The improvement in the conditional rate is real but is cancelled in the headline
 number, so an
 organisation reading only the joint rate will conclude wrongly that scale does nothing
@@ -1217,9 +1235,9 @@ Scale does not remove long-horizon errors evenly. In chess transformers it remov
 errors decidable from a move's own squares several times faster than errors
 decided by the whole board, the ordering replicates on an independent model family,
 and the failures that occur despite correctly decoded belief at the move's squares
-have a joint rate that is nearly flat, exponent +0.027, because a rising chance
+have a joint rate that is nearly flat, exponent -0.036, because a rising chance
 of decoding the position correctly offsets a conditional failure rate that does fall,
-exponent $-$0.121. The measurement needs only a rules engine. What it suggests is
+exponent $-$0.184. The measurement needs only a rules engine. What it suggests is
 that the failures worth studying at scale are the ones defined by global constraints,
 and that interventions aimed at them should be judged on more than one measure, since
 two reasonable scores of the same edit disagree and neither alone settles whether the
@@ -1332,23 +1350,24 @@ to see the numbers.
 \toprule
 \textbf{Quantity} & \textbf{at 39.9M} & \textbf{$10^9$} & \textbf{$10^{12}$} \\
 \midrule
-check share & 0.443 & 0.574 & 0.685 \\
-geometry, impossible & 0.253 & 0.208 & 0.093 \\
-geometry, blocked path & 0.101 & 0.145 & 0.215 \\
+check share & 0.430 & 0.562 & 0.680 \\
+geometry, impossible & 0.258 & 0.227 & 0.117 \\
+geometry, blocked path & 0.100 & 0.141 & 0.197 \\
 empty source & & & 0.001 \\
-policy share (own logit model) & 0.307 & 0.600 & 0.953 \\
+share despite correct local decoding & 0.294 & 0.521 & 0.895 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The check share rises over this range and turns over at a maximum of 0.696,
+The check share rises over this range and turns over at a maximum of 0.709,
 after which blocked paths take an increasing share, because theirs is the shallowest
 exponent in the corrected partition. Every share stays inside the unit interval,
 which is the bounded behaviour the simplex parameterisation guarantees and the
 property the earlier unbounded fit lacked. We stress again that the reordering
 between the check class and blocked paths is governed by an exponent whose interval
 includes zero, so it should be read as what the fitted model implies and not as a
-finding about large models. The policy share is modelled on its own logit rather
+finding about large models. The share despite correct local decoding is modelled on
+its own logit rather
 than inside the simplex, because it cuts across the partition rather than belonging
 to it.
 

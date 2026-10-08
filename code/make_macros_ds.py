@@ -533,6 +533,8 @@ if rc:
     put("rcGeomImp", rc["flow"].get("geometry->geometry_impossible", 0), RC, "{:,d}")
     put("rcGeomBlk", rc["flow"].get("geometry->geometry_blocked", 0), RC, "{:,d}")
     put("rcDriftMean", rc["drift_mean_abs"], RC, "{:.4f}")
+    if rc.get("sample_check_share_first") is not None:
+        put("sampShareCheckFirst", rc["sample_check_share_first"], RC, "{:.3f}")
     if rc.get("superseded_differential") is not None:
         put("rcSupersededDiff", rc["superseded_differential"], RC, "{:+.3f}")
     put("rcDriftMax", rc["drift_max_abs"], RC, "{:.4f}")
@@ -575,6 +577,30 @@ jv = S.load("joint_vs_conditional.json")
 JV = "results/joint_vs_conditional.json"
 if jv and jv.get("slope_additivity_error") is not None:
     put("jvAddErr", jv["slope_additivity_error"], JV, "{:.0e}")
+
+fc = S.load("full_classification.json")
+FC = "results/full_classification.json"
+if fc:
+    put("fcFailures", fc["total_failures"], FC, "{:,d}")
+    put("fcPositions", fc["total_positions"], FC, "{:,d}")
+    put("fcLegalInSet", fc["total_membership_disagreements"], FC, "{:d}")
+
+# Body word count, computed rather than typed: the title page quotes it and the
+# figure had gone stale as the manuscript grew.
+import re as _re
+_src = open(os.path.join(OUT_DIR, "main.tex"), encoding="utf-8").read()
+_body = _src.split(r"\\begin{document}", 1)[-1]
+_body = _body.split(r"\\bibliography", 1)[0]
+# The title page describes this as the body, excluding declarations and
+# appendices, so the count has to stop where the appendices start.
+_body = _body.split(chr(92) + "appendix", 1)[0]
+_body = _body.split(chr(92) + "section{Declarations}", 1)[0]
+_body = _re.sub(r"\\\\begin\{abstract\}.*?\\\\end\{abstract\}", " ", _body, flags=_re.S)
+_body = _re.sub(r"\\\\begin\{(table|figure|tabular)\}.*?\\\\end\{\}", " ", _body, flags=_re.S)
+_body = _re.sub(r"(?m)%.*$", " ", _body)
+_body = _re.sub(r"\\\\[a-zA-Z]+\\*", " ", _body)
+_body = _re.sub(r"[{}$~&\\]", " ", _body)
+put("wordCount", len(_body.split()), "paper_scaling/main.tex", "{:,d}")
 
 env = S.load("environment.json")
 EV = "results/environment.json"

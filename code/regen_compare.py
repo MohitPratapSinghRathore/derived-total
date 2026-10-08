@@ -106,7 +106,14 @@ def main() -> int:
     except Exception as exc:                               # noqa: BLE001
         print("could not recompute the superseded differential:", exc)
 
+    # The sampled check share at the smallest rung, kept so the manuscript can
+    # quote what the 900-failure estimate gave and what the full-set count gives.
+    _small = [q for q in rows if q["name"].startswith("attn_" + S.RUNGS[0])]
+    samp_check_first = (float(np.mean([q["new"]["leaves_check"] for q in _small]))
+                        if _small else None)
+
     out = {"n_failures": n_tot, "n_runs": len(rows),
+           "sample_check_share_first": samp_check_first,
            "superseded_differential": old_diff,
            "n_truly_legal": n_legal,
            "flow": {f"{o}->{nw}": c for (o, nw), c in flow.items()},

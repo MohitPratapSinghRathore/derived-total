@@ -1,0 +1,1540 @@
+{
+ "games": 600,
+ "minply": 20,
+ "device": "cpu",
+ "rows": [
+  {
+   "name": "attn_6L192_s0",
+   "n_positions": 34611,
+   "n_failures": 8703,
+   "illegal_rate": 0.25145185056773856,
+   "counts": {
+    "from_empty": 2164,
+    "from_opponent": 406,
+    "to_own": 1165,
+    "castling": 41,
+    "geometry_impossible": 2006,
+    "geometry_blocked": 505,
+    "leaves_check": 2416,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 2164,
+    "from_opponent": 406,
+    "to_own": 1206,
+    "geometry": 2511,
+    "leaves_check": 2416,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 2006,
+    "from_empty->from_empty": 2164,
+    "to_own->to_own": 1165,
+    "leaves_check->leaves_check": 2416,
+    "from_opponent->from_opponent": 406,
+    "geometry->geometry_blocked": 505,
+    "to_own->castling": 41
+   },
+   "policy_counts": {
+    "from_empty": 502,
+    "from_opponent": 15,
+    "to_own": 110,
+    "castling": 2,
+    "geometry_impossible": 226,
+    "geometry_blocked": 153,
+    "leaves_check": 399,
+    "other": 0
+   },
+   "n_policy": 1407,
+   "policy_share": 0.16166839021027232,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 309,
+     "from_opponent": 42,
+     "to_own": 232,
+     "castling": 0,
+     "geometry_impossible": 366,
+     "geometry_blocked": 148,
+     "leaves_check": 165,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 815,
+     "from_opponent": 129,
+     "to_own": 373,
+     "castling": 7,
+     "geometry_impossible": 626,
+     "geometry_blocked": 238,
+     "leaves_check": 387,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 1040,
+     "from_opponent": 235,
+     "to_own": 560,
+     "castling": 34,
+     "geometry_impossible": 1014,
+     "geometry_blocked": 119,
+     "leaves_check": 1864,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 1262,
+    "40-60": 2575,
+    "60+": 4866
+   },
+   "n_membership_disagreements": 0,
+   "rung": "6L192",
+   "seed": 0
+  },
+  {
+   "name": "attn_6L192_s1",
+   "n_positions": 34611,
+   "n_failures": 8830,
+   "illegal_rate": 0.25512120424142615,
+   "counts": {
+    "from_empty": 2183,
+    "from_opponent": 496,
+    "to_own": 1181,
+    "castling": 52,
+    "geometry_impossible": 1940,
+    "geometry_blocked": 504,
+    "leaves_check": 2474,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 2183,
+    "from_opponent": 496,
+    "to_own": 1233,
+    "geometry": 2444,
+    "leaves_check": 2474,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1940,
+    "geometry->geometry_blocked": 504,
+    "to_own->to_own": 1181,
+    "from_empty->from_empty": 2183,
+    "leaves_check->leaves_check": 2474,
+    "to_own->castling": 52,
+    "from_opponent->from_opponent": 496
+   },
+   "policy_counts": {
+    "from_empty": 567,
+    "from_opponent": 26,
+    "to_own": 161,
+    "castling": 5,
+    "geometry_impossible": 234,
+    "geometry_blocked": 138,
+    "leaves_check": 430,
+    "other": 0
+   },
+   "n_policy": 1561,
+   "policy_share": 0.1767836919592299,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 273,
+     "from_opponent": 71,
+     "to_own": 250,
+     "castling": 1,
+     "geometry_impossible": 356,
+     "geometry_blocked": 136,
+     "leaves_check": 168,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 783,
+     "from_opponent": 150,
+     "to_own": 380,
+     "castling": 13,
+     "geometry_impossible": 618,
+     "geometry_blocked": 241,
+     "leaves_check": 390,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 1127,
+     "from_opponent": 275,
+     "to_own": 551,
+     "castling": 38,
+     "geometry_impossible": 966,
+     "geometry_blocked": 127,
+     "leaves_check": 1916,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 1255,
+    "40-60": 2575,
+    "60+": 5000
+   },
+   "n_membership_disagreements": 0,
+   "rung": "6L192",
+   "seed": 1
+  },
+  {
+   "name": "attn_6L192_s2",
+   "n_positions": 34611,
+   "n_failures": 8715,
+   "illegal_rate": 0.2517985611510791,
+   "counts": {
+    "from_empty": 2130,
+    "from_opponent": 430,
+    "to_own": 1230,
+    "castling": 54,
+    "geometry_impossible": 1957,
+    "geometry_blocked": 528,
+    "leaves_check": 2386,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 2130,
+    "from_opponent": 430,
+    "to_own": 1284,
+    "geometry": 2485,
+    "leaves_check": 2386,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1957,
+    "to_own->to_own": 1230,
+    "geometry->geometry_blocked": 528,
+    "from_empty->from_empty": 2130,
+    "leaves_check->leaves_check": 2386,
+    "from_opponent->from_opponent": 430,
+    "to_own->castling": 54
+   },
+   "policy_counts": {
+    "from_empty": 531,
+    "from_opponent": 23,
+    "to_own": 158,
+    "castling": 3,
+    "geometry_impossible": 239,
+    "geometry_blocked": 150,
+    "leaves_check": 453,
+    "other": 0
+   },
+   "n_policy": 1557,
+   "policy_share": 0.17865748709122203,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 283,
+     "from_opponent": 48,
+     "to_own": 254,
+     "castling": 2,
+     "geometry_impossible": 350,
+     "geometry_blocked": 163,
+     "leaves_check": 165,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 796,
+     "from_opponent": 132,
+     "to_own": 403,
+     "castling": 10,
+     "geometry_impossible": 655,
+     "geometry_blocked": 248,
+     "leaves_check": 383,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 1051,
+     "from_opponent": 250,
+     "to_own": 573,
+     "castling": 42,
+     "geometry_impossible": 952,
+     "geometry_blocked": 117,
+     "leaves_check": 1838,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 1265,
+    "40-60": 2627,
+    "60+": 4823
+   },
+   "n_membership_disagreements": 0,
+   "rung": "6L192",
+   "seed": 2
+  },
+  {
+   "name": "attn_8L256_s0",
+   "n_positions": 34611,
+   "n_failures": 6735,
+   "illegal_rate": 0.19459131489988732,
+   "counts": {
+    "from_empty": 1150,
+    "from_opponent": 273,
+    "to_own": 854,
+    "castling": 32,
+    "geometry_impossible": 1639,
+    "geometry_blocked": 514,
+    "leaves_check": 2273,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 1150,
+    "from_opponent": 273,
+    "to_own": 886,
+    "geometry": 2153,
+    "leaves_check": 2273,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1639,
+    "leaves_check->leaves_check": 2273,
+    "from_empty->from_empty": 1150,
+    "from_opponent->from_opponent": 273,
+    "to_own->to_own": 854,
+    "geometry->geometry_blocked": 514,
+    "to_own->castling": 32
+   },
+   "policy_counts": {
+    "from_empty": 263,
+    "from_opponent": 25,
+    "to_own": 103,
+    "castling": 1,
+    "geometry_impossible": 230,
+    "geometry_blocked": 156,
+    "leaves_check": 580,
+    "other": 0
+   },
+   "n_policy": 1358,
+   "policy_share": 0.2016332590942836,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 110,
+     "from_opponent": 37,
+     "to_own": 140,
+     "castling": 1,
+     "geometry_impossible": 263,
+     "geometry_blocked": 123,
+     "leaves_check": 149,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 367,
+     "from_opponent": 85,
+     "to_own": 241,
+     "castling": 11,
+     "geometry_impossible": 508,
+     "geometry_blocked": 250,
+     "leaves_check": 377,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 673,
+     "from_opponent": 151,
+     "to_own": 473,
+     "castling": 20,
+     "geometry_impossible": 868,
+     "geometry_blocked": 141,
+     "leaves_check": 1747,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 823,
+    "40-60": 1839,
+    "60+": 4073
+   },
+   "n_membership_disagreements": 0,
+   "rung": "8L256",
+   "seed": 0
+  },
+  {
+   "name": "attn_8L256_s1",
+   "n_positions": 34611,
+   "n_failures": 6879,
+   "illegal_rate": 0.198751841899974,
+   "counts": {
+    "from_empty": 1110,
+    "from_opponent": 271,
+    "to_own": 856,
+    "castling": 27,
+    "geometry_impossible": 1771,
+    "geometry_blocked": 533,
+    "leaves_check": 2311,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 1110,
+    "from_opponent": 271,
+    "to_own": 883,
+    "geometry": 2304,
+    "leaves_check": 2311,
+    "other": 0
+   },
+   "flow": {
+    "from_empty->from_empty": 1110,
+    "geometry->geometry_impossible": 1771,
+    "to_own->to_own": 856,
+    "leaves_check->leaves_check": 2311,
+    "geometry->geometry_blocked": 533,
+    "from_opponent->from_opponent": 271,
+    "to_own->castling": 27
+   },
+   "policy_counts": {
+    "from_empty": 239,
+    "from_opponent": 20,
+    "to_own": 128,
+    "castling": 3,
+    "geometry_impossible": 211,
+    "geometry_blocked": 155,
+    "leaves_check": 585,
+    "other": 0
+   },
+   "n_policy": 1341,
+   "policy_share": 0.1949411251635412,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 107,
+     "from_opponent": 26,
+     "to_own": 171,
+     "castling": 1,
+     "geometry_impossible": 265,
+     "geometry_blocked": 133,
+     "leaves_check": 151,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 394,
+     "from_opponent": 87,
+     "to_own": 258,
+     "castling": 4,
+     "geometry_impossible": 578,
+     "geometry_blocked": 237,
+     "leaves_check": 402,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 609,
+     "from_opponent": 158,
+     "to_own": 427,
+     "castling": 22,
+     "geometry_impossible": 928,
+     "geometry_blocked": 163,
+     "leaves_check": 1758,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 854,
+    "40-60": 1960,
+    "60+": 4065
+   },
+   "n_membership_disagreements": 0,
+   "rung": "8L256",
+   "seed": 1
+  },
+  {
+   "name": "attn_8L256_s2",
+   "n_positions": 34611,
+   "n_failures": 6825,
+   "illegal_rate": 0.19719164427494149,
+   "counts": {
+    "from_empty": 1113,
+    "from_opponent": 294,
+    "to_own": 857,
+    "castling": 31,
+    "geometry_impossible": 1733,
+    "geometry_blocked": 546,
+    "leaves_check": 2251,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 1113,
+    "from_opponent": 294,
+    "to_own": 888,
+    "geometry": 2279,
+    "leaves_check": 2251,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1733,
+    "geometry->geometry_blocked": 546,
+    "to_own->to_own": 857,
+    "from_empty->from_empty": 1113,
+    "leaves_check->leaves_check": 2251,
+    "to_own->castling": 31,
+    "from_opponent->from_opponent": 294
+   },
+   "policy_counts": {
+    "from_empty": 229,
+    "from_opponent": 21,
+    "to_own": 110,
+    "castling": 0,
+    "geometry_impossible": 214,
+    "geometry_blocked": 156,
+    "leaves_check": 556,
+    "other": 0
+   },
+   "n_policy": 1286,
+   "policy_share": 0.18842490842490842,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 107,
+     "from_opponent": 26,
+     "to_own": 136,
+     "castling": 3,
+     "geometry_impossible": 286,
+     "geometry_blocked": 128,
+     "leaves_check": 157,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 371,
+     "from_opponent": 98,
+     "to_own": 274,
+     "castling": 7,
+     "geometry_impossible": 561,
+     "geometry_blocked": 268,
+     "leaves_check": 389,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 635,
+     "from_opponent": 170,
+     "to_own": 447,
+     "castling": 21,
+     "geometry_impossible": 886,
+     "geometry_blocked": 150,
+     "leaves_check": 1705,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 843,
+    "40-60": 1968,
+    "60+": 4014
+   },
+   "n_membership_disagreements": 0,
+   "rung": "8L256",
+   "seed": 2
+  },
+  {
+   "name": "attn_12L256_s0",
+   "n_positions": 34611,
+   "n_failures": 6192,
+   "illegal_rate": 0.17890266100372715,
+   "counts": {
+    "from_empty": 872,
+    "from_opponent": 221,
+    "to_own": 731,
+    "castling": 20,
+    "geometry_impossible": 1639,
+    "geometry_blocked": 517,
+    "leaves_check": 2192,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 872,
+    "from_opponent": 221,
+    "to_own": 751,
+    "geometry": 2156,
+    "leaves_check": 2192,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1639,
+    "geometry->geometry_blocked": 517,
+    "to_own->to_own": 731,
+    "leaves_check->leaves_check": 2192,
+    "from_empty->from_empty": 872,
+    "from_opponent->from_opponent": 221,
+    "to_own->castling": 20
+   },
+   "policy_counts": {
+    "from_empty": 178,
+    "from_opponent": 14,
+    "to_own": 109,
+    "castling": 0,
+    "geometry_impossible": 217,
+    "geometry_blocked": 158,
+    "leaves_check": 612,
+    "other": 0
+   },
+   "n_policy": 1288,
+   "policy_share": 0.20801033591731266,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 68,
+     "from_opponent": 25,
+     "to_own": 117,
+     "castling": 1,
+     "geometry_impossible": 235,
+     "geometry_blocked": 111,
+     "leaves_check": 152,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 276,
+     "from_opponent": 72,
+     "to_own": 217,
+     "castling": 1,
+     "geometry_impossible": 504,
+     "geometry_blocked": 245,
+     "leaves_check": 376,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 528,
+     "from_opponent": 124,
+     "to_own": 397,
+     "castling": 18,
+     "geometry_impossible": 900,
+     "geometry_blocked": 161,
+     "leaves_check": 1664,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 709,
+    "40-60": 1691,
+    "60+": 3792
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L256",
+   "seed": 0
+  },
+  {
+   "name": "attn_12L256_s1",
+   "n_positions": 34611,
+   "n_failures": 6174,
+   "illegal_rate": 0.1783825951287163,
+   "counts": {
+    "from_empty": 857,
+    "from_opponent": 216,
+    "to_own": 709,
+    "castling": 31,
+    "geometry_impossible": 1610,
+    "geometry_blocked": 487,
+    "leaves_check": 2264,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 857,
+    "from_opponent": 216,
+    "to_own": 740,
+    "geometry": 2097,
+    "leaves_check": 2264,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1610,
+    "from_empty->from_empty": 857,
+    "to_own->to_own": 709,
+    "leaves_check->leaves_check": 2264,
+    "geometry->geometry_blocked": 487,
+    "to_own->castling": 31,
+    "from_opponent->from_opponent": 216
+   },
+   "policy_counts": {
+    "from_empty": 172,
+    "from_opponent": 16,
+    "to_own": 122,
+    "castling": 2,
+    "geometry_impossible": 225,
+    "geometry_blocked": 152,
+    "leaves_check": 601,
+    "other": 0
+   },
+   "n_policy": 1290,
+   "policy_share": 0.20894071914480078,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 85,
+     "from_opponent": 15,
+     "to_own": 116,
+     "castling": 1,
+     "geometry_impossible": 254,
+     "geometry_blocked": 109,
+     "leaves_check": 144,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 262,
+     "from_opponent": 73,
+     "to_own": 217,
+     "castling": 8,
+     "geometry_impossible": 540,
+     "geometry_blocked": 220,
+     "leaves_check": 384,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 510,
+     "from_opponent": 128,
+     "to_own": 376,
+     "castling": 22,
+     "geometry_impossible": 816,
+     "geometry_blocked": 158,
+     "leaves_check": 1736,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 724,
+    "40-60": 1704,
+    "60+": 3746
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L256",
+   "seed": 1
+  },
+  {
+   "name": "attn_12L256_s2",
+   "n_positions": 34611,
+   "n_failures": 6041,
+   "illegal_rate": 0.17453988616335847,
+   "counts": {
+    "from_empty": 777,
+    "from_opponent": 209,
+    "to_own": 709,
+    "castling": 22,
+    "geometry_impossible": 1584,
+    "geometry_blocked": 515,
+    "leaves_check": 2225,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 777,
+    "from_opponent": 209,
+    "to_own": 731,
+    "geometry": 2099,
+    "leaves_check": 2225,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1584,
+    "from_empty->from_empty": 777,
+    "geometry->geometry_blocked": 515,
+    "leaves_check->leaves_check": 2225,
+    "to_own->to_own": 709,
+    "from_opponent->from_opponent": 209,
+    "to_own->castling": 22
+   },
+   "policy_counts": {
+    "from_empty": 169,
+    "from_opponent": 18,
+    "to_own": 99,
+    "castling": 3,
+    "geometry_impossible": 221,
+    "geometry_blocked": 158,
+    "leaves_check": 659,
+    "other": 0
+   },
+   "n_policy": 1327,
+   "policy_share": 0.21966561827512002,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 52,
+     "from_opponent": 29,
+     "to_own": 103,
+     "castling": 0,
+     "geometry_impossible": 244,
+     "geometry_blocked": 114,
+     "leaves_check": 144,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 272,
+     "from_opponent": 51,
+     "to_own": 202,
+     "castling": 1,
+     "geometry_impossible": 511,
+     "geometry_blocked": 226,
+     "leaves_check": 377,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 453,
+     "from_opponent": 129,
+     "to_own": 404,
+     "castling": 21,
+     "geometry_impossible": 829,
+     "geometry_blocked": 175,
+     "leaves_check": 1704,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 686,
+    "40-60": 1640,
+    "60+": 3715
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L256",
+   "seed": 2
+  },
+  {
+   "name": "attn_8L384_s0",
+   "n_positions": 34611,
+   "n_failures": 5597,
+   "illegal_rate": 0.16171159457975787,
+   "counts": {
+    "from_empty": 728,
+    "from_opponent": 188,
+    "to_own": 578,
+    "castling": 19,
+    "geometry_impossible": 1386,
+    "geometry_blocked": 522,
+    "leaves_check": 2176,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 728,
+    "from_opponent": 188,
+    "to_own": 597,
+    "geometry": 1908,
+    "leaves_check": 2176,
+    "other": 0
+   },
+   "flow": {
+    "from_empty->from_empty": 728,
+    "geometry->geometry_blocked": 522,
+    "to_own->to_own": 578,
+    "leaves_check->leaves_check": 2176,
+    "geometry->geometry_impossible": 1386,
+    "from_opponent->from_opponent": 188,
+    "to_own->castling": 19
+   },
+   "policy_counts": {
+    "from_empty": 156,
+    "from_opponent": 12,
+    "to_own": 93,
+    "castling": 1,
+    "geometry_impossible": 194,
+    "geometry_blocked": 177,
+    "leaves_check": 726,
+    "other": 0
+   },
+   "n_policy": 1359,
+   "policy_share": 0.24280864748972664,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 56,
+     "from_opponent": 17,
+     "to_own": 95,
+     "castling": 1,
+     "geometry_impossible": 194,
+     "geometry_blocked": 111,
+     "leaves_check": 137,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 222,
+     "from_opponent": 60,
+     "to_own": 168,
+     "castling": 3,
+     "geometry_impossible": 444,
+     "geometry_blocked": 225,
+     "leaves_check": 363,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 450,
+     "from_opponent": 111,
+     "to_own": 315,
+     "castling": 15,
+     "geometry_impossible": 748,
+     "geometry_blocked": 186,
+     "leaves_check": 1676,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 611,
+    "40-60": 1485,
+    "60+": 3501
+   },
+   "n_membership_disagreements": 0,
+   "rung": "8L384",
+   "seed": 0
+  },
+  {
+   "name": "attn_8L384_s1",
+   "n_positions": 34611,
+   "n_failures": 5590,
+   "illegal_rate": 0.1615093467394759,
+   "counts": {
+    "from_empty": 760,
+    "from_opponent": 257,
+    "to_own": 643,
+    "castling": 15,
+    "geometry_impossible": 1336,
+    "geometry_blocked": 472,
+    "leaves_check": 2107,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 760,
+    "from_opponent": 257,
+    "to_own": 658,
+    "geometry": 1808,
+    "leaves_check": 2107,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1336,
+    "leaves_check->leaves_check": 2107,
+    "from_empty->from_empty": 760,
+    "geometry->geometry_blocked": 472,
+    "to_own->to_own": 643,
+    "to_own->castling": 15,
+    "from_opponent->from_opponent": 257
+   },
+   "policy_counts": {
+    "from_empty": 152,
+    "from_opponent": 20,
+    "to_own": 101,
+    "castling": 1,
+    "geometry_impossible": 181,
+    "geometry_blocked": 158,
+    "leaves_check": 697,
+    "other": 0
+   },
+   "n_policy": 1310,
+   "policy_share": 0.23434704830053668,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 43,
+     "from_opponent": 26,
+     "to_own": 106,
+     "castling": 0,
+     "geometry_impossible": 163,
+     "geometry_blocked": 105,
+     "leaves_check": 137,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 239,
+     "from_opponent": 91,
+     "to_own": 168,
+     "castling": 1,
+     "geometry_impossible": 434,
+     "geometry_blocked": 209,
+     "leaves_check": 347,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 478,
+     "from_opponent": 140,
+     "to_own": 369,
+     "castling": 14,
+     "geometry_impossible": 739,
+     "geometry_blocked": 158,
+     "leaves_check": 1623,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 580,
+    "40-60": 1489,
+    "60+": 3521
+   },
+   "n_membership_disagreements": 0,
+   "rung": "8L384",
+   "seed": 1
+  },
+  {
+   "name": "attn_8L384_s2",
+   "n_positions": 34611,
+   "n_failures": 5433,
+   "illegal_rate": 0.15697321660743693,
+   "counts": {
+    "from_empty": 731,
+    "from_opponent": 157,
+    "to_own": 586,
+    "castling": 29,
+    "geometry_impossible": 1368,
+    "geometry_blocked": 493,
+    "leaves_check": 2069,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 731,
+    "from_opponent": 157,
+    "to_own": 615,
+    "geometry": 1861,
+    "leaves_check": 2069,
+    "other": 0
+   },
+   "flow": {
+    "leaves_check->leaves_check": 2069,
+    "to_own->to_own": 586,
+    "geometry->geometry_impossible": 1368,
+    "to_own->castling": 29,
+    "from_empty->from_empty": 731,
+    "geometry->geometry_blocked": 493,
+    "from_opponent->from_opponent": 157
+   },
+   "policy_counts": {
+    "from_empty": 164,
+    "from_opponent": 18,
+    "to_own": 98,
+    "castling": 1,
+    "geometry_impossible": 220,
+    "geometry_blocked": 173,
+    "leaves_check": 692,
+    "other": 0
+   },
+   "n_policy": 1366,
+   "policy_share": 0.2514264678814651,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 49,
+     "from_opponent": 15,
+     "to_own": 77,
+     "castling": 1,
+     "geometry_impossible": 181,
+     "geometry_blocked": 94,
+     "leaves_check": 156,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 222,
+     "from_opponent": 42,
+     "to_own": 166,
+     "castling": 5,
+     "geometry_impossible": 439,
+     "geometry_blocked": 230,
+     "leaves_check": 351,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 460,
+     "from_opponent": 100,
+     "to_own": 343,
+     "castling": 23,
+     "geometry_impossible": 748,
+     "geometry_blocked": 169,
+     "leaves_check": 1562,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 573,
+    "40-60": 1455,
+    "60+": 3405
+   },
+   "n_membership_disagreements": 0,
+   "rung": "8L384",
+   "seed": 2
+  },
+  {
+   "name": "attn_12L384_s0",
+   "n_positions": 34611,
+   "n_failures": 5116,
+   "illegal_rate": 0.14781427869752392,
+   "counts": {
+    "from_empty": 590,
+    "from_opponent": 148,
+    "to_own": 500,
+    "castling": 19,
+    "geometry_impossible": 1369,
+    "geometry_blocked": 476,
+    "leaves_check": 2014,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 590,
+    "from_opponent": 148,
+    "to_own": 519,
+    "geometry": 1845,
+    "leaves_check": 2014,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_blocked": 476,
+    "leaves_check->leaves_check": 2014,
+    "geometry->geometry_impossible": 1369,
+    "to_own->castling": 19,
+    "from_empty->from_empty": 590,
+    "to_own->to_own": 500,
+    "from_opponent->from_opponent": 148
+   },
+   "policy_counts": {
+    "from_empty": 110,
+    "from_opponent": 14,
+    "to_own": 94,
+    "castling": 2,
+    "geometry_impossible": 219,
+    "geometry_blocked": 150,
+    "leaves_check": 721,
+    "other": 0
+   },
+   "n_policy": 1310,
+   "policy_share": 0.2560594214229867,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 35,
+     "from_opponent": 9,
+     "to_own": 72,
+     "castling": 2,
+     "geometry_impossible": 174,
+     "geometry_blocked": 87,
+     "leaves_check": 135,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 143,
+     "from_opponent": 49,
+     "to_own": 157,
+     "castling": 3,
+     "geometry_impossible": 419,
+     "geometry_blocked": 208,
+     "leaves_check": 345,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 412,
+     "from_opponent": 90,
+     "to_own": 271,
+     "castling": 14,
+     "geometry_impossible": 776,
+     "geometry_blocked": 181,
+     "leaves_check": 1534,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 514,
+    "40-60": 1324,
+    "60+": 3278
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L384",
+   "seed": 0
+  },
+  {
+   "name": "attn_12L384_s1",
+   "n_positions": 34611,
+   "n_failures": 5010,
+   "illegal_rate": 0.14475166854468233,
+   "counts": {
+    "from_empty": 590,
+    "from_opponent": 131,
+    "to_own": 464,
+    "castling": 15,
+    "geometry_impossible": 1314,
+    "geometry_blocked": 484,
+    "leaves_check": 2012,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 590,
+    "from_opponent": 131,
+    "to_own": 479,
+    "geometry": 1798,
+    "leaves_check": 2012,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1314,
+    "geometry->geometry_blocked": 484,
+    "leaves_check->leaves_check": 2012,
+    "from_opponent->from_opponent": 131,
+    "to_own->to_own": 464,
+    "from_empty->from_empty": 590,
+    "to_own->castling": 15
+   },
+   "policy_counts": {
+    "from_empty": 124,
+    "from_opponent": 10,
+    "to_own": 94,
+    "castling": 2,
+    "geometry_impossible": 222,
+    "geometry_blocked": 161,
+    "leaves_check": 719,
+    "other": 0
+   },
+   "n_policy": 1332,
+   "policy_share": 0.26586826347305387,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 32,
+     "from_opponent": 17,
+     "to_own": 59,
+     "castling": 0,
+     "geometry_impossible": 184,
+     "geometry_blocked": 96,
+     "leaves_check": 139,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 176,
+     "from_opponent": 47,
+     "to_own": 138,
+     "castling": 3,
+     "geometry_impossible": 364,
+     "geometry_blocked": 217,
+     "leaves_check": 334,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 382,
+     "from_opponent": 67,
+     "to_own": 267,
+     "castling": 12,
+     "geometry_impossible": 766,
+     "geometry_blocked": 171,
+     "leaves_check": 1539,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 527,
+    "40-60": 1279,
+    "60+": 3204
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L384",
+   "seed": 1
+  },
+  {
+   "name": "attn_12L384_s2",
+   "n_positions": 34611,
+   "n_failures": 4968,
+   "illegal_rate": 0.1435381815029904,
+   "counts": {
+    "from_empty": 591,
+    "from_opponent": 144,
+    "to_own": 480,
+    "castling": 17,
+    "geometry_impossible": 1268,
+    "geometry_blocked": 454,
+    "leaves_check": 2014,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 591,
+    "from_opponent": 144,
+    "to_own": 497,
+    "geometry": 1722,
+    "leaves_check": 2014,
+    "other": 0
+   },
+   "flow": {
+    "leaves_check->leaves_check": 2014,
+    "geometry->geometry_impossible": 1268,
+    "to_own->to_own": 480,
+    "geometry->geometry_blocked": 454,
+    "from_empty->from_empty": 591,
+    "from_opponent->from_opponent": 144,
+    "to_own->castling": 17
+   },
+   "policy_counts": {
+    "from_empty": 112,
+    "from_opponent": 16,
+    "to_own": 58,
+    "castling": 0,
+    "geometry_impossible": 222,
+    "geometry_blocked": 165,
+    "leaves_check": 685,
+    "other": 0
+   },
+   "n_policy": 1258,
+   "policy_share": 0.2532206119162641,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 31,
+     "from_opponent": 13,
+     "to_own": 71,
+     "castling": 1,
+     "geometry_impossible": 157,
+     "geometry_blocked": 92,
+     "leaves_check": 140,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 161,
+     "from_opponent": 40,
+     "to_own": 137,
+     "castling": 2,
+     "geometry_impossible": 404,
+     "geometry_blocked": 190,
+     "leaves_check": 349,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 399,
+     "from_opponent": 91,
+     "to_own": 272,
+     "castling": 14,
+     "geometry_impossible": 707,
+     "geometry_blocked": 172,
+     "leaves_check": 1525,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 505,
+    "40-60": 1283,
+    "60+": 3180
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L384",
+   "seed": 2
+  },
+  {
+   "name": "attn_12L512_s0",
+   "n_positions": 34611,
+   "n_failures": 4586,
+   "illegal_rate": 0.132501227933316,
+   "counts": {
+    "from_empty": 507,
+    "from_opponent": 117,
+    "to_own": 411,
+    "castling": 21,
+    "geometry_impossible": 1177,
+    "geometry_blocked": 428,
+    "leaves_check": 1925,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 507,
+    "from_opponent": 117,
+    "to_own": 432,
+    "geometry": 1605,
+    "leaves_check": 1925,
+    "other": 0
+   },
+   "flow": {
+    "leaves_check->leaves_check": 1925,
+    "geometry->geometry_impossible": 1177,
+    "to_own->to_own": 411,
+    "to_own->castling": 21,
+    "from_empty->from_empty": 507,
+    "geometry->geometry_blocked": 428,
+    "from_opponent->from_opponent": 117
+   },
+   "policy_counts": {
+    "from_empty": 98,
+    "from_opponent": 12,
+    "to_own": 68,
+    "castling": 3,
+    "geometry_impossible": 223,
+    "geometry_blocked": 173,
+    "leaves_check": 764,
+    "other": 0
+   },
+   "n_policy": 1341,
+   "policy_share": 0.29241168774531184,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 21,
+     "from_opponent": 12,
+     "to_own": 53,
+     "castling": 0,
+     "geometry_impossible": 134,
+     "geometry_blocked": 79,
+     "leaves_check": 122,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 135,
+     "from_opponent": 32,
+     "to_own": 112,
+     "castling": 3,
+     "geometry_impossible": 340,
+     "geometry_blocked": 190,
+     "leaves_check": 335,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 351,
+     "from_opponent": 73,
+     "to_own": 246,
+     "castling": 18,
+     "geometry_impossible": 703,
+     "geometry_blocked": 159,
+     "leaves_check": 1468,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 421,
+    "40-60": 1147,
+    "60+": 3018
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L512",
+   "seed": 0
+  },
+  {
+   "name": "attn_12L512_s1",
+   "n_positions": 34611,
+   "n_failures": 4509,
+   "illegal_rate": 0.1302765016902141,
+   "counts": {
+    "from_empty": 497,
+    "from_opponent": 121,
+    "to_own": 389,
+    "castling": 19,
+    "geometry_impossible": 1131,
+    "geometry_blocked": 445,
+    "leaves_check": 1907,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 497,
+    "from_opponent": 121,
+    "to_own": 408,
+    "geometry": 1576,
+    "leaves_check": 1907,
+    "other": 0
+   },
+   "flow": {
+    "from_opponent->from_opponent": 121,
+    "leaves_check->leaves_check": 1907,
+    "geometry->geometry_impossible": 1131,
+    "to_own->to_own": 389,
+    "geometry->geometry_blocked": 445,
+    "from_empty->from_empty": 497,
+    "to_own->castling": 19
+   },
+   "policy_counts": {
+    "from_empty": 92,
+    "from_opponent": 10,
+    "to_own": 67,
+    "castling": 3,
+    "geometry_impossible": 219,
+    "geometry_blocked": 179,
+    "leaves_check": 774,
+    "other": 0
+   },
+   "n_policy": 1344,
+   "policy_share": 0.2980705256154358,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 34,
+     "from_opponent": 7,
+     "to_own": 52,
+     "castling": 2,
+     "geometry_impossible": 147,
+     "geometry_blocked": 74,
+     "leaves_check": 119,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 125,
+     "from_opponent": 32,
+     "to_own": 92,
+     "castling": 4,
+     "geometry_impossible": 343,
+     "geometry_blocked": 184,
+     "leaves_check": 300,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 338,
+     "from_opponent": 82,
+     "to_own": 245,
+     "castling": 13,
+     "geometry_impossible": 641,
+     "geometry_blocked": 187,
+     "leaves_check": 1488,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 435,
+    "40-60": 1080,
+    "60+": 2994
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L512",
+   "seed": 1
+  },
+  {
+   "name": "attn_12L512_s2",
+   "n_positions": 34611,
+   "n_failures": 4642,
+   "illegal_rate": 0.13411921065557192,
+   "counts": {
+    "from_empty": 512,
+    "from_opponent": 126,
+    "to_own": 419,
+    "castling": 17,
+    "geometry_impossible": 1175,
+    "geometry_blocked": 438,
+    "leaves_check": 1955,
+    "other": 0
+   },
+   "old_counts": {
+    "from_empty": 512,
+    "from_opponent": 126,
+    "to_own": 436,
+    "geometry": 1613,
+    "leaves_check": 1955,
+    "other": 0
+   },
+   "flow": {
+    "geometry->geometry_impossible": 1175,
+    "leaves_check->leaves_check": 1955,
+    "to_own->to_own": 419,
+    "geometry->geometry_blocked": 438,
+    "from_opponent->from_opponent": 126,
+    "from_empty->from_empty": 512,
+    "to_own->castling": 17
+   },
+   "policy_counts": {
+    "from_empty": 102,
+    "from_opponent": 17,
+    "to_own": 98,
+    "castling": 0,
+    "geometry_impossible": 217,
+    "geometry_blocked": 170,
+    "leaves_check": 811,
+    "other": 0
+   },
+   "n_policy": 1415,
+   "policy_share": 0.3048255062473072,
+   "band_counts": {
+    "20-40": {
+     "from_empty": 31,
+     "from_opponent": 11,
+     "to_own": 65,
+     "castling": 0,
+     "geometry_impossible": 129,
+     "geometry_blocked": 76,
+     "leaves_check": 133,
+     "other": 0
+    },
+    "40-60": {
+     "from_empty": 149,
+     "from_opponent": 37,
+     "to_own": 119,
+     "castling": 1,
+     "geometry_impossible": 364,
+     "geometry_blocked": 193,
+     "leaves_check": 346,
+     "other": 0
+    },
+    "60+": {
+     "from_empty": 332,
+     "from_opponent": 78,
+     "to_own": 235,
+     "castling": 16,
+     "geometry_impossible": 682,
+     "geometry_blocked": 169,
+     "leaves_check": 1476,
+     "other": 0
+    }
+   },
+   "band_n": {
+    "20-40": 445,
+    "40-60": 1209,
+    "60+": 2988
+   },
+   "n_membership_disagreements": 0,
+   "rung": "12L512",
+   "seed": 2
+  }
+ ],
+ "total_failures": 110545,
+ "total_positions": 622998,
+ "total_membership_disagreements": 0
+}

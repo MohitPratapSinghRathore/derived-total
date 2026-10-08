@@ -78,46 +78,50 @@ CLASSES_CORRECTED = ["from_empty", "from_opponent", "to_own", "castling",
 
 
 def ladder_rows_corrected():
-    """Ladder rows whose class rates come from the regenerated records.
+    """Ladder rows from the full-set classification.
 
-    Auxiliary fields that the regenerated records do not carry, the depth strata
-    and the check share conditional on correct belief, are taken from the original
-    artifacts and are the only quantities here still produced by the superseded
-    pass; they are descriptive and enter no exponent.
+    Every failure at every scored position is classified, so each class rate is a
+    direct count over the evaluation set rather than a sampled share rescaled by
+    the aggregate rate. The depth bands and the correct-decoding split come from
+    the same pass, so nothing here is produced by the superseded classifier.
     """
-    import json as _json
+    full = load("full_classification.json")
+    if not full:
+        raise SystemExit(
+            "results/full_classification.json is missing; run "
+            "code/full_classification.py. Refusing to fall back to the "
+            "superseded pass or to the 900-failure sample.")
     rows = []
-    for r in RUNGS:
-        for s in SEEDS:
-            name = f"attn_{r}_s{s}"
-            p = os.path.join(RES, f"{name}_regen.json")
-            nd = load(f"{name}_natdiv.json")
-            if not (os.path.exists(p) and nd):
-                continue
-            recs = _json.load(open(p))["records"]
-            n = len(recs)
-            if not n:
-                continue
-            ill = nd["illegal_rate"]
-            pol = sum(q["is_policy"] for q in recs) / n
-            row = {"rung": r, "seed": s, "params": PARAMS[r],
-                   "illegal_rate": ill, "n": n,
-                   "share_policy": pol,
-                   "correct_local_belief": pol * ill,
-                   "share_other": 0.0}
-            for c in CLASSES_CORRECTED:
-                sh = sum(1 for q in recs if q["new_label"] == c) / n
-                row[c] = sh * ill
-                row["share_" + c] = sh
-            st = load(f"{name}_structure.json")
-            if st:
-                row["lc_when_local_ok"] = st["overall"]["leaves_check"].get(
-                    "share_when_belief_ok")
-                strata = st.get("strata", {})
-                row["lc_early"] = strata.get("20-40", {}).get("leaves_check")
-                row["lc_late"] = strata.get("60-120", {}).get("leaves_check")
-            rows.append(row)
+    for r in full["rows"]:
+        n = r["n_failures"]
+        if not n:
+            continue
+        ill = r["illegal_rate"]
+        row = {"rung": r["rung"], "seed": r["seed"],
+               "params": PARAMS[r["rung"]], "illegal_rate": ill,
+               "n": n, "n_positions": r["n_positions"],
+               "share_policy": r["policy_share"],
+               "correct_local_belief": r["policy_share"] * ill,
+               "share_other": r["counts"].get("other", 0) / n}
+        for c in CLASSES_CORRECTED:
+            cnt = r["counts"].get(c, 0)
+            row["share_" + c] = cnt / n
+            # A direct rate: failures of this class per scored position.
+            row[c] = cnt / r["n_positions"]
+        # Check share within depth bands, for the concentration-at-depth claim.
+        for b, bc in r["band_counts"].items():
+            tot = sum(bc.values())
+            row["band_" + b] = (bc.get("leaves_check", 0) / tot) if tot else None
+        row["lc_early"] = row.get("band_20-40")
+        row["lc_late"] = row.get("band_60+")
+        # Class composition among failures where local belief was correct.
+        npol = r["n_policy"]
+        for c in CLASSES_CORRECTED:
+            row["pol_" + c] = (r["policy_counts"].get(c, 0) / npol) if npol \
+                else None
+        rows.append(row)
     return rows
+
 
 def _slope(sub, key):
     x = np.log([q["params"] for q in sub])

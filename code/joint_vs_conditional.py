@@ -60,33 +60,24 @@ def marginal_correct(name: str) -> float | None:
 
 
 def rows_with_decomposition():
+    """One row per run, with the joint rate taken from the full-set counts.
+
+    The joint has to be the same quantity Table 1 reports or the three exponents
+    will not add, and that quantity is now a direct count over every scored
+    position rather than a sampled share.
+    """
     out = []
-    for r in S.RUNGS:
-        for s in S.SEEDS:
-            name = f"attn_{r}_s{s}"
-            # The corrected pass, not the superseded structure file: Table 1's
-            # joint row is computed from these records, and the decomposition
-            # has to be fitted on the same quantity or its slopes will not add.
-            import json as _json
-            import os as _os
-            _p = _os.path.join(S.RES, f"{name}_regen.json")
-            if not _os.path.exists(_p):
-                continue
-            _recs = _json.load(open(_p))["records"]
-            st = {"policy_share": (sum(q["is_policy"] for q in _recs)
-                                   / max(len(_recs), 1))}
-            nd = S.load(f"{name}_natdiv.json")
-            if not (st and nd):
-                continue
-            m = marginal_correct(name)
-            if m is None or m <= 0:
-                continue
-            joint = st["policy_share"] * nd["illegal_rate"]
-            out.append({"rung": r, "seed": s, "params": S.PARAMS[r],
-                        "marginal_correct": m,
-                        "joint": joint,
-                        "conditional": joint / m,
-                        "illegal_rate": nd["illegal_rate"]})
+    for q in S.ladder_rows_corrected():
+        name = f"attn_{q['rung']}_s{q['seed']}"
+        m = marginal_correct(name)
+        if m is None or m <= 0:
+            continue
+        joint = q["correct_local_belief"]
+        out.append({"rung": q["rung"], "seed": q["seed"], "params": q["params"],
+                    "marginal_correct": m,
+                    "joint": joint,
+                    "conditional": joint / m,
+                    "illegal_rate": q["illegal_rate"]})
     return out
 
 
