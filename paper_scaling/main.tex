@@ -46,11 +46,11 @@ parameters, errors decidable from the move's own squares fall with exponent
 \result{expFromEmpty}, while moves illegal only because they leave the king in
 check fall with exponent \result{expLeavesCheck}: a paired differential of
 \result{diffProbeFree} [\result{diffProbeFreeLo}, \result{diffProbeFreeHi}]. Failures
-that occur despite correct internal belief about the move's squares do not fall
-at all, exponent \result{expCorrLocal}. The ordering replicates on an independent
+that occur despite correctly decoded local state have a flat absolute rate,
+exponent \result{expCorrLocal}, but that is two effects cancelling: decoding accuracy
+rises and the conditional failure rate falls, exponent \result{jcCond}. The ordering replicates on an independent
 character-level ladder spanning a \result{kSpan}-fold parameter range, and in
-OthelloGPT every residual failure is of the non-local kind. A causal account
-follows: belief is coupled to action locally, a repair edit can correct about two
+OthelloGPT every residual failure is of the non-local kind. The intervention results are consistent with this: belief is coupled to action locally, a repair edit can correct about two
 squares, and the class that scale leaves behind is the class local correction
 cannot reach. The standard intervention metric inverts on the same data. Illegal
 move rate ranks a norm-matched random edit above correct repair in
@@ -360,7 +360,8 @@ data while being the only one of the two that can be extended.
 
 Under the closed model the check category's share rises from \result{cmpCheckLarge}
 at our largest rung to \result{cmpCheckBn} at one billion and \result{cmpCheckTn}
-at one trillion, approaching but never exceeding \result{cmpCheckMax}, while the
+at one trillion, rising without bound toward one as the shallowest exponent comes to
+dominate, while the
 locally decidable categories fall to \result{cmpEmptyTn}. The paper's qualitative
 claim is unchanged. What changes is that the projection is now bounded by
 construction, so the figures above are statements the categories can jointly
@@ -453,7 +454,7 @@ data, so only exponents are comparable and never levels.
 \begin{table}[t]
 \centering\small
 \caption{Independent ladder. Absolute rates per scored position. With three
-checkpoints no uncertainty in the fit itself can be estimated; the intervals
+checkpoints the uncertainty in the fit itself is poorly determined; the intervals
 propagate only each checkpoint's sampling noise in class shares and should be read
 as a lower bound on uncertainty, not as a confidence statement about the slope.}
 \label{tab:external}
@@ -544,7 +545,16 @@ and edit instruments of \priort, point to the same answer.
 We repair the model's belief at the squares its illegal move touches by adding
 probe-derived occupancy directions to the residual stream, and score the change in
 a forced-choice preference $r = P(m^\ast)/(P(m^\ast)+P(m_{\mathrm{ill}}))$ between
-the best legal move and the illegal one, which is invariant to uniform flattening
+the best legal move and the illegal one. The ratio cancels the softmax normalising
+constant, so it is unaffected by a uniform rescaling of all probabilities, but it is
+not invariant to temperature: $r_T = \sigma((z_{m^\ast} - z_{m_{\mathrm{ill}}})/T)$ moves
+toward one half as $T$ rises. We state this because an earlier version claimed
+invariance to flattening in general, which is wrong, and because temperature alone
+cannot explain the disagreement between metrics reported below: rescaling logits
+does not reorder them, so it cannot change which move is top-1. An edit that
+produces more legal top-1 moves must be reordering logits, not merely flattening
+them, and distinguishing the two needs a temperature-only control that we have not
+run
 of the distribution. Two controls matter. A wrong-target edit installs the same
 occupancy at an unrelated square; an irrelevant edit spends an identical budget on
 squares that are wrongly decoded but not touched by the move. Both are matched to
@@ -599,11 +609,32 @@ Where decoded belief is already correct at both squares a move touches, a check
 violation accounts for \result{lcWhenLocalOk} of failures on average against
 \result{geomWhenLocalOk} for geometry, and is the largest class in
 \result{lcLargestCount} of \result{nRuns} models. Such failures cannot be attributed
-to the decoded belief being wrong at the move's squares, and a check violation is
-decided by squares an edit of two cannot address. Their
-absolute rate is flat with size, exponent \result{expCorrLocal}
-[\result{expCorrLocalLo}, \result{expCorrLocalHi}], a differential against
-empty-source errors of \result{diffCorr} [\result{diffCorrLo}, \result{diffCorrHi}].
+to the decoded belief being wrong at the move's squares. Their absolute rate is
+flat with size, exponent \result{expCorrLocal} [\result{expCorrLocalLo}, \result{expCorrLocalHi}], a differential
+against empty-source errors of \result{diffCorr} [\result{diffCorrLo}, \result{diffCorrHi}].
+
+\paragraph{The flat rate is two effects cancelling, not one effect absent.}
+An earlier version of this paper read that flat exponent as the underlying failure
+propensity being untouched by scale. It does not support that, and the quantity is
+a joint event:
+
+\begin{equation*}
+P(\text{illegal} \\ \text{correct local decoding}) = P(\text{correct local decoding}) \cdot P(\text{illegal} \mid \text{correct local decoding}).
+\end{equation*}
+
+Both factors move. Across the \result{jcRuns} runs the marginal rises with exponent
+\result{jcMarg} [\result{jcMargLo}, \result{jcMargHi}], decoding accuracy going from \result{jcMargFirst} to \result{jcMargLast},
+and the conditional falls with exponent \result{jcCond} [\result{jcCondLo}, \result{jcCondHi}], whose interval
+excludes zero. The joint rate is flat because the two nearly cancel. The
+decomposition is exact rather than estimated, so this is a restatement of the same
+number and not a competing measurement.
+
+The correct reading is therefore the opposite of the one we drew: scale does reduce
+the rate at which a model fails while holding correct local state, and the flat
+joint rate conceals it because a better model decodes correctly more often and so
+has more occasions on which to fail that way. What survives is the weaker claim
+that this component declines more slowly than the locally decidable classes, which
+is what the differential measures.
 An earlier oracle-free attempt to repair state by re-presenting information the
 model already attends to also failed, leaving the late-game illegal rate at
 \result{refreshRepair} against \result{refreshNoop} without intervention.

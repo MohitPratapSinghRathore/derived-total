@@ -354,6 +354,18 @@ put("cmpSizeTV", cp["covariate_tv"]["size"], CP, "{:.3f}")
 put("cmpBaseTV", cp["covariate_tv"]["baseline"], CP, "{:.3f}")
 
 
+jc = S.load("joint_vs_conditional.json")
+JC = "results/joint_vs_conditional.json"
+for k, tag in (("marginal_correct", "Marg"), ("joint", "Joint"),
+               ("conditional", "Cond")):
+    put("jc" + tag, sgn(jc[k]["point"]), JC)
+    put("jc" + tag + "Lo", sgn(jc[k]["lo"]), JC)
+    put("jc" + tag + "Hi", sgn(jc[k]["hi"]), JC)
+put("jcRuns", jc["n_runs"], JC, "{:d}")
+put("jcMargFirst", jc["marginal_first"], JC, "{:.3f}")
+put("jcMargLast", jc["marginal_last"], JC, "{:.3f}")
+
+
 li = S.load("locality_index.json")
 LI = "results/locality_index.json"
 put("locGames", li["games"], LI, "{:d}")

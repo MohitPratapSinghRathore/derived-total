@@ -1287,6 +1287,54 @@
   "value": "0.115",
   "source": "results/compositional.json"
  },
+ "jcMarg": {
+  "value": "+0.148",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcMargLo": {
+  "value": "+0.115",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcMargHi": {
+  "value": "+0.182",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcJoint": {
+  "value": "+0.023",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcJointLo": {
+  "value": "$-$0.005",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcJointHi": {
+  "value": "+0.066",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcCond": {
+  "value": "$-$0.125",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcCondLo": {
+  "value": "$-$0.182",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcCondHi": {
+  "value": "$-$0.053",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcRuns": {
+  "value": "18",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcMargFirst": {
+  "value": "0.471",
+  "source": "results/joint_vs_conditional.json"
+ },
+ "jcMargLast": {
+  "value": "0.675",
+  "source": "results/joint_vs_conditional.json"
+ },
  "locGames": {
   "value": "150",
   "source": "results/locality_index.json"
