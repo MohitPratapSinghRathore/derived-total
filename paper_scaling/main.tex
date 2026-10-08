@@ -108,16 +108,20 @@ correction not at all, and failures occurring despite correct belief at those sq
 have a nearly flat joint rate because improving decoding offsets a falling
 conditional failure rate.
 \item \textbf{The usual way of scoring interventions reads this backwards.}
-Illegal-move rate rewards edits that flatten the output distribution, and on our
-data it prefers a random direction to the correct repair in every model.
+Illegal-move rate prefers a norm-matched random direction to the correct repair in
+every model, while the repair moves a fixed forced choice further. The two scores
+disagree, and we show the obvious explanation is not available: top-1 legality is
+exactly invariant to flattening the distribution, so whatever the random edits do,
+they are not winning by hedging.
 \end{enumerate}
 
 \paragraph{Contributions.}
 A probe-free, rules-grounded measurement of how failure composition changes with
 scale; its replication across two independent ladders, with a consistency check in a
 second game; a mechanistic account,
-with a measured capability limit on the causal instrument; and a demonstration
-that a widely used intervention metric is anti-correlated with the effect it is
+with the tested limits of the causal instrument stated; and a demonstration
+that two reasonable scores of the same intervention disagree, so that a widely used
+intervention metric cannot settle the question it is
 meant to measure. The probe and edit instruments used in Section~\ref{sec:mech}
 are established in prior work \priorp; here they serve only to
 explain a result that stands without them.
@@ -296,7 +300,7 @@ class, which should be decidable from the destination square alone and so should
 have a maximum of zero. The discrepancy was real and it was ours. King onto one's
 own rook is how both UCI and Chess960 encode castling, so a destination-occupancy
 test collects castling attempts; and because \texttt{python-chess} enumerates
-castling as 	exttt{e1g1} while also accepting the 	exttt{e1h1} form, a
+castling as \texttt{e1g1} while also accepting the \texttt{e1h1} form, a
 membership test against the legal moves let a genuinely \emph{legal} castling move
 into a sample of illegal ones. Nearly any edit to such a board removes castling
 rights, blocks the path, or places the king in check, which is where 48 came from.
@@ -304,9 +308,11 @@ Castling is now its own class, legality is tested directly rather than by
 membership, and the own-destination maximum is \result{locKMaxOwn} over \result{locNOwn} moves, as the
 definition requires. We report the defect because the same classifier labels the
 model-generated failures in Table~\ref{tab:exponents}: an illegal castling attempt there
-is counted as an own-destination error. The individual moves were not retained, so
-the affected share cannot be recovered without regenerating the failure sets, and
-we flag it as a known mislabel rather than correct it silently.
+is counted as an own-destination error. The individual moves had not been retained, so the affected share could not be
+recovered without regenerating the failure sets. We have since regenerated them:
+Section~\ref{sec:regen} reports that \result{rcCastling} model-generated failures carried
+this mislabel, that none of them were legal moves, and that the headline classes were
+untouched. The defect is corrected rather than merely disclosed.
 
 \paragraph{What $k$ measures, and what it does not.}
 The statistic counts squares whose alteration \emph{alone} flips the verdict, which is
@@ -331,7 +337,7 @@ and not a relationship in the data. The ordinal claim is supported at the extrem
 where it is now measured. A continuous law predicting an exponent from locality is
 not supported, and we assert none.
 Across all \result{rgRuns} runs the residual class that none of these rules catch
-has a maximum share of \result{shareOtherMax}, so the taxonomy is exhaustive over the
+is empty in every run, so the taxonomy is exhaustive over the
 failures observed. We previously wrote that this also confirmed the classifier
 correct. It does not: assigning every case to some class says nothing about whether
 the assignments are right, and the defect described in Section~\ref{sec:regen} was
@@ -440,8 +446,9 @@ Class shares move by \result{rcDriftMean} on average and at most \result{rcDrift
 changing precision does to the handful of positions where the top two moves are
 nearly tied. We report this rather than assume a rerun reproduces the original. The
 headline differential is \result{rgDiffCheckEmpty} [\result{rgDiffLoCheckEmpty}, \result{rgDiffHiCheckEmpty}] in
-the corrected pass against \result{loroFull} as published, and that residual difference is
-this drift rather than the classifier.
+the corrected pass against \result{rcSupersededDiff}, recomputed from the superseded
+artifacts rather than quoted from memory, and that residual difference is this drift
+rather than the classifier.
 
 \paragraph{The repaired taxonomy changes what geometry means.}
 Splitting geometry is not cosmetic. The two sub-classes scale differently: impossible
@@ -463,9 +470,9 @@ from it.
 \caption{Absolute failure rate per scored position at the smallest and
 largest rung, mean over seeds, and the size exponent with its rung-resampled
 95\% interval. All \result{rgRuns} runs, from the corrected pass of
-Section~\ref{sec:regen}. Classes are grouped by what decides them: the first four are
-decided by the move's own two squares, a blocked path needs one further square, and a
-check violation needs many. The last two rows are not disjoint classes and must not be
+Section~\ref{sec:regen}. Classes are grouped by what decides them: the three source and destination classes
+and impossible movement are settled by the move's own two squares, castling and a
+blocked path need one or a few further squares, and a check violation needs many. The last two rows are not disjoint classes and must not be
 summed with the others, the first being their total and the second a cross-cutting
 flag computed with a probe (Section~\ref{sec:mech}).}
 \label{tab:exponents}
@@ -513,14 +520,15 @@ between the check and empty-source exponents is \result{rgDiffCheckEmpty}
 [\result{rgDiffLoCheckEmpty}, \result{rgDiffHiCheckEmpty}], and it excludes zero.
 
 This is a claim about composition, and composition shifts accordingly. The
-empty-source share of illegal moves falls from \result{shareFromEmptyFirst} to
-\result{shareFromEmptyLast} while the check share rises from
-\result{shareLeavesFirst} to \result{shareLeavesLast}; geometry moves only from
-\result{shareGeometryFirst} to \result{shareGeometryLast}. The shift is
+empty-source share of illegal moves falls from \result{rgShareEmptyFirst} to
+\result{rgShareEmptyLast} while the check share rises from \result{rgShareCheckFirst} to
+\result{rgShareCheckLast}; geometry taken together moves only from \result{rgShareGeomFirst} to
+\result{rgShareGeomLast}, its impossible part barely at all, from \result{rgShareGeomImpFirst}
+to \result{rgShareGeomImpLast}. The shift is
 substantially one class collapsing into another rather than diffuse rebalancing.
 Within models, check violations also concentrate at depth: their share rises from
-early to late game in \result{lcDepthRises} of \result{nRungs} rungs, from
-\result{lcEarlyLarge} to \result{lcLateLarge} at the largest.
+early to late game in \result{rgDepthRises} of \result{nRungs} rungs, from
+\result{rgDepthEarly} to \result{rgDepthLate} at the largest.
 
 Nothing in this section uses model internals. The measurement is a rules engine
 and a move counter, which makes it reproducible against any chess model and immune
@@ -533,8 +541,9 @@ version of this analysis and it is wrong, for a reason that applies to any
 per-category scaling fit and that we have not seen stated.
 
 The categories partition the illegal moves. Their absolute rates must therefore
-sum to the illegal-move rate at every scale. Five independently fitted power laws
-with five different exponents cannot satisfy that identity away from the fitted
+sum to the illegal-move rate at every scale. The \result{rgNClasses} independently fitted
+power laws of the corrected partition, with \result{rgNClasses} different exponents, cannot
+satisfy that identity away from the fitted
 range: the shallowest exponent must eventually dominate a total that is itself
 falling faster. The failure is not gradual. Summing the independently fitted parts
 and dividing by the independently fitted whole gives \result{cmpOverLarge} at our
@@ -791,9 +800,10 @@ invariance to flattening in general, which is wrong, and because temperature alo
 cannot explain the disagreement between metrics reported below: rescaling logits
 does not reorder them, so it cannot change which move is top-1. An edit that
 produces more legal top-1 moves must be reordering logits, not merely flattening
-them, and distinguishing the two needs a temperature-only control that we have not
-run
-of the distribution. Two controls matter. A wrong-target edit installs the same
+them, and distinguishing the two needs a temperature-only control. We report that
+control in Section~\ref{sec:inversion}: top-1 legality turns out to be exactly
+invariant to temperature, so flattening is ruled out as the explanation. Two controls
+matter here as well. A wrong-target edit installs the same
 occupancy at an unrelated square; an irrelevant edit spends an identical budget on
 squares that are wrongly decoded but not touched by the move. Both are matched to
 correct repair in magnitude and construction, and all contrasts are taken on
@@ -848,13 +858,13 @@ occupied-square accuracy, before and after all-square edit & \result{fidOccBefor
 
 \paragraph{What local correction cannot reach.}
 Where decoded belief is already correct at both squares a move touches, a check
-violation accounts for \result{lcWhenLocalOk} of failures on average against
-\result{geomWhenLocalOk} for geometry, and is the largest class in
-\result{lcLargestCount} of \result{nRuns} models. Such failures cannot be attributed
+violation accounts for \result{rgPolCheck} of failures on average against
+\result{rgPolGeom} for geometry taken together, and is the largest class in
+\result{rgPolLargest} of \result{rgPolModels} models. Such failures cannot be attributed
 to the decoded belief being wrong at the move's squares. Their absolute rate is
-flat with size, exponent \result{expCorrLocal} [\result{expCorrLocalLo}, \result{expCorrLocalHi}], a differential
-against empty-source errors of \result{rgExpCorrLoc} minus \result{rgExpEmpty} in the corrected
-pass.
+flat with size, exponent \result{rgExpCorrLoc} [\result{rgExpLoCorrLoc}, \result{rgExpHiCorrLoc}], a differential
+against empty-source errors of \result{rgDiffCorrLocEmpty} [\result{rgDiffLoCorrLocEmpty},
+\result{rgDiffHiCorrLocEmpty}], on the same paired bootstrap as the others.
 
 \paragraph{The flat rate is two effects cancelling, not one effect absent.}
 An earlier version of this paper read that flat exponent as the underlying failure
@@ -899,9 +909,13 @@ legal. On our repair edits that metric orders the conditions nearly in reverse
 preference shift, \result{drCorrect}, and a random direction the smallest,
 \result{drRand}; yet after the edit the random direction leaves a legal top-1 move
 in \result{nlRand} of cases and correct repair in \result{nlCorrect}. The random
-direction also raises output entropy most, by \result{dentRand}. Hedging moves
-probability off a confidently illegal move and onto whatever else is plausible,
-some of which is legal.
+direction also raises output entropy most, by \result{dentRand}. The tempting reading is
+that this is hedging, moving probability off a confidently illegal move and onto
+whatever else is plausible. That reading does not survive the temperature control
+below: flattening a distribution cannot change which move ranks first, so raised
+entropy cannot by itself be what produces the extra legal top-1 moves. The entropy
+change is real and is reported; the mechanism behind the ranking change is not
+established here.
 
 \begin{table}[t]
 \centering\small
@@ -1055,7 +1069,7 @@ The practical reading is about where a mitigation budget goes. A class of failur
 that scale removes on its own is a poor target for engineering effort, and a class
 with an exponent near zero will still be there after the next model upgrade. Our
 estimate is that errors surviving a correct local belief have a flat joint rate,
-exponent \result{expCorrLocal}, which decomposes into a rising chance of decoding the
+exponent \result{rgExpCorrLoc}, which decomposes into a rising chance of decoding the
 position correctly and a conditional failure rate falling with exponent \result{jcCond}.
 The improvement in the conditional rate is real but is cancelled in the headline
 number, so an
@@ -1223,44 +1237,6 @@ decoder, though a single alternative decoder cannot rule out every nonlinear
 encoding.
 
 \section{Integrity record}
-
-\section{Projected Shares Under the Closed Model}
-\label{app:proj}
-
-These figures illustrate the shape of the closed compositional model outside the
-observed range. They are not predictions, for the reason given in the main text: the
-check class is measurably curved within the fitted range, so extending its in-range
-slope is an extrapolation of a quantity already known not to be constant. They are
-included because a bounded projection is a different object from the unbounded one an
-earlier version of this paper reported, and a reader comparing the two should be able
-to see the numbers.
-
-\begin{center}
-\small
-\begin{tabular}{lccc}
-\toprule
-\textbf{Quantity} & \textbf{at \result{paramsLarge}} & \textbf{$10^9$} & \textbf{$10^{12}$} \\
-\midrule
-check share & \result{cmpCheckLarge} & \result{cmpCheckBn} & \result{cmpCheckTn} \\
-geometry, impossible & \result{cmpGeomImpLarge} & \result{cmpGeomImpBn} & \result{cmpGeomImpTn} \\
-geometry, blocked path & \result{cmpGeomBlkLarge} & \result{cmpGeomBlkBn} & \result{cmpGeomBlkTn} \\
-empty source & & & \result{cmpEmptyTn} \\
-policy share (own logit model) & \result{cmpPolicyLarge} & \result{cmpPolicyBn} & \result{cmpPolicyTn} \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The check share rises over this range and turns over at a maximum of \result{cmpCheckMax},
-after which blocked paths take an increasing share, because theirs is the shallowest
-exponent in the corrected partition. Every share stays inside the unit interval,
-which is the bounded behaviour the simplex parameterisation guarantees and the
-property the earlier unbounded fit lacked. We stress again that the reordering
-between the check class and blocked paths is governed by an exponent whose interval
-includes zero, so it should be read as what the fitted model implies and not as a
-finding about large models. The policy share is modelled on its own logit rather
-than inside the simplex, because it cuts across the partition rather than belonging
-to it.
-
 \label{app:integrity}
 
 The analysis plan was frozen and hashed (SHA-256 prefix \texttt{\result{preregHash}}).
@@ -1305,5 +1281,42 @@ analysis repository's version history.
 \ifanon\else\nocite{rathore2026coherent}\fi
 \bibliographystyle{apalike}
 \bibliography{refs}
+
+\section{Projected Shares Under the Closed Model}
+\label{app:proj}
+
+These figures illustrate the shape of the closed compositional model outside the
+observed range. They are not predictions, for the reason given in the main text: the
+check class is measurably curved within the fitted range, so extending its in-range
+slope is an extrapolation of a quantity already known not to be constant. They are
+included because a bounded projection is a different object from the unbounded one an
+earlier version of this paper reported, and a reader comparing the two should be able
+to see the numbers.
+
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Quantity} & \textbf{at \result{paramsLarge}} & \textbf{$10^9$} & \textbf{$10^{12}$} \\
+\midrule
+check share & \result{cmpCheckLarge} & \result{cmpCheckBn} & \result{cmpCheckTn} \\
+geometry, impossible & \result{cmpGeomImpLarge} & \result{cmpGeomImpBn} & \result{cmpGeomImpTn} \\
+geometry, blocked path & \result{cmpGeomBlkLarge} & \result{cmpGeomBlkBn} & \result{cmpGeomBlkTn} \\
+empty source & & & \result{cmpEmptyTn} \\
+policy share (own logit model) & \result{cmpPolicyLarge} & \result{cmpPolicyBn} & \result{cmpPolicyTn} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The check share rises over this range and turns over at a maximum of \result{cmpCheckMax},
+after which blocked paths take an increasing share, because theirs is the shallowest
+exponent in the corrected partition. Every share stays inside the unit interval,
+which is the bounded behaviour the simplex parameterisation guarantees and the
+property the earlier unbounded fit lacked. We stress again that the reordering
+between the check class and blocked paths is governed by an exponent whose interval
+includes zero, so it should be read as what the fitted model implies and not as a
+finding about large models. The policy share is modelled on its own logit rather
+than inside the simplex, because it cuts across the partition rather than belonging
+to it.
 
 \end{document}

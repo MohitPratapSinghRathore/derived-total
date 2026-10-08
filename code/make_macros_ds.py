@@ -479,7 +479,8 @@ if rg:
         put("rgLast" + _t, _e["last"], RG, "{:.4f}")
         if _e.get("fold"):
             put("rgFold" + _t, _e["fold"], RG, "{:.1f}")
-    for _k, _t in (("check - empty", "CheckEmpty"),
+    for _k, _t in (("corr local - empty", "CorrLocEmpty"),
+                   ("check - empty", "CheckEmpty"),
                    ("check - opponent", "CheckOpp"),
                    ("check - geom impossible", "CheckGeomImp")):
         _d = rg.get("differentials", {}).get(_k)
@@ -488,6 +489,35 @@ if rg:
         put("rgDiff" + _t, _d["point"], RG, "{:+.3f}")
         put("rgDiffLo" + _t, _d["lo"], RG, "{:+.3f}")
         put("rgDiffHi" + _t, _d["hi"], RG, "{:+.3f}")
+
+# Shares and depth strata from the corrected pass, so that nothing the prose
+# prints is still produced by the superseded classifier.
+if rg and rg.get("shares_by_rung"):
+    _sh = rg["shares_by_rung"]
+    _f, _l = S.RUNGS[0], S.RUNGS[-1]
+    for _c, _t in (("from_empty", "Empty"), ("leaves_check", "Check"),
+                   ("geometry_impossible", "GeomImp"),
+                   ("geometry_blocked", "GeomBlk")):
+        put("rgShare" + _t + "First", _sh[_f][_c], RG, "{:.3f}")
+        put("rgShare" + _t + "Last", _sh[_l][_c], RG, "{:.3f}")
+    put("rgShareGeomFirst",
+        _sh[_f]["geometry_impossible"] + _sh[_f]["geometry_blocked"], RG, "{:.3f}")
+    put("rgShareGeomLast",
+        _sh[_l]["geometry_impossible"] + _sh[_l]["geometry_blocked"], RG, "{:.3f}")
+    _dp = rg["depth_by_rung"]
+    put("rgDepthRises", rg["depth_rises"], RG, "{:d}")
+    put("rgDepthEarly", _dp[_l]["early"], RG, "{:.3f}")
+    put("rgDepthLate", _dp[_l]["late"], RG, "{:.3f}")
+    put("rgNClasses", len(S.CLASSES_CORRECTED), RG, "{:d}")
+
+# Class composition among failures where local belief was already correct,
+# recomputed on the corrected labels.
+if rg and rg.get("policy_conditioned"):
+    _pc = rg["policy_conditioned"]
+    put("rgPolCheck", _pc["leaves_check"], RG, "{:.3f}")
+    put("rgPolGeom", _pc["geometry"], RG, "{:.3f}")
+    put("rgPolLargest", rg["policy_check_largest"], RG, "{:d}")
+    put("rgPolModels", rg["policy_n_models"], RG, "{:d}")
 
 rc = S.load("regen_compare.json")
 RC = "results/regen_compare.json"
@@ -500,6 +530,8 @@ if rc:
     put("rcGeomImp", rc["flow"].get("geometry->geometry_impossible", 0), RC, "{:,d}")
     put("rcGeomBlk", rc["flow"].get("geometry->geometry_blocked", 0), RC, "{:,d}")
     put("rcDriftMean", rc["drift_mean_abs"], RC, "{:.4f}")
+    if rc.get("superseded_differential") is not None:
+        put("rcSupersededDiff", rc["superseded_differential"], RC, "{:+.3f}")
     put("rcDriftMax", rc["drift_max_abs"], RC, "{:.4f}")
     put("rcMoveEmpty", rc["headline_class_moves"]["from_empty"], RC, "{:d}")
     put("rcMoveCheck", rc["headline_class_moves"]["leaves_check"], RC, "{:d}")

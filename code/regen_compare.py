@@ -90,7 +90,24 @@ def main() -> int:
         for c, v in bycls.items():
             print(f"    {c:14s} mean |delta| {np.mean(v):.5f}")
 
+    # The differential as the superseded pass reported it, recomputed from the
+    # stored structure files rather than transcribed, so the comparison in the
+    # manuscript cites a number with a provenance instead of a remembered one.
+    old_diff = None
+    try:
+        import numpy as _np
+        orows = S.ladder_rows()
+        if orows:
+            _x = _np.log([q["params"] for q in orows])
+            _a = _np.polyfit(_x, _np.log([q["leaves_check"] for q in orows]), 1)[0]
+            _b = _np.polyfit(_x, _np.log([q["from_empty"] for q in orows]), 1)[0]
+            old_diff = float(_a - _b)
+            print(f"superseded pass differential {old_diff:+.4f}")
+    except Exception as exc:                               # noqa: BLE001
+        print("could not recompute the superseded differential:", exc)
+
     out = {"n_failures": n_tot, "n_runs": len(rows),
+           "superseded_differential": old_diff,
            "n_truly_legal": n_legal,
            "flow": {f"{o}->{nw}": c for (o, nw), c in flow.items()},
            "n_relabelled": sum(c for (o, nw), c in flow.items() if o != nw),

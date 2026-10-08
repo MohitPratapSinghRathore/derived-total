@@ -1895,6 +1895,18 @@
   "value": "1.0",
   "source": "results/regen_exponents.json"
  },
+ "rgDiffCorrLocEmpty": {
+  "value": "+0.597",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffLoCorrLocEmpty": {
+  "value": "+0.355",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffHiCorrLocEmpty": {
+  "value": "+0.770",
+  "source": "results/regen_exponents.json"
+ },
  "rgDiffCheckEmpty": {
   "value": "+0.456",
   "source": "results/regen_exponents.json"
@@ -1931,6 +1943,78 @@
   "value": "+0.234",
   "source": "results/regen_exponents.json"
  },
+ "rgShareEmptyFirst": {
+  "value": "0.230",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareEmptyLast": {
+  "value": "0.110",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareCheckFirst": {
+  "value": "0.308",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareCheckLast": {
+  "value": "0.449",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareGeomImpFirst": {
+  "value": "0.233",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareGeomImpLast": {
+  "value": "0.244",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareGeomBlkFirst": {
+  "value": "0.050",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareGeomBlkLast": {
+  "value": "0.089",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareGeomFirst": {
+  "value": "0.284",
+  "source": "results/regen_exponents.json"
+ },
+ "rgShareGeomLast": {
+  "value": "0.333",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDepthRises": {
+  "value": "6",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDepthEarly": {
+  "value": "0.261",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDepthLate": {
+  "value": "0.527",
+  "source": "results/regen_exponents.json"
+ },
+ "rgNClasses": {
+  "value": "7",
+  "source": "results/regen_exponents.json"
+ },
+ "rgPolCheck": {
+  "value": "0.476",
+  "source": "results/regen_exponents.json"
+ },
+ "rgPolGeom": {
+  "value": "0.286",
+  "source": "results/regen_exponents.json"
+ },
+ "rgPolLargest": {
+  "value": "16",
+  "source": "results/regen_exponents.json"
+ },
+ "rgPolModels": {
+  "value": "18",
+  "source": "results/regen_exponents.json"
+ },
  "rcFailures": {
   "value": "16,200",
   "source": "results/regen_compare.json"
@@ -1961,6 +2045,10 @@
  },
  "rcDriftMean": {
   "value": "0.0011",
+  "source": "results/regen_compare.json"
+ },
+ "rcSupersededDiff": {
+  "value": "+0.461",
   "source": "results/regen_compare.json"
  },
  "rcDriftMax": {

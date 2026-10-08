@@ -121,8 +121,97 @@ def main() -> int:
               f"[{e['lo']:+.4f}, {e['hi']:+.4f}]  "
               f"{'excl' if e['excludes_zero'] else 'incl'}")
 
+    # Shares and depth strata, recomputed here so that no quantity the
+    # manuscript prints still comes from the superseded pass. The records carry
+    # the ply of every failure, so the depth bands need no separate artifact.
+    import json as _j
+    shares, depth = {}, {}
+    for r in S.RUNGS:
+        acc, early, late, n_e, n_l = {}, 0.0, 0.0, 0, 0
+        runs = 0
+        for sd in S.SEEDS:
+            p = os.path.join(S.RES, f"attn_{r}_s{sd}_regen.json")
+            if not os.path.exists(p):
+                continue
+            runs += 1
+            recs = _j.load(open(p))["records"]
+            n = len(recs)
+            for c in NEW_CLASSES:
+                acc[c] = acc.get(c, 0.0) + sum(
+                    1 for q in recs if q["new_label"] == c) / n
+            e = [q for q in recs if 20 <= q["ply"] < 40]
+            l = [q for q in recs if q["ply"] >= 60]
+            if e:
+                early += sum(1 for q in e
+                             if q["new_label"] == "leaves_check") / len(e)
+                n_e += 1
+            if l:
+                late += sum(1 for q in l
+                            if q["new_label"] == "leaves_check") / len(l)
+                n_l += 1
+        if not runs:
+            continue
+        shares[r] = {c: v / runs for c, v in acc.items()}
+        depth[r] = {"early": (early / n_e) if n_e else None,
+                    "late": (late / n_l) if n_l else None}
+    out["shares_by_rung"] = shares
+    out["depth_by_rung"] = depth
+    out["depth_rises"] = sum(
+        1 for r, d in depth.items()
+        if d["early"] is not None and d["late"] is not None
+        and d["late"] > d["early"])
+    print("\nSHARES AND DEPTH, corrected pass")
+    first, last = S.RUNGS[0], S.RUNGS[-1]
+    for c in ("from_empty", "leaves_check", "geometry_impossible",
+              "geometry_blocked"):
+        print(f"  {c:22s} share {shares[first][c]:.3f} -> "
+              f"{shares[last][c]:.3f}")
+    print(f"  check share rises with depth in {out['depth_rises']} of "
+          f"{len(depth)} rungs; largest rung "
+          f"{depth[last]['early']:.3f} -> {depth[last]['late']:.3f}")
+
+    # Class composition among failures where local belief was already correct.
+    # These were the last quantities in the manuscript still produced by the
+    # superseded classifier.
+    pol = {}
+    largest = 0
+    n_models = 0
+    for r in S.RUNGS:
+        for sd in S.SEEDS:
+            p = os.path.join(S.RES, f"attn_{r}_s{sd}_regen.json")
+            if not os.path.exists(p):
+                continue
+            recs = [q for q in _j.load(open(p))["records"] if q["is_policy"]]
+            if not recs:
+                continue
+            n_models += 1
+            fr = {}
+            for c in NEW_CLASSES:
+                fr[c] = sum(1 for q in recs if q["new_label"] == c) / len(recs)
+            for c, v in fr.items():
+                pol[c] = pol.get(c, 0.0) + v
+            geom = fr["geometry_impossible"] + fr["geometry_blocked"]
+            if fr["leaves_check"] >= max(geom, *[fr[c] for c in NEW_CLASSES
+                                                 if not c.startswith("geometry")
+                                                 and c != "leaves_check"]):
+                largest += 1
+    if n_models:
+        out["policy_conditioned"] = {
+            c: v / n_models for c, v in pol.items()}
+        out["policy_conditioned"]["geometry"] = (
+            out["policy_conditioned"]["geometry_impossible"]
+            + out["policy_conditioned"]["geometry_blocked"])
+        out["policy_check_largest"] = largest
+        out["policy_n_models"] = n_models
+        pc = out["policy_conditioned"]
+        print("\nWHERE LOCAL BELIEF IS CORRECT, corrected labels")
+        print(f"  leaves_check {pc[chr(108)+chr(101)+chr(97)+chr(118)+chr(101)+chr(115)+chr(95)+chr(99)+chr(104)+chr(101)+chr(99)+chr(107)]:.3f}"
+              f"  geometry {pc[chr(103)+chr(101)+chr(111)+chr(109)+chr(101)+chr(116)+chr(114)+chr(121)]:.3f}"
+              f"  check largest in {largest} of {n_models}")
+
     print("\nHEADLINE DIFFERENTIALS, paired bootstrap")
-    for a, b, lab in (("leaves_check", "from_empty", "check - empty"),
+    for a, b, lab in (("corr_local", "from_empty", "corr local - empty"),
+                      ("leaves_check", "from_empty", "check - empty"),
                       ("leaves_check", "from_opponent", "check - opponent"),
                       ("leaves_check", "geometry_impossible",
                        "check - geom impossible")):

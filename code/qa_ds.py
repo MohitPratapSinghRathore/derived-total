@@ -23,6 +23,28 @@ prose = re.sub(r"\\begin\{(table|figure)\}.*?\\end\{\1\}", " ", body, flags=re.S
 prose = re.sub(r"(?m)%.*$", " ", prose)
 prose_nomac = re.sub(r"\\result\{[^}]*\}", " ", prose)
 
+# De-escaped control sequences. Writing LaTeX through a shell heredoc turns \t
+# into a tab, \r into a carriage return and \e into nothing, so "\texttt" can
+# reach the file as TAB + "exttt" and typesets as visible prose. This has now
+# happened twice in this manuscript's history, once as "esult{" and once as
+# "exttte1g1", and it survives every other gate because the document still
+# compiles. Checking for the control characters catches the cause; checking for
+# orphaned fragments catches the ones that arrive without one.
+gate("\t" not in src and "\r" not in src,
+     "no raw tab or carriage return in source",
+     f"tabs {src.count(chr(9))}, CRs {src.count(chr(13))}")
+ORPHANS = ("esult{", "ef{", "exttt{", "extbf{", "extit{", "egin{", "nd{",
+           "ection{", "aragraph{", "esultdef{", "abel{", "ite{", "mph{")
+found = []
+for frag in ORPHANS:
+    for m in re.finditer(re.escape(frag), src):
+        before = src[m.start() - 1] if m.start() else " "
+        # A legitimate occurrence is preceded by the rest of its command, so the
+        # character before is a letter or a backslash.
+        if not (before.isalpha() or before == "\\"):
+            found.append(frag + " at " + str(m.start()))
+gate(not found, "no de-escaped control sequences", found[:5])
+
 gate("---" not in body, "no em-dash markup")
 gate(not re.search(r"\s--\s", prose_nomac), "no bare -- as punctuation")
 gate("robust" not in src.lower(), "no 'robust'")
@@ -42,18 +64,26 @@ defined = set(re.findall(r"\\defresult\{([^}]+)\}", open(MAC, encoding="utf-8").
 used = set(re.findall(r"\\result\{([^}]+)\}", src))
 gate(not (used - defined), "every \\result key defined", sorted(used - defined))
 
-# Since the corrected classification pass, the pre-correction exponent macros are
-# superseded. They stay defined so the provenance record remains complete, but
-# citing one in the manuscript would make the prose disagree with Table 1. That is
-# the exact drift this paper had to repair, so it gets a gate rather than vigilance.
-SUPERSEDED = {"expFromEmpty", "expFromOpp", "expToOwn", "expLeavesCheck",
-              "diffProbeFree", "diffProbeFreeLo", "diffProbeFreeHi",
-              "diffProbeFreePct", "diffCorr", "diffCorrLo", "diffCorrHi",
-              "ratioFromEmpty", "ratioLeavesCheck", "ratioGeometry",
-              "ratioToOwn", "ratioFromOpp", "absFromEmptyFirst",
-              "absFromEmptyLast", "absLeavesCheckFirst", "absLeavesCheckLast"}
-stale = sorted(used & SUPERSEDED)
-gate(not stale, "no superseded pre-correction macros in prose", stale)
+# Superseded numbers, detected by provenance rather than by a remembered list.
+# Each macro records the result file it came from. The corrected classification
+# pass replaced the per-run structure artifacts, so any macro still sourced from
+# them is superseded by construction and must not appear in the manuscript. This
+# replaces a blocklist that needed widening three times, each time after a stale
+# number had already reached the PDF.
+SUPERSEDED_SOURCE = "attn_*_{structure,natdiv}"
+prov = dict(re.findall(r"\\defresult\{([^}]+)\}\{[^}]*\}\s*%\s*(.*)",
+                       open(MAC, encoding='utf-8').read()))
+# Some macros from those artifacts are properties of the experiment rather than
+# of the classifier, and the corrected pass did not change them: how many runs,
+# rungs and seeds there are, and the endpoint parameter counts. One is
+# deliberately historical: the pre-split geometry exponent, cited as the value
+# the split replaced.
+PASS_INVARIANT = {"nRuns", "nRungs", "nSeeds", "paramsSmall", "paramsLarge",
+                  "expGeometry"}
+stale = sorted(k for k in used
+               if SUPERSEDED_SOURCE in prov.get(k, '')
+               and k not in PASS_INVARIANT)
+gate(not stale, "no macro in prose comes from the superseded pass", stale[:8])
 
 pdf = pypdf.PdfReader(PDF)
 txt = "\n".join((p.extract_text() or "") for p in pdf.pages)
