@@ -1971,6 +1971,50 @@
   "value": "2026-09-05",
   "source": "results/prereg_timing.json"
  },
+ "tcPos": {
+  "value": "7,114",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcTmin": {
+  "value": "0.25",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcTmax": {
+  "value": "8",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcFold": {
+  "value": "32",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcTop1": {
+  "value": "0.8683",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcTop1Dev": {
+  "value": "0",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcMassHi": {
+  "value": "0.863",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcMassLo": {
+  "value": "0.036",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcMassFold": {
+  "value": "24",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcPrefHi": {
+  "value": "0.859",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "tcPrefLo": {
+  "value": "0.563",
+  "source": "results/attn_12L512_s0_temperature.json"
+ },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",
   "source": "results/environment.json"

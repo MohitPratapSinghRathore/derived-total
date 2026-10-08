@@ -558,23 +558,30 @@ attains RMSE \result{cmpRmseSimplex} across the \result{nRuns} runs against
 \result{cmpRmseIndep} for the uncoupled fits, so it is at least as good on the
 data while being the only one of the two that can be extended.
 
-Under the closed model the check category's share rises from \result{cmpCheckLarge}
-at our largest rung to \result{cmpCheckBn} at one billion and \result{cmpCheckTn}
-at one trillion, increasing monotonically toward its upper bound of one as the
-shallowest exponent comes to
-dominate, while the
-locally decidable categories fall to \result{cmpEmptyTn}. The paper's qualitative
-claim is unchanged. What changes is that the projection is now bounded by
-construction, so the figures above are statements the categories can jointly
-satisfy, which the earlier ones were not.
+Under the closed model the check category's share increases monotonically with size
+toward its upper bound of one, as the shallowest exponent comes to dominate, while the
+locally decidable categories decline toward zero. The paper's qualitative claim is
+unchanged. What changes is that the trajectory is now bounded by construction, so it
+describes something the categories can jointly satisfy, which the earlier unbounded
+projection did not.
+
+We no longer put figures for specific far-off scales in the main text. Enforcing
+arithmetic consistency removes one objection to extrapolating, that the parts and the
+total contradicted each other, but it does not supply a licence to extend a fitted
+exponent far past the data, and we have independent reason here not to: the check
+class shows detectable curvature inside the observed range (Section~\ref{sec:limits}),
+so the in-range slope is already not a constant. The projected values are given in
+Appendix~\ref{app:proj} for readers who want them, as an illustration of the closed
+model's shape rather than as a prediction.
 
 The same discipline applies to the policy share, the fraction of illegal moves
 occurring despite correctly decoded local belief. It is not a member of the
 partition, since it cuts across the classes, but it is a proportion, and fitting a
 proportion linearly in $\log N$ is unbounded in exactly the same way. Fitted on the
-logit it rises from \result{cmpPolicyLarge} at our largest rung to
-\result{cmpPolicyBn} at one billion and \result{cmpPolicyTn} at one trillion, having
-been observed between \result{cmpPolicyObsLo} and \result{cmpPolicyObsHi}. We report
+logit it increases with size from \result{cmpPolicyLarge} at our largest rung, having been
+observed between \result{cmpPolicyObsLo} and \result{cmpPolicyObsHi}, and remains bounded above
+by one however far it is extended; the projected values are in
+Appendix~\ref{app:proj}. We report
 it separately rather than folding it into the simplex; an earlier version of this
 analysis did fold it in, which is wrong and which manufactured a spurious interior
 maximum in the check category.
@@ -929,6 +936,41 @@ change it, so something other than flattening is at work and we have not identif
 it.
 
 % ====================================================================
+
+\paragraph{A temperature-only control, which rules out the flattening account.}
+An earlier version of this paper explained the inversion by saying that illegal-move
+rate rewards edits which flatten the output distribution. That account cannot be
+right, and the reason is short enough to settle without an experiment: dividing
+logits by a temperature is a monotone transformation, so it cannot reorder them, so it
+cannot change which move ranks first. Top-1 legality is therefore invariant to
+flattening exactly, not approximately, and whatever the random edits are doing, they
+are not winning on this metric by hedging.
+
+We ran the control regardless, because an assertion of exact invariance is a claim
+about our implementation as well as about the mathematics, and because the quantities
+that are not invariant are the informative part. Over \result{tcPos} scored positions
+of the largest model, sweeping temperature across a \result{tcFold}-fold range from
+\result{tcTmin} to \result{tcTmax} leaves top-1 legality at \result{tcTop1} throughout, with a maximum
+deviation of \result{tcTop1Dev}: not small but identically zero, as it must be. The ranks of
+the fixed candidate pair do not move either.
+
+The other two measures move a great deal. Total probability mass on legal moves falls
+from \result{tcMassHi} to \result{tcMassLo} over the same sweep, a factor of \result{tcMassFold}, and the
+forced-choice preference between the best legal move and the top illegal one drifts
+from \result{tcPrefHi} toward \result{tcPrefLo}, approaching the indifference value of one half as
+the temperature rises. The candidate pair is fixed from the unmodified logits before
+the sweep, so this is the preference moving and not the selection of what to compare.
+
+Three measures of the same model under the same manipulation therefore behave in three
+ways: one cannot move at all, one collapses, and one decays toward indifference. This
+is the defensible form of the paper's point about measurement. It is not that
+illegal-move rate is an inverted measure of quality, nor that the random edits are
+merely hedging. It is that the random edits genuinely do better on top-1 legality,
+the repair genuinely does better on the forced choice, and these cannot both be
+summarised by one number. Which of them tracks move quality is a question this paper
+does not answer, and identifying what the random edits change about the ranking, given
+that flattening cannot, is the obvious next experiment.
+
 \section{Discussion}
 
 The practical content is about where effort goes. The class that does not fall
@@ -1168,6 +1210,36 @@ decoder, though a single alternative decoder cannot rule out every nonlinear
 encoding.
 
 \section{Integrity record}
+
+\section{Projected Shares Under the Closed Model}
+\label{app:proj}
+
+These figures illustrate the shape of the closed compositional model outside the
+observed range. They are not predictions, for the reason given in the main text: the
+check class is measurably curved within the fitted range, so extending its in-range
+slope is an extrapolation of a quantity already known not to be constant. They are
+included because a bounded projection is a different object from the unbounded one an
+earlier version of this paper reported, and a reader comparing the two should be able
+to see the numbers.
+
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Quantity} & \textbf{at \result{paramsLarge}} & \textbf{$10^9$} & \textbf{$10^{12}$} \\
+\midrule
+check share & \result{cmpCheckLarge} & \result{cmpCheckBn} & \result{cmpCheckTn} \\
+locally decidable share & & & \result{cmpEmptyTn} \\
+policy share (own logit model) & \result{cmpPolicyLarge} & \result{cmpPolicyBn} & \result{cmpPolicyTn} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The check share approaches one from below and the locally decidable shares approach
+zero, which is the bounded behaviour the simplex parameterisation guarantees. The
+policy share is modelled on its own logit rather than inside the simplex, because it
+cuts across the partition rather than belonging to it.
+
 \label{app:integrity}
 
 The analysis plan was frozen and hashed (SHA-256 prefix \texttt{\result{preregHash}}).

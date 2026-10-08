@@ -511,6 +511,22 @@ if pt:
         if pt.get(_k):
             put(_t, pt[_k]["date"].split(" ")[0], PT)
 
+tc = S.load("attn_12L512_s0_temperature.json")
+TC = "results/attn_12L512_s0_temperature.json"
+if tc:
+    put("tcPos", tc["n_positions"], TC, "{:,d}")
+    put("tcTmin", min(tc["temperatures"]), TC, "{:g}")
+    put("tcTmax", max(tc["temperatures"]), TC, "{:g}")
+    put("tcFold", max(tc["temperatures"]) / min(tc["temperatures"]), TC, "{:g}")
+    put("tcTop1", tc["by_temp"]["1.0"]["top1_legal_rate"], TC, "{:.4f}")
+    put("tcTop1Dev", tc["top1_max_deviation"], TC, "{:.0f}")
+    put("tcMassHi", max(tc["legal_mass_range"]), TC, "{:.3f}")
+    put("tcMassLo", min(tc["legal_mass_range"]), TC, "{:.3f}")
+    put("tcMassFold", max(tc["legal_mass_range"]) / min(tc["legal_mass_range"]),
+        TC, "{:.0f}")
+    put("tcPrefHi", max(tc["pref_range"]), TC, "{:.3f}")
+    put("tcPrefLo", min(tc["pref_range"]), TC, "{:.3f}")
+
 env = S.load("environment.json")
 EV = "results/environment.json"
 put("envGpu", env["gpu_name"], EV)
