@@ -87,6 +87,17 @@ def main():
                                       "ScaleFixesLocalErrorsFirst_TitlePage.docx")],
                   cwd=PAPER, quiet=True)
     rc |= run([PY, os.path.join(ROOT, "code", "qa_ds.py")])
+    # Supplementary material: generated from the result files, then compiled, so
+    # a supplementary table cannot quietly stop matching the analysis.
+    rc |= run([PY, os.path.join(ROOT, "code", "make_supplement.py")])
+    rc |= run([TECTONIC, "-X", "compile", "supplement.tex", "--outdir", BUILD],
+              cwd=PAPER, quiet=True)
+    if shutil.which("pandoc"):
+        rc |= run(["pandoc", "supplement.tex", "-o",
+                   os.path.join(BUILD,
+                                "ScaleFixesLocalErrorsFirst_Supplement.docx")],
+                  cwd=PAPER, quiet=True)
+
     # The LaTeX source archive, verified by compiling its own contents.
     rc |= run([PY, os.path.join(ROOT, "code", "make_submission_zip.py")])
     rc |= run([PY, os.path.join(ROOT, "code", "consistency_audit.py")])

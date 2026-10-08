@@ -1,0 +1,299 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\title{\bf Supplementary Material\\
+\large Scale Fixes Local Errors First: Differential Scaling of Chess Transformer Failures}
+\author{Mohit Pratap Singh Rathore \and Gunveer Singh Kalsi \and Sriharsha Meduri\\ \small Oviqo Private Limited}
+\date{}
+
+\begin{document}
+\maketitle
+
+This document holds the per-run tables and verification records that the
+manuscript summarises. Every table is generated from the result files in the
+public repository by \texttt{code/make\_supplement.py}, so a table here cannot
+drift away from the analysis it reports. Section numbers are prefixed S and the
+tables are numbered S1 onward.
+
+\section{Reproduction}
+
+The analysis runs in the following order. Each step writes result files that
+the next step reads, and the manuscript's numbers are generated from those
+files by the macro pipeline rather than typed.
+
+\begin{enumerate}
+\item \texttt{code/prep\_data.py}, \texttt{code/make\_states.py}: tokenise games and record ground-truth board state.
+\item \texttt{code/run\_grid.py}: train the 18 runs of the ladder.
+\item \texttt{code/full\_classification.py}: classify every failure at every scored position.
+\item \texttt{code/regen\_exponents.py}, \texttt{code/compositional.py}, \texttt{code/robustness\_checks.py}: fit exponents, the closed compositional model, and the leave-one-rung-out refits.
+\item \texttt{code/make\_macros\_ds.py}: write every number the manuscript prints, with its source file recorded beside it.
+\item \texttt{code/build\_ds.py}: build the manuscript and run the gates and the consistency audit.
+\end{enumerate}
+
+All of it runs on one NVIDIA GeForce RTX 3050 Laptop GPU with 4 GiB of device memory under Windows 11, using Python 3.12.10, PyTorch 2.5.1+cu121, NumPy 2.4.6 and python-chess 1.11.2. The classification and analysis steps run on CPU; training used the GPU.
+
+\section{Per-run training detail}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Per-run training detail, read out of the checkpoints. Every run shares one recipe; the final checkpoint is also the lowest-validation-loss checkpoint in 18 of 18 runs, so checkpoint selection carries none of the result.}
+\label{tab:s-training}
+\begin{tabular}{llrrrrrrrr}
+\toprule
+rung & seed & params & L & d & heads & steps & tokens (M) & val. & best \\
+\midrule
+6L192 & 0 & 3,440,064 & 6 & 192 & 6 & 12,000 & 30.0 & 3.3423 & 3.3423 \\
+6L192 & 1 & 3,440,064 & 6 & 192 & 6 & 12,000 & 30.0 & 3.3489 & 3.3489 \\
+6L192 & 2 & 3,440,064 & 6 & 192 & 6 & 12,000 & 30.0 & 3.3388 & 3.3388 \\
+8L256 & 0 & 7,345,920 & 8 & 256 & 8 & 12,000 & 30.0 & 3.0287 & 3.0287 \\
+8L256 & 1 & 7,345,920 & 8 & 256 & 8 & 12,000 & 30.0 & 3.0371 & 3.0371 \\
+8L256 & 2 & 7,345,920 & 8 & 256 & 8 & 12,000 & 30.0 & 3.0375 & 3.0375 \\
+12L256 & 0 & 10,504,960 & 12 & 256 & 8 & 12,000 & 30.0 & 2.9166 & 2.9166 \\
+12L256 & 1 & 10,504,960 & 12 & 256 & 8 & 12,000 & 30.0 & 2.9279 & 2.9279 \\
+12L256 & 2 & 10,504,960 & 12 & 256 & 8 & 12,000 & 30.0 & 2.9129 & 2.9129 \\
+8L384 & 0 & 15,737,472 & 8 & 384 & 8 & 12,000 & 30.0 & 2.8401 & 2.8401 \\
+8L384 & 1 & 15,737,472 & 8 & 384 & 8 & 12,000 & 30.0 & 2.8538 & 2.8538 \\
+8L384 & 2 & 15,737,472 & 8 & 384 & 8 & 12,000 & 30.0 & 2.8353 & 2.8353 \\
+12L384 & 0 & 22,835,328 & 12 & 384 & 8 & 12,000 & 30.0 & 2.7537 & 2.7537 \\
+12L384 & 1 & 22,835,328 & 12 & 384 & 8 & 12,000 & 30.0 & 2.7482 & 2.7482 \\
+12L384 & 2 & 22,835,328 & 12 & 384 & 8 & 12,000 & 30.0 & 2.7527 & 2.7527 \\
+12L512 & 0 & 39,884,288 & 12 & 512 & 8 & 12,000 & 30.0 & 2.7095 & 2.7095 \\
+12L512 & 1 & 39,884,288 & 12 & 512 & 8 & 12,000 & 30.0 & 2.7001 & 2.7001 \\
+12L512 & 2 & 39,884,288 & 12 & 512 & 8 & 12,000 & 30.0 & 2.7065 & 2.7065 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Per-run evaluation and failure counts}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Per-run evaluation counts. Every failure at every scored position is classified, so these are counts rather than sampled shares: 110,545 failures over 622,998 model-position evaluations, each model being evaluated at the same 34,611 unique positions. No recorded failure was a legal move under the corrected gate.}
+\label{tab:s-counts}
+\begin{tabular}{llrrrrrrrrrr}
+\toprule
+rung & seed & positions & failures & rate & empty & opp & own & cast & g.imp & g.blk & check \\
+\midrule
+6L192 & 0 & 34,611 & 8,703 & 0.25145 & 2,164 & 406 & 1,165 & 41 & 2,006 & 505 & 2,416 \\
+6L192 & 1 & 34,611 & 8,830 & 0.25512 & 2,183 & 496 & 1,181 & 52 & 1,940 & 504 & 2,474 \\
+6L192 & 2 & 34,611 & 8,715 & 0.25180 & 2,130 & 430 & 1,230 & 54 & 1,957 & 528 & 2,386 \\
+8L256 & 0 & 34,611 & 6,735 & 0.19459 & 1,150 & 273 & 854 & 32 & 1,639 & 514 & 2,273 \\
+8L256 & 1 & 34,611 & 6,879 & 0.19875 & 1,110 & 271 & 856 & 27 & 1,771 & 533 & 2,311 \\
+8L256 & 2 & 34,611 & 6,825 & 0.19719 & 1,113 & 294 & 857 & 31 & 1,733 & 546 & 2,251 \\
+12L256 & 0 & 34,611 & 6,192 & 0.17890 & 872 & 221 & 731 & 20 & 1,639 & 517 & 2,192 \\
+12L256 & 1 & 34,611 & 6,174 & 0.17838 & 857 & 216 & 709 & 31 & 1,610 & 487 & 2,264 \\
+12L256 & 2 & 34,611 & 6,041 & 0.17454 & 777 & 209 & 709 & 22 & 1,584 & 515 & 2,225 \\
+8L384 & 0 & 34,611 & 5,597 & 0.16171 & 728 & 188 & 578 & 19 & 1,386 & 522 & 2,176 \\
+8L384 & 1 & 34,611 & 5,590 & 0.16151 & 760 & 257 & 643 & 15 & 1,336 & 472 & 2,107 \\
+8L384 & 2 & 34,611 & 5,433 & 0.15697 & 731 & 157 & 586 & 29 & 1,368 & 493 & 2,069 \\
+12L384 & 0 & 34,611 & 5,116 & 0.14781 & 590 & 148 & 500 & 19 & 1,369 & 476 & 2,014 \\
+12L384 & 1 & 34,611 & 5,010 & 0.14475 & 590 & 131 & 464 & 15 & 1,314 & 484 & 2,012 \\
+12L384 & 2 & 34,611 & 4,968 & 0.14354 & 591 & 144 & 480 & 17 & 1,268 & 454 & 2,014 \\
+12L512 & 0 & 34,611 & 4,586 & 0.13250 & 507 & 117 & 411 & 21 & 1,177 & 428 & 1,925 \\
+12L512 & 1 & 34,611 & 4,509 & 0.13028 & 497 & 121 & 389 & 19 & 1,131 & 445 & 1,907 \\
+12L512 & 2 & 34,611 & 4,642 & 0.13412 & 512 & 126 & 419 & 17 & 1,175 & 438 & 1,955 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Exponents, endpoints and fold drops}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Absolute failure rate per scored position at the smallest and largest rung, the fold drop between them, and the size exponent with its rung-resampled interval. The last three rows are not disjoint classes and must not be summed with the others.}
+\label{tab:s-exponents}
+\begin{tabular}{lrrrrlc}
+\toprule
+class & at smallest & at largest & fold & exponent & 95\% CI & excl.\ 0 \\
+\midrule
+empty source & 0.0624 & 0.0146 & 4.3 & -0.5891 & [-0.7541, -0.3847] & yes \\
+opponent source & 0.0128 & 0.0035 & 3.7 & -0.5375 & [-0.6129, -0.4486] & yes \\
+own destination & 0.0344 & 0.0117 & 2.9 & -0.4518 & [-0.5077, -0.4252] & yes \\
+castling & 0.0014 & 0.0005 & 2.6 & -0.4154 & [-0.5974, -0.1503] & yes \\
+geometry, impossible & 0.0569 & 0.0335 & 1.7 & -0.2223 & [-0.2663, -0.1810] & yes \\
+geometry, blocked path & 0.0148 & 0.0126 & 1.2 & -0.0694 & [-0.1183, -0.0154] & yes \\
+leaves check & 0.0701 & 0.0557 & 1.3 & -0.0966 & [-0.1144, -0.0851] & yes \\
+\textit{pooled local} & 0.1665 & 0.0634 & 2.6 & -0.3972 & [-0.4599, -0.3184] & yes \\
+\textit{all illegal} & 0.2528 & 0.1323 & 1.9 & -0.2664 & [-0.3067, -0.2160] & yes \\
+\textit{despite correct local belief} & 0.0436 & 0.0395 & 1.1 & -0.0365 & [-0.0943, +0.0314] & no \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Paired differentials, bootstrapped on the same rung resamples so each interval is on the difference itself.}
+\label{tab:s-diffs}
+\begin{tabular}{lrlc}
+\toprule
+differential & point & 95\% CI & excl.\ 0 \\
+\midrule
+check - local pooled & +0.3006 & [+0.2125, +0.3746] & yes \\
+check - empty & +0.4925 & [+0.2777, +0.6697] & yes \\
+check - opponent & +0.4409 & [+0.3409, +0.5183] & yes \\
+check - geom impossible & +0.1257 & [+0.1026, +0.1564] & yes \\
+corr local - empty & +0.5526 & [+0.4160, +0.6593] & yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Leave one rung out}
+
+\begin{table}[htbp]
+\centering\small
+\caption{The headline differential refitted with each rung deleted in turn. The sign is unchanged in every refit and the largest shift is 0.1352, so no single rung carries the result.}
+\label{tab:s-loro}
+\begin{tabular}{lrr}
+\toprule
+fit & check $-$ empty & shift \\
+\midrule
+full ladder & +0.4925 & -- \\
+without 6L192 & +0.3573 & -0.1352 \\
+without 8L256 & +0.5045 & +0.0120 \\
+without 12L256 & +0.5017 & +0.0092 \\
+without 8L384 & +0.4899 & -0.0026 \\
+without 12L384 & +0.4868 & -0.0057 \\
+without 12L512 & +0.5816 & +0.0891 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Locality measurements}
+
+For a position and an illegal move, $k$ counts the squares whose contents can alone flip the legality verdict, excluding the two the move names. It is computed by brute force with no model involved, so it is a property of the rules and the position.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Dependency set sizes over 120 games. The two geometry rows subdivide the geometry row above them; castling was sampled separately once the audit identified it as a distinct class.}
+\label{tab:s-locality}
+\begin{tabular}{lrrrrrr}
+\toprule
+class & $n$ & mean $k$ & median & sd & min & max \\
+\midrule
+from empty & 960 & 0.000 & 0 & 0.00 & 0 & 0 \\
+from opponent & 960 & 0.000 & 0 & 0.00 & 0 & 0 \\
+to own & 949 & 0.000 & 0 & 0.00 & 0 & 0 \\
+geometry & 960 & 0.019 & 0 & 0.14 & 0 & 1 \\
+geometry impossible & 932 & 0.000 & 0 & 0.00 & 0 & 0 \\
+geometry blocked & 28 & 0.643 & 1 & 0.48 & 0 & 1 \\
+castling & 603 & 0.128 & 0 & 0.45 & 0 & 7 \\
+leaves check & 375 & 17.491 & 17 & 11.34 & 0 & 55 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The statistic counts single-square sufficiency, which undercounts when no single square is sufficient. The deficit is characterised rather than unknown: among the 28 blocked-path moves, those with one blocker have $k=1$ in 18 of 19 cases, and all 9 moves with two or more blockers have $k=0$, since removing either blocker alone leaves the path blocked.
+
+\section{The classifier correction, audited}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Class flow under the corrected classifier, over the 16,200 audited moves that carry both labels. No move entered or left either class the headline differential uses, so the relabelling cannot have changed it.}
+\label{tab:s-flow}
+\begin{tabular}{llrl}
+\toprule
+old label & new label & moves &  \\
+\midrule
+leaves check & leaves check & 6,143 &  \\
+geometry & geometry impossible & 4,106 & changed \\
+from empty & from empty & 2,327 &  \\
+to own & to own & 1,701 &  \\
+geometry & geometry blocked & 1,352 & changed \\
+from opponent & from opponent & 462 &  \\
+to own & castling & 109 & changed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{The original failure gate tested membership in the generated legal moves; the corrected gate tests legality directly. The two differ only on the king-onto-rook castling encoding. Over every scored position of every run they disagree at 0 positions, so the aggregate rate is unaffected over the whole set and not merely in a sample.}
+\label{tab:s-gates}
+\begin{tabular}{lrrrr}
+\toprule
+run & positions & membership gate & legality gate & disagree \\
+\midrule
+6L192 s0 & 34,611 & 0.251452 & 0.251452 & 0 \\
+6L192 s1 & 34,611 & 0.255121 & 0.255121 & 0 \\
+6L192 s2 & 34,611 & 0.251799 & 0.251799 & 0 \\
+8L256 s0 & 34,611 & 0.194591 & 0.194591 & 0 \\
+8L256 s1 & 34,611 & 0.198752 & 0.198752 & 0 \\
+8L256 s2 & 34,611 & 0.197192 & 0.197192 & 0 \\
+12L256 s0 & 34,611 & 0.178903 & 0.178903 & 0 \\
+12L256 s1 & 34,611 & 0.178383 & 0.178383 & 0 \\
+12L256 s2 & 34,611 & 0.174540 & 0.174540 & 0 \\
+8L384 s0 & 34,611 & 0.161712 & 0.161712 & 0 \\
+8L384 s1 & 34,611 & 0.161509 & 0.161509 & 0 \\
+8L384 s2 & 34,611 & 0.156973 & 0.156973 & 0 \\
+12L384 s0 & 34,611 & 0.147814 & 0.147814 & 0 \\
+12L384 s1 & 34,611 & 0.144752 & 0.144752 & 0 \\
+12L384 s2 & 34,611 & 0.143538 & 0.143538 & 0 \\
+12L512 s0 & 34,611 & 0.132501 & 0.132501 & 0 \\
+12L512 s1 & 34,611 & 0.130277 & 0.130277 & 0 \\
+12L512 s2 & 34,611 & 0.134119 & 0.134119 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Why the headline differential moved, varying one thing at a time. The dominant term is the estimator, not the hardware: the sampled estimator was biased by corpus order. The classifier term is exactly zero, which independently confirms the flow table.}
+\label{tab:s-drift}
+\begin{tabular}{lllrrr}
+\toprule
+configuration & classifier & arithmetic & estimator & check $-$ empty & shift \\
+\midrule
+A published & old & float16 GPU & sampled & +0.4613 & -- \\
+B precision & old & float32 CPU & sampled & +0.4561 & -0.0052 \\
+C estimator & old & float32 CPU & full set & +0.4925 & +0.0364 \\
+D classifier & new & float32 CPU & full set & +0.4925 & +0.0000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The decomposition of the near-flat joint rate is exact rather than estimated, and that commits it to a checkable property. Since the identity holds position by position, the logs add and an ordinary-least-squares slope is a linear functional of the response, the three exponents must sum. They do, to 2.4e-16: +0.1479 for the marginal and -0.1844 for the conditional give -0.0365 for the joint.
+
+\section{What the verification suite checks}
+
+The build fails rather than warns. Two kinds of check run on every build: gates on the manuscript, and invariants between quantities that must agree. Each was added after a defect of its kind reached a draft.
+
+\begin{itemize}
+\item \textbf{Provenance.} Every number in the manuscript resolves to a macro with a recorded source file, no decimal may be typed in prose, and no macro sourced from the superseded classification pass may appear at all.
+\item \textbf{De-escaped control sequences.} Raw tabs and carriage returns in the source, and orphaned fragments such as \texttt{exttt}, which typeset as visible prose while the document still compiles.
+\item \textbf{Arithmetic.} The partition sums to the illegal-move rate; fold drops agree with their endpoints; relabelling counts sum to their components; the exponents of an exact decomposition sum to the exponent they decompose.
+\item \textbf{Significance.} No class may be described as having an interval that includes zero when its interval excludes it.
+\item \textbf{Scope.} Every cross-reference resolves; every quoted count is no larger than its total; the anonymous build contains no author identity; the source archive compiles from its own extracted contents.
+\end{itemize}
+
+\section{Artifact inventory}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Result files cited by the manuscript or this supplement. All are in the public repository.}
+\label{tab:s-artifacts}
+\begin{tabular}{ll}
+\toprule
+file under \texttt{results/} & contents \\
+\midrule
+\texttt{full\_classification.json} & every failure classified, per run \\
+\texttt{regen\_exponents.json} & exponents, shares, depth bands, differentials \\
+\texttt{attn\_*\_regen.json} & the audited sample, each move under both labels \\
+\texttt{aggregate\_gate\_check.json} & both legality gates on every position \\
+\texttt{drift\_decomposition.json} & why the headline differential moved \\
+\texttt{locality\_index.json} & dependency set sizes by class \\
+\texttt{blocker\_check.json} & the multi-blocker characterisation of $k$ \\
+\texttt{training\_table.json} & per-run architecture and training detail \\
+\texttt{compositional.json} & the closed simplex fit and the closure argument \\
+\texttt{robustness\_checks.json} & leave-one-rung-out refits \\
+\texttt{joint\_vs\_conditional.json} & the exact decomposition and its additivity \\
+\texttt{environment.json} & hardware and library versions \\
+\texttt{prereg\_timing.json} & registration dates read from the git history \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

@@ -22,7 +22,8 @@ BUILD = os.path.join(ROOT, "build_scaling")
 TECTONIC = os.path.join(ROOT, "tools", "tectonic.exe")
 OUT = os.path.join(BUILD, "ScaleFixesLocalErrorsFirst_LaTeX.zip")
 
-FILES = ["main.tex", "titlepage.tex", "results_macros.tex", "refs.bib"]
+FILES = ["main.tex", "titlepage.tex", "supplement.tex", "results_macros.tex",
+         "refs.bib"]
 
 
 def main() -> int:
