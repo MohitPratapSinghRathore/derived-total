@@ -42,17 +42,18 @@ asked which errors it removes. We classify every illegal move made by search-fre
 chess transformers by what made it illegal, using only a rules engine, and measure
 how each class's absolute rate falls with model size. Across
 \result{rgRuns} models spanning \result{paramsSmall} to \result{paramsLarge} parameters, errors decidable
-from the move's own squares fall with exponent \result{rgExpEmpty}, while moves illegal
-only because they leave the king in check fall with exponent \result{rgExpCheck}: a paired
-differential of \result{rgDiffCheckEmpty} [\result{rgDiffLoCheckEmpty}, \result{rgDiffHiCheckEmpty}]. Every
-class improves; the rates differ. Failures occurring despite
+from the move's own two squares fall, pooled, with exponent \result{rgExpLocalPooled}, while
+moves illegal only because they leave the king in check fall with exponent
+\result{rgExpCheck}: a paired differential of \result{rgDiffCheckLocal} [\result{rgDiffLoCheckLocal},
+\result{rgDiffHiCheckLocal}]. Every
+class has a negative fitted slope, and the rates differ. Failures occurring despite
 correctly decoded local state have a nearly flat joint rate, because improving
 decoding offsets a conditional failure rate falling with exponent \result{jcCond}. The
 ordering replicates on an independent character-level ladder spanning a
 \result{kSpan}-fold parameter range, and in OthelloGPT \result{othNoFlank} of \result{othFail} residual
-failures are of the non-local kind. Internal belief is coupled to action locally,
-and the repair we test installs about two squares but no reliable whole-board
-correction. Two reasonable scores of the same intervention then disagree:
+failures are of the non-local kind. The repair we test installs about two
+squares but no reliable whole-board correction, and two reasonable scores of it
+disagree:
 illegal-move rate ranks a norm-matched random edit above correct repair in
 \result{invCount} of \result{invN} models, while the repair shifts a fixed forced choice
 further, so one headline number cannot settle whether an intervention helped.
@@ -101,13 +102,14 @@ intervention, or interpretability method enters this result.
 independent ladder with different data, notation, and training code, and in a
 game whose legality is non-local by construction.
 \item \textbf{The slowest-improving component is the one local correction cannot
-reach.} Every disjoint failure class improves with scale; they differ in how fast.
+reach.} Every disjoint failure class has a negative fitted slope, significantly so for all
+but blocked paths; what differs is the rate.
 Internal belief is causally coupled to action at the squares a move touches, the
 repair procedure we test installs about two squares reliably and whole-board
 correction not at all, and failures occurring despite correct belief at those squares
 have a nearly flat joint rate because improving decoding offsets a falling
 conditional failure rate.
-\item \textbf{The usual way of scoring interventions reads this backwards.}
+\item \textbf{Two reasonable ways of scoring interventions disagree.}
 Illegal-move rate prefers a norm-matched random direction to the correct repair in
 every model, while the repair moves a fixed forced choice further. The two scores
 disagree, and we show the obvious explanation is not available: top-1 legality is
@@ -345,7 +347,11 @@ present throughout while the residual class stayed empty.
 
 \paragraph{Absolute rates, not shares.}
 We report each class as a fraction of all scored positions, its share of illegal
-moves multiplied by the illegal-move rate. Shares are misleading here: the
+moves multiplied by the illegal-move rate. Both factors come from the corrected pass:
+the share from the regenerated records and the rate from the full-set scoring
+described in Section~\ref{sec:regen}, which the two gates agree on exactly. The
+endpoint rates are unchanged from the earlier version because the gates agree, not
+because an old aggregate was reused. Shares are misleading here: the
 illegal-move rate itself falls with size, so a class whose absolute rate falls can
 still grow as a share of what remains. We state this because an earlier draft of
 this analysis read a rising share as the model getting worse at a class it was in
@@ -417,8 +423,17 @@ The difference between the two labels is then caused by the classifier alone, an
 cannot be confounded with any numerical difference between this pass and the original.
 
 \paragraph{No legal move was ever counted as a failure.}
-Across \result{rcFailures} recorded failures from all \result{rcRuns} runs, \result{rcLegal} were legal under
-the corrected gate. The failure mode that would have been most damaging, legal moves
+The audited set is a fixed-size sample: the pass records the first \result{rcPerRun} failures
+each model makes on the evaluation split, \result{rcFailures} across all \result{rcRuns} runs, which is
+the same sampling rule the original pass used and so the same population Table~\ref{tab:exponents}
+describes. Of those, \result{rcLegal} were legal under the corrected gate.
+
+A sample can only support a statement about the sample, and the aggregate rate is
+computed over every scored position rather than over sampled failures, so we checked
+the whole set as well. Scoring all \result{agPos} positions of the evaluation split for each
+of the \result{agRuns} runs under both gates, the membership test and the direct legality test,
+the two disagree at \result{agDisagree} positions. The aggregate illegal-move rate is therefore
+unaffected over the full set and not merely in the audited sample. The failure mode that would have been most damaging, legal moves
 inflating the failure counts and with them the aggregate rates, did not occur. The
 reason is visible once the mechanism is stated: for the defect to bite, a model must
 emit the king-onto-rook form while castling is actually available, and these models
@@ -510,8 +525,15 @@ class falls faster than the global one.}
 
 Every class falls with size, so the result is not that larger models get worse at
 anything. It is that they get better at different things at very different rates
-(Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The exponents order
-themselves by how local the rule is. Empty-source errors fall with exponent
+(Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The extremes order
+themselves by how local the rule is, but the ordering is not monotone across every
+class and we do not claim it is: castling improves fastest of all at \result{rgExpCastle} despite
+needing more than the move's two squares, and blocked paths have the shallowest point
+estimate with an interval that includes zero. What the data support is the specific
+comparison. Errors decidable from the move's own two squares, pooled, fall with
+exponent \result{rgExpLocalPooled} [\result{rgExpLoLocalPooled}, \result{rgExpHiLocalPooled}], against
+\result{rgExpCheck} for check violations, a paired differential of \result{rgDiffCheckLocal}
+[\result{rgDiffLoCheckLocal}, \result{rgDiffHiCheckLocal}]. Taken singly, empty-source errors fall with exponent
 \result{rgExpEmpty}; geometry splits into movements no arrangement of the other squares
 would permit, with \result{rgExpGeomImp}, and blocked paths, which do depend on the squares
 between source and destination, with \result{rgExpGeomBlk}; and check violations, which
@@ -540,8 +562,12 @@ report what they imply at, say, one billion parameters. We did this in an earlie
 version of this analysis and it is wrong, for a reason that applies to any
 per-category scaling fit and that we have not seen stated.
 
-The categories partition the illegal moves. Their absolute rates must therefore
-sum to the illegal-move rate at every scale. The \result{rgNClasses} independently fitted
+The categories partition the illegal moves. Their absolute rates must therefore sum
+to the illegal-move rate at every scale. The difficulty is not that approximate
+in-range fits disagree slightly, which is ordinary and harmless; several curves can
+each describe the data well over a range without any contradiction. It appears when
+those fits are treated as jointly exact and extended, because then the identity is
+being asserted at scales where the functional forms cannot satisfy it. The \result{rgNClasses} independently fitted
 power laws of the corrected partition, with \result{rgNClasses} different exponents, cannot
 satisfy that identity away from the fitted
 range: the shallowest exponent must eventually dominate a total that is itself
@@ -581,11 +607,16 @@ rather than unbounded as in the earlier projection.
 
 We put little weight on that asymptotic reordering, and say so here rather than
 letting the appendix imply otherwise. It is decided entirely by the blocked-path
-exponent, whose interval includes zero and which rests on the smallest category in
-the partition. The claim we defend is the ordering in range; which class wins at
+exponent, which is the least well determined number in the partition: its interval
+includes zero, and it is fitted on a category whose rate barely moves across the
+ladder, from \result{rgFirstGeomBlk} to \result{rgLastGeomBlk}. The claim we defend is the ordering in range; which class wins at
 scales far beyond the data is determined by the least well measured number we have.
 
-We no longer put figures for specific far-off scales in the main text. Enforcing
+We no longer report projected class shares at specific far-off scales in the main
+text. The overspend ratios above are at those scales and stay, because what they
+demonstrate is an inconsistency in a fitting procedure rather than a prediction about
+models: the point is precisely that those numbers cannot be what the fits imply.
+Enforcing
 arithmetic consistency removes one objection to extrapolating, that the parts and the
 total contradicted each other, but it does not supply a licence to extend a fitted
 exponent far past the data, and we have independent reason here not to: the check
@@ -856,7 +887,7 @@ occupied-square accuracy, before and after all-square edit & \result{fidOccBefor
 \end{tabular}
 \end{table}
 
-\paragraph{What local correction cannot reach.}
+\paragraph{What the tested correction does not reach.}
 Where decoded belief is already correct at both squares a move touches, a check
 violation accounts for \result{rgPolCheck} of failures on average against
 \result{rgPolGeom} for geometry taken together, and is the largest class in
@@ -882,6 +913,17 @@ excludes zero. The joint rate is flat because the two nearly cancel. The
 decomposition is exact rather than estimated, so this is a restatement of the same
 number and not a competing measurement.
 
+Calling it exact commits us to something checkable, and it is worth saying what.
+Because the identity holds position by position, the logs add, and an ordinary
+least-squares slope is a linear functional of the response, the three exponents
+must sum exactly when all three are fitted on the same runs with the same
+predictor. They do, to \result{jvAddErr}: the marginal and conditional exponents
+add to the joint exponent of Table~\ref{tab:exponents} and not merely to something
+close to it. An earlier version of this paper failed that check, because the joint
+rate was taken from the superseded classification pass while the two factors came
+from the corrected one. Two numbers that must add are a cheap and unforgiving test
+of whether a decomposition has been assembled from one pass or two.
+
 The correct reading is therefore the opposite of the one we drew: scale does reduce
 the rate at which a model fails while holding correct local state, and the flat
 joint rate conceals it because a better model decodes correctly more often and so
@@ -897,10 +939,11 @@ install a multi-square correction, so whether the residual is genuine policy
 failure or simply beyond its reach is undetermined, and we recorded the stronger
 reading as retracted (Appendix~\ref{app:integrity}). The claim is narrower and
 sufficient: the component scale leaves behind is concentrated in exactly the
-failures that correction at the move's squares cannot address.
+failures that the correction procedure we tested, applied at the move's squares,
+does not address. Whether some other local intervention could reach them is open.
 
 % ====================================================================
-\section{The Standard Metric Inverts}
+\section{Intervention Metrics Rank Repairs Differently}
 \label{sec:inversion}
 
 Interventions on state are usually scored by whether the model's output becomes
@@ -1181,10 +1224,13 @@ Scale does not remove long-horizon errors evenly. In chess transformers it remov
 errors decidable from a move's own squares several times faster than errors
 decided by the whole board, the ordering replicates on an independent model family,
 and the failures that occur despite correctly decoded belief at the move's squares
-do not decline at all. The measurement needs only a rules engine. What it suggests is that the
-failures worth studying at scale are the ones defined by global constraints, and
-that interventions should be judged by their effect on those, measured with a
-metric a flatter output distribution cannot improve.
+have a joint rate that is nearly flat, exponent \result{rgExpCorrLoc}, because a rising chance
+of decoding the position correctly offsets a conditional failure rate that does fall,
+exponent \result{jcCond}. The measurement needs only a rules engine. What it suggests is
+that the failures worth studying at scale are the ones defined by global constraints,
+and that interventions aimed at them should be judged on more than one measure, since
+two reasonable scores of the same edit disagree and neither alone settles whether the
+edit helped.
 
 \section*{Declarations}
 

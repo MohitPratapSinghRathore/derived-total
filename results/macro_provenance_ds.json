@@ -1324,27 +1324,27 @@
   "source": "results/joint_vs_conditional.json"
  },
  "jcJoint": {
-  "value": "+0.023",
+  "value": "+0.027",
   "source": "results/joint_vs_conditional.json"
  },
  "jcJointLo": {
-  "value": "$-$0.005",
+  "value": "$-$0.008",
   "source": "results/joint_vs_conditional.json"
  },
  "jcJointHi": {
-  "value": "+0.066",
+  "value": "+0.097",
   "source": "results/joint_vs_conditional.json"
  },
  "jcCond": {
-  "value": "$-$0.125",
+  "value": "$-$0.121",
   "source": "results/joint_vs_conditional.json"
  },
  "jcCondLo": {
-  "value": "$-$0.182",
+  "value": "$-$0.184",
   "source": "results/joint_vs_conditional.json"
  },
  "jcCondHi": {
-  "value": "$-$0.053",
+  "value": "$-$0.034",
   "source": "results/joint_vs_conditional.json"
  },
  "jcRuns": {
@@ -1895,6 +1895,42 @@
   "value": "1.0",
   "source": "results/regen_exponents.json"
  },
+ "rgExpLocalPooled": {
+  "value": "-0.394",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoLocalPooled": {
+  "value": "-0.439",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiLocalPooled": {
+  "value": "-0.336",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstLocalPooled": {
+  "value": "0.1584",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastLocalPooled": {
+  "value": "0.0606",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldLocalPooled": {
+  "value": "2.6",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffCheckLocal": {
+  "value": "+0.279",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffLoCheckLocal": {
+  "value": "+0.263",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffHiCheckLocal": {
+  "value": "+0.293",
+  "source": "results/regen_exponents.json"
+ },
  "rgDiffCorrLocEmpty": {
   "value": "+0.597",
   "source": "results/regen_exponents.json"
@@ -2019,6 +2055,10 @@
   "value": "16,200",
   "source": "results/regen_compare.json"
  },
+ "rcPerRun": {
+  "value": "900",
+  "source": "results/regen_compare.json"
+ },
  "rcRuns": {
   "value": "18",
   "source": "results/regen_compare.json"
@@ -2118,6 +2158,22 @@
  "tcPrefLo": {
   "value": "0.563",
   "source": "results/attn_12L512_s0_temperature.json"
+ },
+ "agPos": {
+  "value": "622,998",
+  "source": "results/aggregate_gate_check.json"
+ },
+ "agRuns": {
+  "value": "18",
+  "source": "results/aggregate_gate_check.json"
+ },
+ "agDisagree": {
+  "value": "0",
+  "source": "results/aggregate_gate_check.json"
+ },
+ "jvAddErr": {
+  "value": "4e-17",
+  "source": "results/joint_vs_conditional.json"
  },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",

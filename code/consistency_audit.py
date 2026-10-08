@@ -181,6 +181,26 @@ def main() -> int:
         ok(abs(min(vf) - num(M.get("trnValMin"))) < 5e-4,
            "printed validation minimum matches the artifacts")
 
+    print("\nDECOMPOSITION: exponents that must add, do")
+    jv = S.load("joint_vs_conditional.json") or {}
+    if jv:
+        add = abs((jv["marginal_correct"]["point"] + jv["conditional"]["point"])
+                  - jv["joint"]["point"])
+        ok(add < 1e-9,
+           "marginal and conditional exponents sum to the joint exponent",
+           f"error {add:.2e}")
+        if rg:
+            ok(abs(jv["joint"]["point"]
+                   - rg["classes"]["corr_local"]["point"]) < 5e-4,
+               "the decomposition's joint matches the Table 1 row",
+               f"{jv['joint']['point']:.4f} vs "
+               f"{rg['classes']['corr_local']['point']:.4f}")
+    ag = S.load("aggregate_gate_check.json") or {}
+    if ag:
+        ok(ag["total_disagreements"] == 0,
+           "the two legality gates agree on every scored position",
+           ag["total_disagreements"])
+
     print("\nPROSE: every 'A of B' must have A no greater than B")
     # Resolve macros to their values first, then look for the pattern.
     prose = tex

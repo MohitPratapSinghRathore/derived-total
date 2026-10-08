@@ -465,7 +465,8 @@ RG = "results/regen_exponents.json"
 _RGTAG = {"from_empty": "Empty", "from_opponent": "Opp", "to_own": "Own",
           "castling": "Castle", "geometry_impossible": "GeomImp",
           "geometry_blocked": "GeomBlk", "leaves_check": "Check",
-          "all_illegal": "AllIll", "corr_local": "CorrLoc"}
+          "all_illegal": "AllIll", "corr_local": "CorrLoc",
+          "local_pooled": "LocalPooled"}
 if rg:
     put("rgRuns", rg["n_runs"], RG, "{:d}")
     for _c, _t in _RGTAG.items():
@@ -479,7 +480,8 @@ if rg:
         put("rgLast" + _t, _e["last"], RG, "{:.4f}")
         if _e.get("fold"):
             put("rgFold" + _t, _e["fold"], RG, "{:.1f}")
-    for _k, _t in (("corr local - empty", "CorrLocEmpty"),
+    for _k, _t in (("check - local pooled", "CheckLocal"),
+                   ("corr local - empty", "CorrLocEmpty"),
                    ("check - empty", "CheckEmpty"),
                    ("check - opponent", "CheckOpp"),
                    ("check - geom impossible", "CheckGeomImp")):
@@ -523,6 +525,7 @@ rc = S.load("regen_compare.json")
 RC = "results/regen_compare.json"
 if rc:
     put("rcFailures", rc["n_failures"], RC, "{:,d}")
+    put("rcPerRun", rc["n_failures"] // max(rc["n_runs"], 1), RC, "{:,d}")
     put("rcRuns", rc["n_runs"], RC, "{:d}")
     put("rcLegal", rc["n_truly_legal"], RC, "{:d}")
     put("rcRelabelled", rc["n_relabelled"], RC, "{:,d}")
@@ -560,6 +563,18 @@ if tc:
         TC, "{:.0f}")
     put("tcPrefHi", max(tc["pref_range"]), TC, "{:.3f}")
     put("tcPrefLo", min(tc["pref_range"]), TC, "{:.3f}")
+
+ag = S.load("aggregate_gate_check.json")
+AG = "results/aggregate_gate_check.json"
+if ag:
+    put("agPos", sum(r["n_positions"] for r in ag["rows"]), AG, "{:,d}")
+    put("agRuns", len(ag["rows"]), AG, "{:d}")
+    put("agDisagree", ag["total_disagreements"], AG, "{:d}")
+
+jv = S.load("joint_vs_conditional.json")
+JV = "results/joint_vs_conditional.json"
+if jv and jv.get("slope_additivity_error") is not None:
+    put("jvAddErr", jv["slope_additivity_error"], JV, "{:.0e}")
 
 env = S.load("environment.json")
 EV = "results/environment.json"

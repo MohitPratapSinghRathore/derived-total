@@ -113,7 +113,11 @@ def main() -> int:
     for q in rs:
         q["all_illegal"] = q["illegal_rate"]
         q["corr_local"] = q["policy_share"] * q["illegal_rate"]
-    for c in ("all_illegal", "corr_local"):
+        # The four classes a verdict can reach from the move's own two squares.
+        # Castling and blocked paths are excluded: both need further squares.
+        q["local_pooled"] = (q["from_empty"] + q["from_opponent"]
+                             + q["to_own"] + q["geometry_impossible"])
+    for c in ("local_pooled", "all_illegal", "corr_local"):
         e = exponent(rs, c)
         e.update(endpoints(rs, c))
         out["classes"][c] = e
@@ -210,7 +214,8 @@ def main() -> int:
               f"  check largest in {largest} of {n_models}")
 
     print("\nHEADLINE DIFFERENTIALS, paired bootstrap")
-    for a, b, lab in (("corr_local", "from_empty", "corr local - empty"),
+    for a, b, lab in (("leaves_check", "local_pooled", "check - local pooled"),
+                      ("corr_local", "from_empty", "corr local - empty"),
                       ("leaves_check", "from_empty", "check - empty"),
                       ("leaves_check", "from_opponent", "check - opponent"),
                       ("leaves_check", "geometry_impossible",

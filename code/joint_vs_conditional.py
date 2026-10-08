@@ -64,7 +64,17 @@ def rows_with_decomposition():
     for r in S.RUNGS:
         for s in S.SEEDS:
             name = f"attn_{r}_s{s}"
-            st = S.load(f"{name}_structure.json")
+            # The corrected pass, not the superseded structure file: Table 1's
+            # joint row is computed from these records, and the decomposition
+            # has to be fitted on the same quantity or its slopes will not add.
+            import json as _json
+            import os as _os
+            _p = _os.path.join(S.RES, f"{name}_regen.json")
+            if not _os.path.exists(_p):
+                continue
+            _recs = _json.load(open(_p))["records"]
+            st = {"policy_share": (sum(q["is_policy"] for q in _recs)
+                                   / max(len(_recs), 1))}
             nd = S.load(f"{name}_natdiv.json")
             if not (st and nd):
                 continue
@@ -101,6 +111,14 @@ def main() -> int:
         print("no runs carry both the structure and the AUC artifact")
         return 1
     out = {"n_runs": len(rows)}
+    # Endpoint decoding accuracy, which the mechanism section quotes. Stored
+    # rather than only printed: an earlier version printed these and the macro
+    # generator read keys the file no longer carried.
+    _first = [q["marginal_correct"] for q in rows if q["rung"] == S.RUNGS[0]]
+    _last = [q["marginal_correct"] for q in rows if q["rung"] == S.RUNGS[-1]]
+    if _first and _last:
+        out["marginal_first"] = float(np.mean(_first))
+        out["marginal_last"] = float(np.mean(_last))
     print(f"{len(rows)} runs carry both artifacts\n")
     print(f"{'rung':8s} {'P(correct)':>11s} {'joint':>9s} {'conditional':>12s}")
     for r in S.RUNGS:
@@ -123,6 +141,15 @@ def main() -> int:
     err = max(abs(q["joint"] - q["marginal_correct"] * q["conditional"])
               for q in rows)
     out["identity_max_abs_error"] = err
+    # The pointwise identity implies the slopes add, because an OLS slope is a
+    # linear functional of the response and the logs add. If this does not hold
+    # to machine precision, the three fits are not on the same sample.
+    add_err = abs((out["marginal_correct"]["point"] + out["conditional"]["point"])
+                  - out["joint"]["point"])
+    out["slope_additivity_error"] = float(add_err)
+    print(f"slope additivity: marginal + conditional - joint = {add_err:.2e}")
+    assert add_err < 1e-9, (
+        "the three exponents do not add; the fits are not on one sample")
     print(f"\ndecomposition identity holds to {err:.2e}")
     out["interpretation_supported"] = bool(
         not out["conditional"]["excludes_zero"])

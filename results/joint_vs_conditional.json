@@ -1,5 +1,7 @@
 {
  "n_runs": 18,
+ "marginal_first": 0.47058662762323084,
+ "marginal_last": 0.6750414836505612,
  "marginal_correct": {
   "point": 0.14790187270357832,
   "lo": 0.11485900314242511,
@@ -7,19 +9,18 @@
   "excludes_zero": true
  },
  "joint": {
-  "point": 0.022750503001423235,
-  "lo": -0.004841707398232353,
-  "hi": 0.0661221841245078,
+  "point": 0.027274699990366344,
+  "lo": -0.007630188732901201,
+  "hi": 0.09727800882197363,
   "excludes_zero": false
  },
  "conditional": {
-  "point": -0.12515136970215532,
-  "lo": -0.1819204428333774,
-  "hi": -0.053308908389038796,
+  "point": -0.12062717271321194,
+  "lo": -0.18388671370976112,
+  "hi": -0.033834563040380176,
   "excludes_zero": true
  },
  "identity_max_abs_error": 0.0,
- "interpretation_supported": false,
- "marginal_first": 0.47058662762323084,
- "marginal_last": 0.6750414836505612
+ "slope_additivity_error": 4.163336342344337e-17,
+ "interpretation_supported": false
 }
