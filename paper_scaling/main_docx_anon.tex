@@ -422,8 +422,13 @@ whose validity rests on the first 900 failures being representative of all of th
 and corpus order is not random: a model failing more often in early games reaches its
 900th failure sooner and is then described by a narrower slice of the corpus. The
 assumption was avoidable, so we removed it rather than stating it. Every failure at
-every scored position is now classified: 110,545 failures over 622,998
-positions, so each class rate is a direct count. The difference is not negligible.
+every scored position is now classified. The denominators are worth stating
+separately, because they differ by a factor of 18 and the pooled figure is easy
+to mistake for a corpus size. The evaluation split contributes 34,611 unique
+scored positions, each model is evaluated at every one of them, and pooling over the
+18 runs gives 622,998 model-position evaluations, at which 110,545
+failures occur. Every rate in this paper is a failure count divided by the scored
+positions of the same model, never by the pooled total,positions, so each class rate is a direct count. The difference is not negligible.
 The check class holds 0.277 of failures at the smallest rung on the full set
 against 0.308 in the sample, which is the corpus-order effect the estimate was
 exposed to.
@@ -431,7 +436,8 @@ exposed to.
 \paragraph{No legal move was counted as a failure, over the whole set.}
 Of the 16,200 audited moves, 0 were legal under the corrected gate. A sample
 can only support a statement about the sample, so we checked the whole set directly:
-scoring all 622,998 positions for each of the 18 runs under both gates, the
+scoring each run's 34,611 positions under both gates, 622,998 evaluations in
+all, the
 membership test and the direct legality test, the two disagree at 0 positions.
 No legal move entered any failure set anywhere in the evaluation data, and the
 aggregate illegal-move rate is unaffected over the full set rather than in a sample. The failure mode that would have been most damaging, legal moves
@@ -454,29 +460,55 @@ therefore unchanged by the relabelling as a matter of arithmetic rather than of
 estimation, which is the specific thing a reader needs in order to know that the
 central result survives the correction.
 
-\paragraph{The cost of regenerating on different hardware.}
-The original pass ran in float16 on a GPU that is no longer attached; the corrected
-pass ran in float32 on CPU. Comparing the \emph{old} labels from the new pass against
-the stored shares isolates that change, since the classifier is then held fixed.
-Class shares move by 0.0011 on average and at most 0.0121, which is what
-changing precision does to the handful of positions where the top two moves are
-nearly tied. We report this rather than assume a rerun reproduces the original. The
-headline differential is +0.492 [+0.278, +0.670] in
-the corrected pass against +0.461, recomputed from the superseded
-artifacts rather than quoted from memory, and that residual difference is this drift
-rather than the classifier.
+\paragraph{Why the headline differential moved, one change at a time.}
+The differential is +0.492 [+0.278, +0.670] here
+against +0.461 as published. An earlier version of this paragraph attributed that
+movement to floating-point precision, because the original pass ran in float16 on a
+GPU that is no longer attached and this one runs in float32 on CPU. That attribution
+was not established, and we withdraw it: three things changed between the two
+numbers, not one. The classifier changed, and so did the estimator, from sampled
+shares rescaled by the aggregate rate to direct counts over every scored position.
+
+Varying them one at a time settles it. Holding the classifier, the sampling rule and
+the estimator fixed and changing only the arithmetic moves the differential to
++0.456, a shift of -0.0052. Then holding the classifier and the arithmetic
+fixed and replacing the sampled estimator with full-set counts moves it to
++0.492, a shift of +0.0364. Then changing the classifier moves it by
++0.0000. The three sum to the total +0.0312 by construction.
+
+So the dominant term is the estimator, not the hardware: the sampled estimator was
+biased by corpus order, and correcting it accounts for most of the movement, while
+precision accounts for a shift smaller by a factor of several. The classifier term is
+exactly zero, which is an independent confirmation of the flow table above: no move
+entered or left either class the differential is computed from, so relabelling could
+not have changed it.
+
+One limit on the precision term is worth stating. Changing the arithmetic can change
+which move is top-1 at a near-tie, so the realised set of sampled failures is not
+identical between the first two configurations even though the sampling rule is.
+There is no way to hold the sampled set fixed while changing the arithmetic that
+selects it; what is held fixed is the classifier, the sampling rule and the estimator.
+For the record, class shares between those two configurations move by 0.0011
+on average and at most 0.0121.
 
 \paragraph{The repaired taxonomy changes what geometry means.}
 Splitting geometry is not cosmetic. The two sub-classes scale differently: impossible
 movement has exponent -0.222 [-0.266, -0.181], while blocked
-paths have -0.069 [-0.118, -0.015], an interval that includes
-zero. The aggregate geometry exponent was averaging the two, which is the same
-objection this paper raises against fitting one exponent to a total whose parts scale
-differently, turned on one of our own categories. Against the locally decided classes
-the check differential narrows but survives: check against impossible movement is
-+0.126 [+0.103, +0.156]. The blocked-path
-exponent is poorly determined on 6 rungs and we draw no ordering conclusion
-from it.
+paths have -0.069 [-0.118, -0.015], both intervals
+excluding zero and the two more than a factor of three apart. The aggregate geometry
+exponent was averaging them, which is the same objection this paper raises against
+fitting one exponent to a total whose parts scale differently, turned on one of our
+own categories. Against the locally decided classes the check differential narrows
+but survives: check against impossible movement is +0.126 [
++0.103, +0.156].
+
+What the blocked-path exponent does not settle is its ordering against check
+violations. At -0.069 against -0.097 the two are separated by less than the
+width of either interval, so which of them is the shallower class in the partition is
+undetermined on 6 rungs. That is a different statement from the exponent being
+indistinguishable from zero, which it is not, and we draw no ordering conclusion
+between those two classes while drawing one between either of them and the locally
+decided classes.
 
 \section{Differential Scaling}
 \label{sec:scaling}
@@ -528,9 +560,12 @@ Every class falls with size, so the result is not that larger models get worse a
 anything. It is that they get better at different things at very different rates
 (Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The extremes order
 themselves by how local the rule is, but the ordering is not monotone across every
-class and we do not claim it is: castling improves fastest of all at -0.415 despite
-needing more than the move's two squares, and blocked paths have the shallowest point
-estimate with an interval that includes zero. What the data support is the specific
+class and we do not claim it is. Castling improves faster than impossible movement,
+at -0.415 against -0.222, despite needing more than the move's two squares;
+and blocked paths, which need only one further square, have the shallowest point
+estimate of any class, -0.069, shallower even than check violations. Both
+intervals exclude zero, so these are differences in rate rather than one class failing
+to improve. What the data support is the specific
 comparison. Errors decidable from the move's own two squares, pooled, fall with
 exponent -0.397 [-0.460, -0.318], against
 -0.097 for check violations, a paired differential of +0.301
@@ -1047,10 +1082,13 @@ that flattening cannot, is the obvious next experiment.
 
 \section{Discussion}
 
-The practical content is about where effort goes. The class that does not fall
+The practical content is about where effort goes. The class that falls most slowly
 with size is the one defined by constraints spanning the whole board, and on our
 evidence it is also the class that correcting the model's belief about a move's own
-squares does not reach. We read this, as an interpretation we have not tested
+squares does not reach. It does fall: its exponent is -0.097 with an interval
+excluding zero. The quantity that is close to flat is a different one, the joint rate
+of failures occurring despite correct local decoding, and that flatness is itself two
+effects cancelling. We read this, as an interpretation we have not tested
 directly, as a caution for interventions such as auxiliary board losses and state
 supervision: they aim at the model's knowledge of where pieces stand, and the
 failures most directly attributable to that knowledge are the ones scale is already
@@ -1351,14 +1389,19 @@ share despite correct local decoding & 0.294 & 0.521 & 0.895 \\
 \end{tabular}
 \end{center}
 
-The check share rises over this range and turns over at a maximum of 0.709,
-after which blocked paths take an increasing share, because theirs is the shallowest
-exponent in the corrected partition. Every share stays inside the unit interval,
-which is the bounded behaviour the simplex parameterisation guarantees and the
-property the earlier unbounded fit lacked. We stress again that the reordering
-between the check class and blocked paths is governed by an exponent whose interval
-includes zero, so it should be read as what the fitted model implies and not as a
-finding about large models. The share despite correct local decoding is modelled on
+The check share rises monotonically across this range, to 0.709 at the far end.
+It does not turn over inside it: blocked paths have the shallowest exponent in the
+corrected partition and must take the whole share eventually, but at $-$0.069
+against -0.097 the crossing falls beyond the scales tabulated here. Every share
+stays inside the unit interval, which is the bounded behaviour the simplex
+parameterisation guarantees and the property the earlier unbounded fit lacked.
+
+The reordering should still be read as what the fitted model implies rather than as a
+finding about large models, for a reason that is not that the exponent is
+indistinguishable from zero. It is not: both intervals exclude zero. The difficulty is
+that the two exponents are separated by less than the width of either interval, so
+which class is shallower, and therefore which one eventually dominates, is not
+resolved by 6 rungs. The share despite correct local decoding is modelled on
 its own logit rather
 than inside the simplex, because it cuts across the partition rather than belonging
 to it.

@@ -584,6 +584,13 @@ if fc:
     put("fcFailures", fc["total_failures"], FC, "{:,d}")
     put("fcPositions", fc["total_positions"], FC, "{:,d}")
     put("fcLegalInSet", fc["total_membership_disagreements"], FC, "{:d}")
+    # The three denominators the review asks to see separately: unique
+    # positions, evaluations per model, and the pooled model-position total.
+    _per = {r["n_positions"] for r in fc["rows"]}
+    put("fcPerModel", sorted(_per)[0], FC, "{:,d}")
+    put("fcUnique", sorted(_per)[0], FC, "{:,d}")
+    put("fcPooled", fc["total_positions"], FC, "{:,d}")
+    put("fcModels", len(fc["rows"]), FC, "{:d}")
 
 # Body word count, computed rather than typed: the title page quotes it and the
 # figure had gone stale as the manuscript grew.
@@ -601,6 +608,19 @@ _body = _re.sub(r"(?m)%.*$", " ", _body)
 _body = _re.sub(r"\\\\[a-zA-Z]+\\*", " ", _body)
 _body = _re.sub(r"[{}$~&\\]", " ", _body)
 put("wordCount", len(_body.split()), "paper_scaling/main.tex", "{:,d}")
+
+dd = S.load("drift_decomposition.json")
+DD = "results/drift_decomposition.json"
+if dd:
+    put("ddPublished", dd["A_published"], DD, "{:+.3f}")
+    put("ddPrecision", dd["B_precision"], DD, "{:+.3f}")
+    put("ddEstimator", dd["C_estimator"], DD, "{:+.3f}")
+    put("ddCurrent", dd["D_classifier"], DD, "{:+.3f}")
+    put("ddTermPrec", dd["d_precision"], DD, "{:+.4f}")
+    put("ddTermEst", dd["d_estimator"], DD, "{:+.4f}")
+    put("ddTermClass", dd["d_classifier"], DD, "{:+.4f}")
+    put("ddTotal", dd["total"], DD, "{:+.4f}")
+    put("ddLargest", dd["largest_term"], DD)
 
 env = S.load("environment.json")
 EV = "results/environment.json"

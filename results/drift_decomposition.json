@@ -1,0 +1,12 @@
+{
+ "A_published": 0.46130014968135696,
+ "B_precision": 0.4560598382647535,
+ "C_estimator": 0.49249159448876134,
+ "D_classifier": 0.49249159448876134,
+ "d_precision": -0.0052403114166034714,
+ "d_estimator": 0.03643175622400785,
+ "d_classifier": 0.0,
+ "total": 0.031191444807404378,
+ "sum_check": 0.0,
+ "largest_term": "estimator"
+}

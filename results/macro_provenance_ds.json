@@ -2191,9 +2191,61 @@
   "value": "0",
   "source": "results/full_classification.json"
  },
+ "fcPerModel": {
+  "value": "34,611",
+  "source": "results/full_classification.json"
+ },
+ "fcUnique": {
+  "value": "34,611",
+  "source": "results/full_classification.json"
+ },
+ "fcPooled": {
+  "value": "622,998",
+  "source": "results/full_classification.json"
+ },
+ "fcModels": {
+  "value": "18",
+  "source": "results/full_classification.json"
+ },
  "wordCount": {
-  "value": "12,438",
+  "value": "12,884",
   "source": "paper_scaling/main.tex"
+ },
+ "ddPublished": {
+  "value": "+0.461",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddPrecision": {
+  "value": "+0.456",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddEstimator": {
+  "value": "+0.492",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddCurrent": {
+  "value": "+0.492",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddTermPrec": {
+  "value": "-0.0052",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddTermEst": {
+  "value": "+0.0364",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddTermClass": {
+  "value": "+0.0000",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddTotal": {
+  "value": "+0.0312",
+  "source": "results/drift_decomposition.json"
+ },
+ "ddLargest": {
+  "value": "estimator",
+  "source": "results/drift_decomposition.json"
  },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",

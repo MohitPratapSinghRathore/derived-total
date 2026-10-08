@@ -201,6 +201,37 @@ def main() -> int:
            "the two legality gates agree on every scored position",
            ag["total_disagreements"])
 
+    print("\nSIGNIFICANCE: prose claims about zero match the intervals")
+    # Three times now a class has been described as having an interval that
+    # includes zero after the interval stopped including it. The claim is
+    # checkable: find each class's exponent macro in the prose and look for a
+    # zero claim near it, then ask the artifact.
+    TAGS = {"rgExpEmpty": "from_empty", "rgExpOpp": "from_opponent",
+            "rgExpOwn": "to_own", "rgExpCastle": "castling",
+            "rgExpGeomImp": "geometry_impossible",
+            "rgExpGeomBlk": "geometry_blocked", "rgExpCheck": "leaves_check",
+            "rgExpCorrLoc": "corr_local",
+            "rgExpLocalPooled": "local_pooled"}
+    bad = []
+    for tag, cls in TAGS.items():
+        e = (rg.get("classes") or {}).get(cls)
+        if not e:
+            continue
+        for m in re.finditer(re.escape("\\result{" + tag + "}"), tex):
+            window = tex[m.start():m.start() + 400]
+            says_incl = "includes\nzero" in window or "includes zero" in window
+            if says_incl and e["excludes_zero"]:
+                bad.append(f"{cls} described as including zero but "
+                           f"[{e['lo']:+.3f},{e['hi']:+.3f}] excludes it")
+    ok(not bad, "no class is called zero-inclusive when its interval excludes zero",
+       bad[:4])
+    # And the reverse: a differential called significant must exclude zero.
+    bad2 = []
+    for lab, d in (rg.get("differentials") or {}).items():
+        if not d["excludes_zero"]:
+            bad2.append(lab)
+    ok(not bad2, "every reported differential excludes zero", bad2)
+
     print("\nPROSE: every 'A of B' must have A no greater than B")
     # Resolve macros to their values first, then look for the pattern.
     prose = tex
