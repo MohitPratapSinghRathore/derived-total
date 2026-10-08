@@ -60,7 +60,7 @@ def implied_q(rws):
 
 
 def main():
-    rows = S.ladder_rows()
+    rows = S.ladder_rows_corrected()
     out = {"n_runs": len(rows)}
 
     m, i = measured_q(rows), implied_q(rows)
@@ -94,7 +94,7 @@ def main():
 
     # which categories are themselves not power laws?
     out["categories"] = {}
-    for k in S.CLASSES:
+    for k in S.CLASSES_CORRECTED:
         q_pt = measured_q(rows, k)
         bs = []
         for sub in S._rung_resamples(rows, n=N_BOOT):
@@ -126,7 +126,7 @@ def main():
     for k, v in out["categories"].items():
         flag = "CURVED" if v["curved"] else "straight"
         print(f"  {k:16s} q={v['q']:+.5f} [{v['lo']:+.5f}, {v['hi']:+.5f}]  {flag}")
-    print(f"\n{out['n_curved']} of {len(S.CLASSES)} categories are detectably curved")
+    print(f"\n{out['n_curved']} of {len(S.CLASSES_CORRECTED)} categories are detectably curved")
 
 
 if __name__ == "__main__":

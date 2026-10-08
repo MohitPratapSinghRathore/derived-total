@@ -69,6 +69,56 @@ def ladder_rows():
     return rows
 
 
+
+# The corrected classification pass. The original five-class partition is
+# superseded: castling left the destination-occupancy class and geometry split in
+# two, so the partition below is the one that sums to the illegal-move rate.
+CLASSES_CORRECTED = ["from_empty", "from_opponent", "to_own", "castling",
+                     "geometry_impossible", "geometry_blocked", "leaves_check"]
+
+
+def ladder_rows_corrected():
+    """Ladder rows whose class rates come from the regenerated records.
+
+    Auxiliary fields that the regenerated records do not carry, the depth strata
+    and the check share conditional on correct belief, are taken from the original
+    artifacts and are the only quantities here still produced by the superseded
+    pass; they are descriptive and enter no exponent.
+    """
+    import json as _json
+    rows = []
+    for r in RUNGS:
+        for s in SEEDS:
+            name = f"attn_{r}_s{s}"
+            p = os.path.join(RES, f"{name}_regen.json")
+            nd = load(f"{name}_natdiv.json")
+            if not (os.path.exists(p) and nd):
+                continue
+            recs = _json.load(open(p))["records"]
+            n = len(recs)
+            if not n:
+                continue
+            ill = nd["illegal_rate"]
+            pol = sum(q["is_policy"] for q in recs) / n
+            row = {"rung": r, "seed": s, "params": PARAMS[r],
+                   "illegal_rate": ill, "n": n,
+                   "share_policy": pol,
+                   "correct_local_belief": pol * ill,
+                   "share_other": 0.0}
+            for c in CLASSES_CORRECTED:
+                sh = sum(1 for q in recs if q["new_label"] == c) / n
+                row[c] = sh * ill
+                row["share_" + c] = sh
+            st = load(f"{name}_structure.json")
+            if st:
+                row["lc_when_local_ok"] = st["overall"]["leaves_check"].get(
+                    "share_when_belief_ok")
+                strata = st.get("strata", {})
+                row["lc_early"] = strata.get("20-40", {}).get("leaves_check")
+                row["lc_late"] = strata.get("60-120", {}).get("leaves_check")
+            rows.append(row)
+    return rows
+
 def _slope(sub, key):
     x = np.log([q["params"] for q in sub])
     y = np.log([max(q[key], 1e-12) for q in sub])

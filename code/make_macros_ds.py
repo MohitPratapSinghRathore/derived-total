@@ -329,6 +329,7 @@ def _pf(n):
 put("cmpRmseSimplex", cp["rmse_simplex"], CP, "{:.5f}")
 put("cmpRmseIndep", cp["rmse_independent"], CP, "{:.5f}")
 put("cmpAstar", sgn(cp["a_star"]), CP)
+put("cmpAstarClass", cp.get("a_star_key", "").replace("_", " "), CP)
 put("cmpBtotal", sgn(cp["b_total"]), CP)
 put("cmpWeighted", sgn(cp["weighted_mean_exponent"]), CP)
 put("cmpDiverge", sgn(cp["divergence_rate"]), CP)
@@ -340,7 +341,8 @@ put("cmpOverBnHi", cp["overspend_1e9_hi"], CP, "{:.2f}")
 put("cmpOverBnFrac", 100 * cp["overspend_1e9_frac_above_one"], CP, "{:.0f}")
 for tag, lab in (("ours_large", "Large"), ("proj_1e9", "Bn"), ("proj_1e12", "Tn")):
     for k, nm in (("leaves_check", "Check"), ("from_empty", "Empty"),
-                  ("geometry", "Geom")):
+                  ("geometry_impossible", "GeomImp"),
+                  ("geometry_blocked", "GeomBlk")):
         put(f"cmp{nm}{lab}", cp["composition"][tag][k], CP, "{:.3f}")
 put("cmpCheckMax", cp["check_max_share"], CP, "{:.3f}")
 put("cmpPolicySlope", sgn(cp["policy_logit_slope"]), CP)

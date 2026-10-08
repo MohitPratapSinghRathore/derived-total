@@ -42,6 +42,19 @@ defined = set(re.findall(r"\\defresult\{([^}]+)\}", open(MAC, encoding="utf-8").
 used = set(re.findall(r"\\result\{([^}]+)\}", src))
 gate(not (used - defined), "every \\result key defined", sorted(used - defined))
 
+# Since the corrected classification pass, the pre-correction exponent macros are
+# superseded. They stay defined so the provenance record remains complete, but
+# citing one in the manuscript would make the prose disagree with Table 1. That is
+# the exact drift this paper had to repair, so it gets a gate rather than vigilance.
+SUPERSEDED = {"expFromEmpty", "expFromOpp", "expToOwn", "expLeavesCheck",
+              "diffProbeFree", "diffProbeFreeLo", "diffProbeFreeHi",
+              "diffProbeFreePct", "diffCorr", "diffCorrLo", "diffCorrHi",
+              "ratioFromEmpty", "ratioLeavesCheck", "ratioGeometry",
+              "ratioToOwn", "ratioFromOpp", "absFromEmptyFirst",
+              "absFromEmptyLast", "absLeavesCheckFirst", "absLeavesCheckLast"}
+stale = sorted(used & SUPERSEDED)
+gate(not stale, "no superseded pre-correction macros in prose", stale)
+
 pdf = pypdf.PdfReader(PDF)
 txt = "\n".join((p.extract_text() or "") for p in pdf.pages)
 gate("??" not in txt, "no ?? in PDF", txt.count("??"))

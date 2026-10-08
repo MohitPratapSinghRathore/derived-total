@@ -152,9 +152,9 @@ def _selftest():
 
     print("=" * 62)
     print("our ladder")
-    rows = S.ladder_rows()
+    rows = S.ladder_rows_corrected()
     N = [q["params"] for q in rows]
-    r = check(**from_points(N, {c: [q[c] for q in rows] for c in S.CLASSES},
+    r = check(**from_points(N, {c: [q[c] for q in rows] for c in S.CLASSES_CORRECTED},
                             [q["illegal_rate"] for q in rows]))
     print(r)
 

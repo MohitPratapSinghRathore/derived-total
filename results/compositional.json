@@ -4,78 +4,84 @@
   "from_empty",
   "from_opponent",
   "to_own",
-  "geometry",
-  "leaves_check",
-  "other"
+  "castling",
+  "geometry_impossible",
+  "geometry_blocked",
+  "leaves_check"
  ],
  "pivot": 10000000.0,
- "rmse_simplex": 0.012506118986507048,
- "rmse_independent": 0.0132170131967795,
+ "rmse_simplex": 0.010709528914394513,
+ "rmse_independent": 0.011148407714718943,
  "simplex_fits_better": true,
- "divergence_rate": 0.15437729752011914,
- "a_star": -0.11226480791145714,
+ "divergence_rate": 0.21357562322469253,
+ "a_star": -0.05306648220688377,
  "b_total": -0.2666421054315763,
- "weighted_mean_exponent": -0.26595843758273735,
- "breakdown_scale": 173672359.01164782,
+ "a_star_key": "geometry_blocked",
+ "weighted_mean_exponent": -0.264374937948932,
+ "breakdown_scale": 148457202.36049637,
  "overspend": {
   "ours_large": {
    "N": 39900000.0,
-   "ratio": 1.0156098787820564
+   "ratio": 1.0177754900195055
   },
   "proj_1e9": {
    "N": 1000000000.0,
-   "ratio": 1.2684175049437734
+   "ratio": 1.3074301897443925
   },
   "proj_1e12": {
    "N": 1000000000000.0,
-   "ratio": 2.8229506383889875
+   "ratio": 3.3283187010977513
   }
  },
  "composition": {
   "ours_small": {
    "N": 3440000.0,
-   "from_empty": 0.21106359308713515,
-   "from_opponent": 0.035348604541041544,
-   "to_own": 0.14195109656856508,
-   "geometry": 0.3086130634422994,
-   "leaves_check": 0.30302362649477566,
-   "other": 1.586618323899626e-08
+   "from_empty": 0.21015636778250005,
+   "from_opponent": 0.03380186384342258,
+   "to_own": 0.12933838154666896,
+   "castling": 0.012698385312432343,
+   "geometry_impossible": 0.2457923794661673,
+   "geometry_blocked": 0.0640462217726556,
+   "leaves_check": 0.30416640027615316
   },
   "ours_large": {
    "N": 39900000.0,
-   "from_empty": 0.09280312561201712,
-   "from_opponent": 0.023189770807392412,
-   "to_own": 0.08585007157813883,
-   "geometry": 0.3544115550316523,
-   "leaves_check": 0.443745469882606,
-   "other": 7.088193385675616e-09
+   "from_empty": 0.09283630537577728,
+   "from_opponent": 0.023483636686882838,
+   "to_own": 0.08298643603084198,
+   "castling": 0.003013600590334814,
+   "geometry_impossible": 0.25329923041193464,
+   "geometry_blocked": 0.10092700338968863,
+   "leaves_check": 0.4434537875145399
   },
   "proj_1e9": {
    "N": 1000000000.0,
-   "from_empty": 0.02527603219619905,
-   "from_opponent": 0.010686760612218849,
-   "to_own": 0.03555199642692224,
-   "geometry": 0.3409340437314392,
-   "leaves_check": 0.5875511650618461,
-   "other": 1.971374427874871e-09
+   "from_empty": 0.025018228505114117,
+   "from_opponent": 0.011475531038824668,
+   "to_own": 0.036526651506121326,
+   "castling": 0.0003588881730283896,
+   "geometry_impossible": 0.2078326802657692,
+   "geometry_blocked": 0.14471699368145866,
+   "leaves_check": 0.5740710268296836
   },
   "proj_1e12": {
    "N": 1000000000000.0,
-   "from_empty": 0.0011137304618721521,
-   "from_opponent": 0.0014544317316434797,
-   "to_own": 0.0038473097922928027,
-   "geometry": 0.22484261611531334,
-   "leaves_check": 0.7687419118080278,
-   "other": 9.085034237572528e-11
+   "from_empty": 0.0010311005729432584,
+   "from_opponent": 0.0016945874885766854,
+   "to_own": 0.004310599127331377,
+   "castling": 2.5673089965009535e-06,
+   "geometry_impossible": 0.09324782546838763,
+   "geometry_blocked": 0.21493305363689283,
+   "leaves_check": 0.6847802663968718
   }
  },
- "check_monotone": true,
- "check_max_share": 0.8710159216403269,
- "policy_logit_slope": 0.3720977452757207,
+ "check_monotone": false,
+ "check_max_share": 0.6962851991713481,
+ "policy_logit_slope": 0.3775150122255126,
  "policy_at": {
-  "ours_large": 0.3079564780285691,
-  "proj_1e9": 0.5960365211005194,
-  "proj_1e12": 0.9507029600534024
+  "ours_large": 0.3074833206812527,
+  "proj_1e9": 0.5996981208322822,
+  "proj_1e12": 0.9531128094850286
  },
  "policy_obs_min": 0.14777777777777779,
  "policy_obs_max": 0.3211111111111111,
@@ -90,12 +96,12 @@
  "ext_b": -1.2782345072986718,
  "ext_overspend_1e9": 1.2780061004422845,
  "ext_breakdown": 242804616.05638742,
- "overspend_1e9_lo": 1.1300412076597068,
- "overspend_1e9_hi": 1.566100005148953,
+ "overspend_1e9_lo": 1.1321927220762569,
+ "overspend_1e9_hi": 1.859978890506638,
  "overspend_1e9_frac_above_one": 1.0,
  "covariate_tv": {
-  "competence": 0.4897185984497683,
-  "size": 0.09959480838890238,
-  "baseline": 0.11463135191526956
+  "competence": 0.488920235987913,
+  "size": 0.10012569109828591,
+  "baseline": 0.114909468844334
  }
 }

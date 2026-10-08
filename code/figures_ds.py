@@ -49,7 +49,21 @@ def series(ax, xs, ys, fit_x, color, marker, label, dashed=False, dy=0):
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    rows = S.ladder_rows()
+    # Panel (a) must plot the same numbers Table 1 reports, which since the
+    # corrected classification pass means the regenerated records rather than the
+    # original structure files. Falling back would silently redraw the figure from
+    # superseded data, which is the drift this paper keeps having to repair.
+    try:
+        from regen_exponents import rows as regen_rows
+        rows = regen_rows()
+        for q in rows:
+            q["corr_local"] = q["policy_share"] * q["illegal_rate"]
+        assert rows, "no regenerated records"
+        src = "corrected pass"
+    except Exception as exc:                               # noqa: BLE001
+        raise SystemExit(
+            f"refusing to draw the figure from superseded data: {exc}")
+    print(f"panel (a) from the {src}, {len(rows)} runs")
     ext = S.external_rows()
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 3.9))
 
@@ -58,9 +72,10 @@ def main():
     p = np.array([q["params"] for q in rows], float)
     for key, color, marker, label, dashed in (
             ("from_empty", BLUE, "o", "empty source (local)", False),
-            ("geometry", AQUA, "s", "geometry", False),
+            ("geometry_impossible", AQUA, "s", "geometry, impossible", False),
+            ("geometry_blocked", AQUA, "v", "geometry, blocked path", True),
             ("leaves_check", ORANGE, "^", "leaves check (global)", False),
-            ("correct_local_belief", YELLOW, "D",
+            ("corr_local", YELLOW, "D",
              "despite correct local belief", True)):
         series(ax, p, np.array([q[key] for q in rows]), p, color, marker, label,
                dashed)

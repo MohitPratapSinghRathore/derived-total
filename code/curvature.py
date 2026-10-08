@@ -58,7 +58,7 @@ def ols_t(rws):
 
 
 def main():
-    rows = S.ladder_rows()
+    rows = S.ladder_rows_corrected()
     x, y = _design(rows)
     out = {"n_runs": len(rows), "n_rungs": len(S.RUNGS)}
 

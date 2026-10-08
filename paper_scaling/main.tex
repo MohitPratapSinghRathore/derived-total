@@ -93,9 +93,9 @@ model internals, and is the axis along which we measure scaling.
 \begin{enumerate}[nosep]
 \item \textbf{Failure classes scale at different rates, ordered by locality.}
 Absolute rates of local errors fall steeply with size and global ones slowly. The
-empty-source class falls \result{ratioFromEmpty}-fold across our ladder and the
-check class \result{ratioLeavesCheck}-fold, a differential exponent of
-\result{diffProbeFree} that excludes zero in every rung resample. No probe,
+empty-source class falls \result{rgFoldEmpty}-fold across our ladder and the check class
+\result{rgFoldCheck}-fold, a differential exponent of \result{rgDiffCheckEmpty} whose rung-resampled
+interval excludes zero. No probe,
 intervention, or interpretability method enters this result.
 \item \textbf{It is not an artefact of our models.} The same ordering holds on an
 independent ladder with different data, notation, and training code, and in a
@@ -280,8 +280,9 @@ destination-occupancy class matters. The separation between the locally and glob
 decided classes is not a matter of degree.
 
 But $k$ does \emph{not} explain the ordering of the exponents. Geometry has an
-exponent of \result{expGeometry}, roughly halfway between the local classes and the check
-class, and a dependency set indistinguishable from the local ones. The reason lies in
+exponent, before it is split, of \result{expGeometry}, roughly halfway between the local
+classes and the check class, and a dependency set indistinguishable from the local
+ones. The reason lies in
 the taxonomy rather than in the models, and the table above splits it: of
 \result{locGeomN} geometry errors sampled, \result{locGeomImposs} percent are moves the piece cannot
 make under any arrangement of the other squares, with $k$ exactly zero, and only
@@ -504,12 +505,12 @@ Every class falls with size, so the result is not that larger models get worse a
 anything. It is that they get better at different things at very different rates
 (Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The exponents order
 themselves by how local the rule is. Empty-source errors fall with exponent
-\result{expFromEmpty}; geometry, which depends on the squares between source and
-destination, with \result{expGeometry}; and check violations, which depend on
-every attacker's position, with \result{expLeavesCheck}. The paired differential
-between the check and empty-source exponents is \result{diffProbeFree}
-[\result{diffProbeFreeLo}, \result{diffProbeFreeHi}], positive in
-\result{diffProbeFreePct}\% of rung resamples.
+\result{rgExpEmpty}; geometry splits into movements no arrangement of the other squares
+would permit, with \result{rgExpGeomImp}, and blocked paths, which do depend on the squares
+between source and destination, with \result{rgExpGeomBlk}; and check violations, which
+depend on every attacker's position, with \result{rgExpCheck}. The paired differential
+between the check and empty-source exponents is \result{rgDiffCheckEmpty}
+[\result{rgDiffLoCheckEmpty}, \result{rgDiffHiCheckEmpty}], and it excludes zero.
 
 This is a claim about composition, and composition shifts accordingly. The
 empty-source share of illegal moves falls from \result{shareFromEmptyFirst} to
@@ -558,12 +559,22 @@ attains RMSE \result{cmpRmseSimplex} across the \result{nRuns} runs against
 \result{cmpRmseIndep} for the uncoupled fits, so it is at least as good on the
 data while being the only one of the two that can be extended.
 
-Under the closed model the check category's share increases monotonically with size
-toward its upper bound of one, as the shallowest exponent comes to dominate, while the
-locally decidable categories decline toward zero. The paper's qualitative claim is
-unchanged. What changes is that the trajectory is now bounded by construction, so it
-describes something the categories can jointly satisfy, which the earlier unbounded
-projection did not.
+Under the closed model the check category's share rises across the range we are
+willing to project, from \result{cmpCheckLarge} at our largest rung, while the locally
+decidable categories decline. It does not rise to one, and here the corrected
+partition changes the picture rather than merely refining it. Whichever category has
+the shallowest exponent must eventually take the whole share, and before geometry was
+split that category was the check class. It is now blocked paths, at
+\result{cmpAstar} against the check class's \result{rgExpCheck}, so the check share turns over at a
+maximum of \result{cmpCheckMax} and declines thereafter. The paper's qualitative claim about
+the observed range is unchanged, and the trajectory is now bounded by construction
+rather than unbounded as in the earlier projection.
+
+We put little weight on that asymptotic reordering, and say so here rather than
+letting the appendix imply otherwise. It is decided entirely by the blocked-path
+exponent, whose interval includes zero and which rests on the smallest category in
+the partition. The claim we defend is the ordering in range; which class wins at
+scales far beyond the data is determined by the least well measured number we have.
 
 We no longer put figures for specific far-off scales in the main text. Enforcing
 arithmetic consistency removes one objection to extrapolating, that the parts and the
@@ -593,7 +604,8 @@ total is $N^{b}$, so the ratio grows like $N^{a^\star-b}$ and diverges precisely
 when $a^\star>b$. This is not a coincidence to be checked case by case. Fitted in
 range, $b$ tracks the rate-weighted mean of the $a_i$, and a maximum is at least a
 weighted mean, with equality only if every exponent is identical. Our own values
-make the point: $a^\star$ is \result{cmpAstar}, the weighted mean is
+make the point: $a^\star$ is \result{cmpAstar}, attained by the \result{cmpAstarClass} class,
+the weighted mean is
 \result{cmpWeighted}, and the separately fitted $b$ is \result{cmpBtotal}, giving
 divergence \result{cmpDiverge}.
 
@@ -663,7 +675,7 @@ biases the comparison against the result.
 
 The ordering holds (Table~\ref{tab:external}, Figure~\ref{fig:scaling}b).
 Unreachable errors fall with exponent \result{kExpUnr} and check violations with
-\result{kExpLc}, a differential of \result{kDiff}, against \result{diffProbeFree} on
+\result{kExpLc}, a differential of \result{kDiff}, against \result{rgDiffCheckEmpty} on
 our ladder. The local share of failures falls from \result{kShareUnrSix} to
 \result{kShareUnrSixteen} while the check share rises from \result{kShareLcSix} to
 \result{kShareLcSixteen}. Within the smallest checkpoint the check share rises from
@@ -841,7 +853,8 @@ violation accounts for \result{lcWhenLocalOk} of failures on average against
 \result{lcLargestCount} of \result{nRuns} models. Such failures cannot be attributed
 to the decoded belief being wrong at the move's squares. Their absolute rate is
 flat with size, exponent \result{expCorrLocal} [\result{expCorrLocalLo}, \result{expCorrLocalHi}], a differential
-against empty-source errors of \result{diffCorr} [\result{diffCorrLo}, \result{diffCorrHi}].
+against empty-source errors of \result{rgExpCorrLoc} minus \result{rgExpEmpty} in the corrected
+pass.
 
 \paragraph{The flat rate is two effects cancelling, not one effect absent.}
 An earlier version of this paper read that flat exponent as the underlying failure
@@ -1229,16 +1242,24 @@ to see the numbers.
 \textbf{Quantity} & \textbf{at \result{paramsLarge}} & \textbf{$10^9$} & \textbf{$10^{12}$} \\
 \midrule
 check share & \result{cmpCheckLarge} & \result{cmpCheckBn} & \result{cmpCheckTn} \\
-locally decidable share & & & \result{cmpEmptyTn} \\
+geometry, impossible & \result{cmpGeomImpLarge} & \result{cmpGeomImpBn} & \result{cmpGeomImpTn} \\
+geometry, blocked path & \result{cmpGeomBlkLarge} & \result{cmpGeomBlkBn} & \result{cmpGeomBlkTn} \\
+empty source & & & \result{cmpEmptyTn} \\
 policy share (own logit model) & \result{cmpPolicyLarge} & \result{cmpPolicyBn} & \result{cmpPolicyTn} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The check share approaches one from below and the locally decidable shares approach
-zero, which is the bounded behaviour the simplex parameterisation guarantees. The
-policy share is modelled on its own logit rather than inside the simplex, because it
-cuts across the partition rather than belonging to it.
+The check share rises over this range and turns over at a maximum of \result{cmpCheckMax},
+after which blocked paths take an increasing share, because theirs is the shallowest
+exponent in the corrected partition. Every share stays inside the unit interval,
+which is the bounded behaviour the simplex parameterisation guarantees and the
+property the earlier unbounded fit lacked. We stress again that the reordering
+between the check class and blocked paths is governed by an exponent whose interval
+includes zero, so it should be read as what the fitted model implies and not as a
+finding about large models. The policy share is modelled on its own logit rather
+than inside the simplex, because it cuts across the partition rather than belonging
+to it.
 
 \label{app:integrity}
 

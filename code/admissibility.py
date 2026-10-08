@@ -49,7 +49,7 @@ def powerlaw(rws, key):
 
 
 def parts_fits(rws, keys=None):
-    return {k: powerlaw(rws, k) for k in (keys or S.CLASSES)}
+    return {k: powerlaw(rws, k) for k in (keys or S.CLASSES_CORRECTED)}
 
 
 def T_sum(fits, N):
@@ -118,8 +118,9 @@ def accuracy_both_spaces(rws):
     P_sum = []
     for q in rws:
         N = q["params"]
-        r = np.array([np.exp(np.polyval(fits[k], np.log(N))) for k in S.CLASSES])
-        r = np.append(r, 0.0)           # 'other' carries no fitted curve
+        r = np.array([np.exp(np.polyval(fits[k], np.log(N))) for k in S.CLASSES_CORRECTED])
+        # The corrected partition has no residual 'other' column: no observed
+        # failure fell outside it, so there is nothing to append.
         P_sum.append(r / r.sum())
     P_sum = np.array(P_sum)
 
@@ -139,7 +140,7 @@ def accuracy_both_spaces(rws):
 
 
 def main():
-    rows = S.ladder_rows()
+    rows = S.ladder_rows_corrected()
     fits = parts_fits(rows)
     out = {"n_runs": len(rows)}
 

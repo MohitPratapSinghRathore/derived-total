@@ -15,6 +15,6 @@
  "aic_linear": -124.75309341698971,
  "aic_quadratic": -154.81791026514745,
  "aic_prefers_quadratic": true,
- "implied_slope_change": 0.07135661329304988,
- "implied_q": 0.01455964803241214
+ "implied_slope_change": 0.07670265898588324,
+ "implied_q": 0.01565045854121789
 }

@@ -143,7 +143,8 @@ def own_destination_audit(n_games=40):
 
 
 def main() -> int:
-    rows = S.ladder_rows()
+    # The corrected partition, so the headline here matches Table 1.
+    rows = S.ladder_rows_corrected()
     out = {}
     print("LEAVE ONE RUNG OUT, paired differential check minus empty")
     loro = leave_one_rung_out(rows)

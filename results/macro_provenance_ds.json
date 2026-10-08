@@ -1152,15 +1152,19 @@
   "source": "results/adapter_checks.json"
  },
  "cmpRmseSimplex": {
-  "value": "0.01251",
+  "value": "0.01071",
   "source": "results/compositional.json"
  },
  "cmpRmseIndep": {
-  "value": "0.01322",
+  "value": "0.01115",
   "source": "results/compositional.json"
  },
  "cmpAstar": {
-  "value": "$-$0.112",
+  "value": "$-$0.053",
+  "source": "results/compositional.json"
+ },
+ "cmpAstarClass": {
+  "value": "geometry blocked",
   "source": "results/compositional.json"
  },
  "cmpBtotal": {
@@ -1168,15 +1172,15 @@
   "source": "results/compositional.json"
  },
  "cmpWeighted": {
-  "value": "$-$0.266",
+  "value": "$-$0.264",
   "source": "results/compositional.json"
  },
  "cmpDiverge": {
-  "value": "+0.154",
+  "value": "+0.214",
   "source": "results/compositional.json"
  },
  "cmpBreakdown": {
-  "value": "174M",
+  "value": "148M",
   "source": "results/compositional.json"
  },
  "cmpOverLarge": {
@@ -1184,11 +1188,11 @@
   "source": "results/compositional.json"
  },
  "cmpOverBn": {
-  "value": "1.27",
+  "value": "1.31",
   "source": "results/compositional.json"
  },
  "cmpOverTn": {
-  "value": "2.82",
+  "value": "3.33",
   "source": "results/compositional.json"
  },
  "cmpOverBnLo": {
@@ -1196,7 +1200,7 @@
   "source": "results/compositional.json"
  },
  "cmpOverBnHi": {
-  "value": "1.57",
+  "value": "1.86",
   "source": "results/compositional.json"
  },
  "cmpOverBnFrac": {
@@ -1204,47 +1208,59 @@
   "source": "results/compositional.json"
  },
  "cmpCheckLarge": {
-  "value": "0.444",
+  "value": "0.443",
   "source": "results/compositional.json"
  },
  "cmpEmptyLarge": {
   "value": "0.093",
   "source": "results/compositional.json"
  },
- "cmpGeomLarge": {
-  "value": "0.354",
+ "cmpGeomImpLarge": {
+  "value": "0.253",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomBlkLarge": {
+  "value": "0.101",
   "source": "results/compositional.json"
  },
  "cmpCheckBn": {
-  "value": "0.588",
+  "value": "0.574",
   "source": "results/compositional.json"
  },
  "cmpEmptyBn": {
   "value": "0.025",
   "source": "results/compositional.json"
  },
- "cmpGeomBn": {
-  "value": "0.341",
+ "cmpGeomImpBn": {
+  "value": "0.208",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomBlkBn": {
+  "value": "0.145",
   "source": "results/compositional.json"
  },
  "cmpCheckTn": {
-  "value": "0.769",
+  "value": "0.685",
   "source": "results/compositional.json"
  },
  "cmpEmptyTn": {
   "value": "0.001",
   "source": "results/compositional.json"
  },
- "cmpGeomTn": {
-  "value": "0.225",
+ "cmpGeomImpTn": {
+  "value": "0.093",
+  "source": "results/compositional.json"
+ },
+ "cmpGeomBlkTn": {
+  "value": "0.215",
   "source": "results/compositional.json"
  },
  "cmpCheckMax": {
-  "value": "0.871",
+  "value": "0.696",
   "source": "results/compositional.json"
  },
  "cmpPolicySlope": {
-  "value": "+0.372",
+  "value": "+0.378",
   "source": "results/compositional.json"
  },
  "cmpPolicyObsLo": {
@@ -1256,15 +1272,15 @@
   "source": "results/compositional.json"
  },
  "cmpPolicyLarge": {
-  "value": "0.308",
+  "value": "0.307",
   "source": "results/compositional.json"
  },
  "cmpPolicyBn": {
-  "value": "0.596",
+  "value": "0.600",
   "source": "results/compositional.json"
  },
  "cmpPolicyTn": {
-  "value": "0.951",
+  "value": "0.953",
   "source": "results/compositional.json"
  },
  "cmpExtDiverge": {
@@ -1284,7 +1300,7 @@
   "source": "results/compositional.json"
  },
  "cmpCompTV": {
-  "value": "0.490",
+  "value": "0.489",
   "source": "results/compositional.json"
  },
  "cmpSizeTV": {
@@ -1484,19 +1500,19 @@
   "source": "results/blocker_check.json"
  },
  "loroFull": {
-  "value": "+0.461",
+  "value": "+0.456",
   "source": "results/robustness_checks.json"
  },
  "loroMin": {
-  "value": "+0.360",
+  "value": "+0.347",
   "source": "results/robustness_checks.json"
  },
  "loroMax": {
-  "value": "+0.539",
+  "value": "+0.537",
   "source": "results/robustness_checks.json"
  },
  "loroShift": {
-  "value": "0.101",
+  "value": "0.109",
   "source": "results/robustness_checks.json"
  },
  "extLooMin": {

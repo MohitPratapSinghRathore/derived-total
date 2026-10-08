@@ -43,7 +43,7 @@ sys.path.insert(0, HERE)
 import ds_stats as S
 
 # The true partition: these sum to exactly 1 in every structure file.
-PART = S.CLASSES + ["other"]
+PART = list(S.CLASSES_CORRECTED)
 PIVOT = 1e7            # centring scale for conditioning, not a fitted quantity
 N_BOOT = 1000
 
@@ -52,9 +52,11 @@ def _composition(rws):
     x = np.log(np.array([q["params"] for q in rws], float)) - np.log(PIVOT)
     Y = np.zeros((len(rws), len(PART)))
     for i, q in enumerate(rws):
-        for j, k in enumerate(S.CLASSES):
+        for j, k in enumerate(S.CLASSES_CORRECTED):
             Y[i, j] = q["share_" + k]
-        Y[i, -1] = q["share_other"]
+        # The old partition reserved the last column for a residual 'other'
+        # class. The corrected partition has none, and the last column is now
+        # leaves_check, so writing a residual here would zero the largest class.
     return x, Y / Y.sum(1, keepdims=True)
 
 
@@ -90,7 +92,7 @@ def _powerlaw(rws, key):
 
 def overspend(rws, N, keys=None):
     """Sum of independently extrapolated parts, over the extrapolated whole."""
-    keys = keys or S.CLASSES
+    keys = keys or S.CLASSES_CORRECTED
     s = sum(np.exp(np.polyval(_powerlaw(rws, k), np.log(N))) for k in keys)
     return float(s / np.exp(np.polyval(_powerlaw(rws, "illegal_rate"), np.log(N))))
 
@@ -98,16 +100,20 @@ def overspend(rws, N, keys=None):
 def divergence_rate(rws, keys=None):
     """a* - b: the exponent at which parts outgrow the whole. Positive means the
     decomposition must become impossible at some finite scale."""
-    keys = keys or S.CLASSES
-    a = max(_powerlaw(rws, k)[0] for k in keys)
+    keys = keys or S.CLASSES_CORRECTED
+    # Which class attains the maximum matters now: under the corrected partition
+    # it is no longer the check class, and the reader needs to be told which one
+    # the extrapolation comes to depend on.
+    best = max(keys, key=lambda k: _powerlaw(rws, k)[0])
+    a = _powerlaw(rws, best)[0]
     b = _powerlaw(rws, "illegal_rate")[0]
-    return float(a - b), float(a), float(b)
+    return float(a - b), float(a), float(b), best
 
 
 def weighted_mean_exponent(rws, keys=None):
     """The rate-weighted mean of the part exponents, which b tracks in range.
     a* >= this mean always, with equality only if every exponent is equal."""
-    keys = keys or S.CLASSES
+    keys = keys or S.CLASSES_CORRECTED
     w = {k: np.mean([q[k] for q in rws]) for k in keys}
     tot = sum(w.values())
     return float(sum(w[k] * _powerlaw(rws, k)[0] for k in keys) / tot)
@@ -177,9 +183,17 @@ MATCHED = ["local", "to_own", "leaves_check"]
 def _matched_ours(rows):
     out = []
     for q in rows:
+        # The groups are held equivalent to the external ladder's three, whose
+        # classifier predates the split: geometry is rejoined from its two
+        # sub-classes, and castling goes back with destination occupancy, which
+        # is where that classifier would put it. Regrouping for the comparison is
+        # not the same as reverting the correction; the per-class fits elsewhere
+        # use the corrected partition.
         v = np.array([q["share_from_empty"] + q["share_from_opponent"]
-                      + q["share_geometry"],
-                      q["share_to_own"], q["share_leaves_check"]], float)
+                      + q["share_geometry_impossible"]
+                      + q["share_geometry_blocked"],
+                      q["share_to_own"] + q["share_castling"],
+                      q["share_leaves_check"]], float)
         out.append({"ill": q["illegal_rate"], "params": q["params"],
                     "y": v / v.sum()})
     return out
@@ -235,7 +249,7 @@ def covariate_test(rows, pivot=np.log(0.05)):
 
 
 def main():
-    rows = S.ladder_rows()
+    rows = S.ladder_rows_corrected()
     p = fit_simplex(rows)
     out = {"n_runs": len(rows), "partition": PART, "pivot": PIVOT}
 
@@ -243,8 +257,9 @@ def main():
     out["rmse_simplex"], out["rmse_independent"] = r_s, r_i
     out["simplex_fits_better"] = bool(r_s < r_i)
 
-    d, a_star, b = divergence_rate(rows)
+    d, a_star, b, a_key = divergence_rate(rows)
     out["divergence_rate"], out["a_star"], out["b_total"] = d, a_star, b
+    out["a_star_key"] = a_key
     out["weighted_mean_exponent"] = weighted_mean_exponent(rows)
     out["breakdown_scale"] = breakdown_scale(rows)
 
@@ -276,7 +291,7 @@ def main():
 
     # Independent replication of the methodological failure
     erows, ekeys = external_partition_rows()
-    ed, ea, eb = divergence_rate(erows, ekeys)
+    ed, ea, eb, _ek = divergence_rate(erows, ekeys)
     out["ext_classes"] = ekeys
     out["ext_divergence_rate"], out["ext_a_star"], out["ext_b"] = ed, ea, eb
     out["ext_overspend_1e9"] = overspend(erows, 1e9, ekeys)

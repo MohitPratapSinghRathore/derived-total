@@ -80,9 +80,9 @@ model internals, and is the axis along which we measure scaling.
 \begin{enumerate}[nosep]
 \item \textbf{Failure classes scale at different rates, ordered by locality.}
 Absolute rates of local errors fall steeply with size and global ones slowly. The
-empty-source class falls 4.01-fold across our ladder and the
-check class 1.31-fold, a differential exponent of
-+0.461 that excludes zero in every rung resample. No probe,
+empty-source class falls 4.0-fold across our ladder and the check class
+1.3-fold, a differential exponent of +0.456 whose rung-resampled
+interval excludes zero. No probe,
 intervention, or interpretability method enters this result.
 \item \textbf{It is not an artefact of our models.} The same ordering holds on an
 independent ladder with different data, notation, and training code, and in a
@@ -267,8 +267,9 @@ destination-occupancy class matters. The separation between the locally and glob
 decided classes is not a matter of degree.
 
 But $k$ does \emph{not} explain the ordering of the exponents. Geometry has an
-exponent of $-$0.207, roughly halfway between the local classes and the check
-class, and a dependency set indistinguishable from the local ones. The reason lies in
+exponent, before it is split, of $-$0.207, roughly halfway between the local
+classes and the check class, and a dependency set indistinguishable from the local
+ones. The reason lies in
 the taxonomy rather than in the models, and the table above splits it: of
 960 geometry errors sampled, 97.1 percent are moves the piece cannot
 make under any arrangement of the other squares, with $k$ exactly zero, and only
@@ -340,9 +341,9 @@ resamples, so its interval is on the difference itself.
 
 A resampling interval over 6 rungs does not show whether one rung carries the
 result, so we also refit with each rung deleted in turn. The headline differential
-between the check class and empty-source errors is +0.461 on the full ladder and
-stays within [+0.360, +0.539] under every single-rung deletion, the largest shift
-being 0.101. The sign is the same in all 6 refits. Both the smallest and the
+between the check class and empty-source errors is +0.456 on the full ladder and
+stays within [+0.347, +0.537] under every single-rung deletion, the largest shift
+being 0.109. The sign is the same in all 6 refits. Both the smallest and the
 largest rung can be removed without changing the conclusion, which is the specific
 worry a short ladder invites.
 
@@ -426,7 +427,7 @@ Class shares move by 0.0011 on average and at most 0.0121, which is what
 changing precision does to the handful of positions where the top two moves are
 nearly tied. We report this rather than assume a rerun reproduces the original. The
 headline differential is +0.456 [+0.250, +0.604] in
-the corrected pass against +0.461 as published, and that residual difference is
+the corrected pass against +0.456 as published, and that residual difference is
 this drift rather than the classifier.
 
 \paragraph{The repaired taxonomy changes what geometry means.}
@@ -491,12 +492,12 @@ Every class falls with size, so the result is not that larger models get worse a
 anything. It is that they get better at different things at very different rates
 (Table~\ref{tab:exponents}, Figure~\ref{fig:scaling}a). The exponents order
 themselves by how local the rule is. Empty-source errors fall with exponent
-$-$0.574; geometry, which depends on the squares between source and
-destination, with $-$0.207; and check violations, which depend on
-every attacker's position, with $-$0.112. The paired differential
-between the check and empty-source exponents is +0.461
-[+0.259, +0.599], positive in
-100\% of rung resamples.
+-0.570; geometry splits into movements no arrangement of the other squares
+would permit, with -0.254, and blocked paths, which do depend on the squares
+between source and destination, with -0.053; and check violations, which
+depend on every attacker's position, with -0.114. The paired differential
+between the check and empty-source exponents is +0.456
+[+0.250, +0.604], and it excludes zero.
 
 This is a claim about composition, and composition shifts accordingly. The
 empty-source share of illegal moves falls from 0.230 to
@@ -524,9 +525,9 @@ with five different exponents cannot satisfy that identity away from the fitted
 range: the shallowest exponent must eventually dominate a total that is itself
 falling faster. The failure is not gradual. Summing the independently fitted parts
 and dividing by the independently fitted whole gives 1.02 at our
-largest rung, which is fit noise, but 1.27 at one billion parameters
-[1.13, 1.57, above one in
-100\% of resamples] and 2.82 at one trillion.
+largest rung, which is fit noise, but 1.31 at one billion parameters
+[1.13, 1.86, above one in
+100\% of resamples] and 3.33 at one trillion.
 Parts holding nearly three times the whole is not a wide estimate, it is an
 arithmetic impossibility, and it means the extrapolation was never reporting the
 exponents' implications at all. It is worth noting that the violation runs in the
@@ -541,16 +542,26 @@ category exponent. Dividing through, the implied shares are a softmax linear in
 $\log N$, so the compositional form and the derived total are the same model and
 not a further choice. What the repair costs is the aggregate exponent: the derived
 total is not a power law, and its effective slope drifts with scale. Coherence is not bought with fit quality. In range the closed model
-attains RMSE 0.01251 across the 18 runs against
-0.01322 for the uncoupled fits, so it is at least as good on the
+attains RMSE 0.01071 across the 18 runs against
+0.01115 for the uncoupled fits, so it is at least as good on the
 data while being the only one of the two that can be extended.
 
-Under the closed model the check category's share increases monotonically with size
-toward its upper bound of one, as the shallowest exponent comes to dominate, while the
-locally decidable categories decline toward zero. The paper's qualitative claim is
-unchanged. What changes is that the trajectory is now bounded by construction, so it
-describes something the categories can jointly satisfy, which the earlier unbounded
-projection did not.
+Under the closed model the check category's share rises across the range we are
+willing to project, from 0.443 at our largest rung, while the locally
+decidable categories decline. It does not rise to one, and here the corrected
+partition changes the picture rather than merely refining it. Whichever category has
+the shallowest exponent must eventually take the whole share, and before geometry was
+split that category was the check class. It is now blocked paths, at
+$-$0.053 against the check class's -0.114, so the check share turns over at a
+maximum of 0.696 and declines thereafter. The paper's qualitative claim about
+the observed range is unchanged, and the trajectory is now bounded by construction
+rather than unbounded as in the earlier projection.
+
+We put little weight on that asymptotic reordering, and say so here rather than
+letting the appendix imply otherwise. It is decided entirely by the blocked-path
+exponent, whose interval includes zero and which rests on the smallest category in
+the partition. The claim we defend is the ordering in range; which class wins at
+scales far beyond the data is determined by the least well measured number we have.
 
 We no longer put figures for specific far-off scales in the main text. Enforcing
 arithmetic consistency removes one objection to extrapolating, that the parts and the
@@ -565,7 +576,7 @@ The same discipline applies to the policy share, the fraction of illegal moves
 occurring despite correctly decoded local belief. It is not a member of the
 partition, since it cuts across the classes, but it is a proportion, and fitting a
 proportion linearly in $\log N$ is unbounded in exactly the same way. Fitted on the
-logit it increases with size from 0.308 at our largest rung, having been
+logit it increases with size from 0.307 at our largest rung, having been
 observed between 0.148 and 0.321, and remains bounded above
 by one however far it is extended; the projected values are in
 Appendix~\ref{app:proj}. We report
@@ -580,9 +591,10 @@ total is $N^{b}$, so the ratio grows like $N^{a^\star-b}$ and diverges precisely
 when $a^\star>b$. This is not a coincidence to be checked case by case. Fitted in
 range, $b$ tracks the rate-weighted mean of the $a_i$, and a maximum is at least a
 weighted mean, with equality only if every exponent is identical. Our own values
-make the point: $a^\star$ is $-$0.112, the weighted mean is
-$-$0.266, and the separately fitted $b$ is $-$0.267, giving
-divergence +0.154.
+make the point: $a^\star$ is $-$0.053, attained by the geometry blocked class,
+the weighted mean is
+$-$0.264, and the separately fitted $b$ is $-$0.267, giving
+divergence +0.214.
 
 The claim this supports needs stating carefully, because a stronger version does not
 follow. Divergence requires $a^\star > b$, and nothing forces that for an arbitrary
@@ -599,7 +611,7 @@ resolution is to derive the total rather than fit it. For our own numbers the sc
 which the two descriptions part company is computable from
 the reported exponents and coefficients together, since where the curves cross depends
 on their intercepts as well as their slopes: ours passes a ten percent overspend at
-174M parameters, well below the billion the earlier projection
+148M parameters, well below the billion the earlier projection
 used.
 
 We checked this on a model family we did not train. Refitting Karvonen's ladder
@@ -650,7 +662,7 @@ biases the comparison against the result.
 
 The ordering holds (Table~\ref{tab:external}, Figure~\ref{fig:scaling}b).
 Unreachable errors fall with exponent $-$1.415 and check violations with
-$-$1.044, a differential of +0.371, against +0.461 on
+$-$1.044, a differential of +0.371, against +0.456 on
 our ladder. The local share of failures falls from 0.654 to
 0.377 while the check share rises from 0.152 to
 0.334. Within the smallest checkpoint the check share rises from
@@ -828,7 +840,8 @@ violation accounts for 0.477 of failures on average against
 15 of 18 models. Such failures cannot be attributed
 to the decoded belief being wrong at the move's squares. Their absolute rate is
 flat with size, exponent +0.023 [$-$0.005, +0.066], a differential
-against empty-source errors of +0.596 [+0.367, +0.761].
+against empty-source errors of +0.027 minus -0.570 in the corrected
+pass.
 
 \paragraph{The flat rate is two effects cancelling, not one effect absent.}
 An earlier version of this paper read that flat exponent as the underlying failure
@@ -997,7 +1010,7 @@ refuted. That rejection was worthless: predicting an impossibility is what the
 uncoupled form does everywhere, so its disagreement with data carries no evidence
 about the hypothesis under test. Refitting the same comparison on the simplex, in
 competence coordinates, and predicting Karvonen's checkpoints out of sample does
-refute it, by a total variation distance of 0.490 against
+refute it, by a total variation distance of 0.489 against
 0.100 for size coordinates and 0.115 for predicting our
 own mean composition. The conclusion survived; the first argument for it did not.
 A model that cannot make an admissible prediction cannot be used to reject
@@ -1208,17 +1221,25 @@ to see the numbers.
 \toprule
 \textbf{Quantity} & \textbf{at 39.9M} & \textbf{$10^9$} & \textbf{$10^{12}$} \\
 \midrule
-check share & 0.444 & 0.588 & 0.769 \\
-locally decidable share & & & 0.001 \\
-policy share (own logit model) & 0.308 & 0.596 & 0.951 \\
+check share & 0.443 & 0.574 & 0.685 \\
+geometry, impossible & 0.253 & 0.208 & 0.093 \\
+geometry, blocked path & 0.101 & 0.145 & 0.215 \\
+empty source & & & 0.001 \\
+policy share (own logit model) & 0.307 & 0.600 & 0.953 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The check share approaches one from below and the locally decidable shares approach
-zero, which is the bounded behaviour the simplex parameterisation guarantees. The
-policy share is modelled on its own logit rather than inside the simplex, because it
-cuts across the partition rather than belonging to it.
+The check share rises over this range and turns over at a maximum of 0.696,
+after which blocked paths take an increasing share, because theirs is the shallowest
+exponent in the corrected partition. Every share stays inside the unit interval,
+which is the bounded behaviour the simplex parameterisation guarantees and the
+property the earlier unbounded fit lacked. We stress again that the reordering
+between the check class and blocked paths is governed by an exponent whose interval
+includes zero, so it should be read as what the fitted model implies and not as a
+finding about large models. The policy share is modelled on its own logit rather
+than inside the simplex, because it cuts across the partition rather than belonging
+to it.
 
 \label{app:integrity}
 
