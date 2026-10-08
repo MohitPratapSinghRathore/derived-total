@@ -37,26 +37,28 @@
 \maketitle
 
 \begin{abstract}
-Scaling reduces how often language models make long-horizon errors, but it is
-rarely asked which errors it removes. We classify every illegal move made by
-search-free chess transformers by what made it illegal, using only a rules engine,
-and measure how the absolute rate of each class falls with model size. Across
-\result{nRuns} models spanning \result{paramsSmall} to \result{paramsLarge}
-parameters, errors decidable from the move's own squares fall with exponent
-\result{expFromEmpty}, while moves illegal only because they leave the king in
-check fall with exponent \result{expLeavesCheck}: a paired differential of
-\result{diffProbeFree} [\result{diffProbeFreeLo}, \result{diffProbeFreeHi}]. Failures
-that occur despite correctly decoded local state have a flat absolute rate,
-exponent \result{expCorrLocal}, but that is two effects cancelling: decoding accuracy
-rises and the conditional failure rate falls, exponent \result{jcCond}. The ordering replicates on an independent
-character-level ladder spanning a \result{kSpan}-fold parameter range, and in
-OthelloGPT every residual failure is of the non-local kind. The intervention results are consistent with this: belief is coupled to action locally, a repair edit can correct about two
-squares, and the class that scale leaves behind is the class local correction
-cannot reach. The standard intervention metric inverts on the same data. Illegal
-move rate ranks a norm-matched random edit above correct repair in
-\result{invCount} of \result{invN} models, because hedging lowers it. Finally, these
-per-category fits and a separately fitted aggregate cannot both hold, since a sum of
-power laws is not a power law; we derive the total from the categories instead.
+Scaling reduces how often language models err over long horizons, but it is rarely
+asked which errors it removes. We classify every illegal move made by search-free
+chess transformers by what made it illegal, using only a rules engine, and measure
+how each class's absolute rate falls with model size. Across
+\result{rgRuns} models spanning \result{paramsSmall} to \result{paramsLarge} parameters, errors decidable
+from the move's own squares fall with exponent \result{rgExpEmpty}, while moves illegal
+only because they leave the king in check fall with exponent \result{rgExpCheck}: a paired
+differential of \result{rgDiffCheckEmpty} [\result{rgDiffLoCheckEmpty}, \result{rgDiffHiCheckEmpty}]. Every
+class improves; the rates differ. Failures occurring despite
+correctly decoded local state have a nearly flat joint rate, because improving
+decoding offsets a conditional failure rate falling with exponent \result{jcCond}. The
+ordering replicates on an independent character-level ladder spanning a
+\result{kSpan}-fold parameter range, and in OthelloGPT \result{othNoFlank} of \result{othFail} residual
+failures are of the non-local kind. Internal belief is coupled to action locally,
+and the repair we test installs about two squares but no reliable whole-board
+correction. Two reasonable scores of the same intervention then disagree:
+illegal-move rate ranks a norm-matched random edit above correct repair in
+\result{invCount} of \result{invN} models, while the repair shifts a fixed forced choice
+further, so one headline number cannot settle whether an intervention helped.
+Finally, these per-category fits and a separately fitted aggregate cannot both
+hold, since a sum of power laws with differing exponents is generally not a power
+law; we derive the total from the categories instead.
 \end{abstract}
 
 \noindent\textbf{Keywords:} scaling, failure analysis, world models, state
@@ -98,11 +100,13 @@ intervention, or interpretability method enters this result.
 \item \textbf{It is not an artefact of our models.} The same ordering holds on an
 independent ladder with different data, notation, and training code, and in a
 game whose legality is non-local by construction.
-\item \textbf{The component scale does not remove is the one local correction
-cannot reach.} Internal belief is causally coupled to action at the squares a
-move touches, a residual-stream repair can install at most about two squares, and
-failures that occur despite correct belief at those squares have an exponent
-indistinguishable from zero.
+\item \textbf{The slowest-improving component is the one local correction cannot
+reach.} Every disjoint failure class improves with scale; they differ in how fast.
+Internal belief is causally coupled to action at the squares a move touches, the
+repair procedure we test installs about two squares reliably and whole-board
+correction not at all, and failures occurring despite correct belief at those squares
+have a nearly flat joint rate because improving decoding offsets a falling
+conditional failure rate.
 \item \textbf{The usual way of scoring interventions reads this backwards.}
 Illegal-move rate rewards edits that flatten the output distribution, and on our
 data it prefers a random direction to the correct repair in every model.
@@ -110,7 +114,8 @@ data it prefers a random direction to the correct repair in every model.
 
 \paragraph{Contributions.}
 A probe-free, rules-grounded measurement of how failure composition changes with
-scale; its replication across two ladders and two games; a mechanistic account,
+scale; its replication across two independent ladders, with a consistency check in a
+second game; a mechanistic account,
 with a measured capability limit on the causal instrument; and a demonstration
 that a widely used intervention metric is anti-correlated with the effect it is
 meant to measure. The probe and edit instruments used in Section~\ref{sec:mech}
@@ -203,9 +208,11 @@ along a compute-optimal frontier. And the reported checkpoint is the final one, 
 no early stopping and no best-validation selection. That choice is innocuous here
 rather than by assumption: the final checkpoint is also the lowest-validation-loss
 checkpoint in \result{trnFinalIsBest} of \result{trnRuns} runs, so selection cannot be carrying any part of
-the result. Validation loss falls monotonically along the ladder, from \result{trnValMax} at the
-smallest rung to \result{trnValMin} at the largest, which confirms the ladder is one of capability
-and not merely of parameter count.
+the result. Validation loss falls monotonically along the ladder, which confirms the
+ladder is one of capability and not merely of parameter count. The table lists the
+seed-zero run of each rung; over all \result{trnRuns} runs the loss spans \result{trnValMin} to
+\result{trnValMax}, and the two sets of numbers differ only because one is a single run and
+the other the extremes across seeds.
 
 \paragraph{Failure taxonomy.}
 At every position from ply 20 onward we take the model's top-1 move and ask the
@@ -229,8 +236,19 @@ squares, excluding the two the move names because every class depends on those b
 construction. The definition is causal: it asks what the verdict turns on, not what
 the rule text mentions. It is computed by brute force over all 64 squares and all 12
 piece types, on positions from real games with no model involved, so $k$ is a
-property of the rules and the position rather than of any network. Over \result{locGames} games
-and \result{locMoves} sampled illegal moves:
+property of the rules and the position rather than of any network. The edited boards
+are not constrained to be reachable or even valid: python-chess answers legality
+queries on such positions as what its documentation calls pseudo-chess, and a board
+may end up without a king or with the side not to move in check. We allow this
+deliberately, because the question is which squares the legality rule reads, not which
+positions a game could reach. It does mean $k$ counts sensitivity to physically
+unreachable alterations, and the castling defect above was found precisely by asking
+why a class decidable from one square appeared to depend on many. Over \result{locGames} games
+and \result{locMoves} sampled illegal moves drawn from the five classes of the original
+partition, plus \result{locNCastle} castling attempts sampled separately once the audit below
+identified them as a distinct class, the dependency counts are as follows. The two
+geometry rows subdivide the geometry row above them rather than adding to it, so the
+partition total is the five original classes alone.
 
 \begin{center}
 \small
@@ -255,7 +273,11 @@ Two things follow, and the second is inconvenient for us. The local and global
 distinction this paper rests on is confirmed, and is now a measurement rather than
 an argument: the check class depends on \result{locKCheck} squares on average, with a
 standard deviation of \result{locCheckSd} and a maximum of \result{locKMaxCheck}, while every other
-class depends on at most one. That separation is not a matter of degree.
+class decided by the move's own squares depends on at most one. Castling sits in
+between, with a maximum of \result{locKMaxCastle}: rights and the intervening squares can
+each be interfered with, which is part of why separating it from the
+destination-occupancy class matters. The separation between the locally and globally
+decided classes is not a matter of degree.
 
 But $k$ does \emph{not} explain the ordering of the exponents. Geometry has an
 exponent of \result{expGeometry}, roughly halfway between the local classes and the check
@@ -295,7 +317,11 @@ testable prediction about which moves score zero, and it holds exactly. Among th
 \result{blkOneN} cases, and every one of the \result{blkManyN} moves with two or more blockers has
 $k=0$. So $k$ is a lower bound on dependence, its deficit is characterised rather
 than unknown, and in this class the deficit is fully accounted for by blocker count.
-This strengthens the separation rather than weakening it: the check class reaches
+This does not automatically strengthen the comparison between classes, because the
+amount of undercounting can differ between them: a class with many multi-piece
+dependencies loses more than one with few. What it does establish is a lower bound on
+each class separately, and the bound is already decisive for the one that matters,
+since the check class reaches
 \result{locKCheck} under a measure that systematically undercounts.
 We report this rather than choose $k$ to fit. Hand-assigned values of $k$ produce a
 coefficient of determination anywhere from about two thirds to about seven eighths
@@ -303,9 +329,12 @@ depending on which values are assigned, which measures the freedom in the assign
 and not a relationship in the data. The ordinal claim is supported at the extremes,
 where it is now measured. A continuous law predicting an exponent from locality is
 not supported, and we assert none.
-Across all \result{nRuns} runs the residual class that none of these rules catch
-has a maximum share of \result{shareOtherMax}, which confirms the taxonomy is
-exhaustive and the parser correct; it is a quality check, not a finding.
+Across all \result{rgRuns} runs the residual class that none of these rules catch
+has a maximum share of \result{shareOtherMax}, so the taxonomy is exhaustive over the
+failures observed. We previously wrote that this also confirmed the classifier
+correct. It does not: assigning every case to some class says nothing about whether
+the assignments are right, and the defect described in Section~\ref{sec:regen} was
+present throughout while the residual class stayed empty.
 
 \paragraph{Absolute rates, not shares.}
 We report each class as a fraction of all scored positions, its share of illegal
@@ -346,30 +375,116 @@ past what we can train ourselves. Versions are recorded by
 stale if the work moves to another machine.
 
 % ====================================================================
+
+\section{The Corrected Classification Pass}
+\label{sec:regen}
+
+The audit above found two defects in the classifier, and the second is more serious
+than a mislabel. Disclosing them is not the same as correcting them, so the failure
+sets were regenerated from the saved checkpoints and every downstream quantity
+recomputed. This section reports what changed, what did not, and how we know which
+is which.
+
+\paragraph{The two defects.}
+First, king onto one's own rook is how both UCI and Chess960 encode castling, so a
+test for a piece of one's own colour on the destination square collects castling
+attempts and files them as destination-occupancy errors. Second, and worse, the test
+deciding whether a move counted as a failure at all asked whether the move was absent
+from \texttt{board.legal\_moves}, the generator python-chess uses to enumerate legal
+moves. That generator emits castling as \texttt{e1g1}, while \texttt{board.is\_legal} also
+accepts the \texttt{e1h1} king-onto-rook form of the same move. A legal castling move
+written the second way is therefore absent from the enumeration while being legal, and
+would be recorded as a failure. We state the distinction precisely because it is the
+whole mechanism: the original gate tested membership in the materialised set of
+generated moves, not legality, and the two differ exactly on this encoding.
+
+\paragraph{The corrected pass.}
+The gate now calls \texttt{is\_legal} directly, castling is its own class, geometry is
+split into impossible movement and blocked path, and every failure is recorded with
+its position, its move and its label under both the old and the new scheme. That last
+point is why the affected share previously could not be quantified: the individual
+moves were not retained and only aggregate shares were stored. They are retained now.
+
+Labelling each move both ways on the same recorded position matters for attribution.
+The difference between the two labels is then caused by the classifier alone, and
+cannot be confounded with any numerical difference between this pass and the original.
+
+\paragraph{No legal move was ever counted as a failure.}
+Across \result{rcFailures} recorded failures from all \result{rcRuns} runs, \result{rcLegal} were legal under
+the corrected gate. The failure mode that would have been most damaging, legal moves
+inflating the failure counts and with them the aggregate rates, did not occur. The
+reason is visible once the mechanism is stated: for the defect to bite, a model must
+emit the king-onto-rook form while castling is actually available, and these models
+are trained on move tokens produced by the same library's standard encoding, so they
+learn \texttt{e1g1} and not \texttt{e1h1} as the way to castle. That token is in the
+vocabulary only as an ordinary rook move. Aggregate illegal-move rates, and every
+quantity built on them, are therefore unaffected.
+
+\paragraph{What was relabelled, and what the headline rests on.}
+\result{rcRelabelled} of the \result{rcFailures} moves changed class: \result{rcGeomImp} and \result{rcGeomBlk} moved from
+the geometry label into its two sub-classes, which is a refinement rather than a
+correction, and \result{rcCastling} genuinely illegal castling attempts left the
+destination-occupancy class, which is the correction. No move entered or left either
+of the two classes the headline differential is computed from: \result{rcMoveEmpty} for
+empty-source errors and \result{rcMoveCheck} for check violations. The differential is
+therefore unchanged by the relabelling as a matter of arithmetic rather than of
+estimation, which is the specific thing a reader needs in order to know that the
+central result survives the correction.
+
+\paragraph{The cost of regenerating on different hardware.}
+The original pass ran in float16 on a GPU that is no longer attached; the corrected
+pass ran in float32 on CPU. Comparing the \emph{old} labels from the new pass against
+the stored shares isolates that change, since the classifier is then held fixed.
+Class shares move by \result{rcDriftMean} on average and at most \result{rcDriftMax}, which is what
+changing precision does to the handful of positions where the top two moves are
+nearly tied. We report this rather than assume a rerun reproduces the original. The
+headline differential is \result{rgDiffCheckEmpty} [\result{rgDiffLoCheckEmpty}, \result{rgDiffHiCheckEmpty}] in
+the corrected pass against \result{loroFull} as published, and that residual difference is
+this drift rather than the classifier.
+
+\paragraph{The repaired taxonomy changes what geometry means.}
+Splitting geometry is not cosmetic. The two sub-classes scale differently: impossible
+movement has exponent \result{rgExpGeomImp} [\result{rgExpLoGeomImp}, \result{rgExpHiGeomImp}], while blocked
+paths have \result{rgExpGeomBlk} [\result{rgExpLoGeomBlk}, \result{rgExpHiGeomBlk}], an interval that includes
+zero. The aggregate geometry exponent was averaging the two, which is the same
+objection this paper raises against fitting one exponent to a total whose parts scale
+differently, turned on one of our own categories. Against the locally decided classes
+the check differential narrows but survives: check against impossible movement is
+\result{rgDiffCheckGeomImp} [\result{rgDiffLoCheckGeomImp}, \result{rgDiffHiCheckGeomImp}]. The blocked-path
+exponent is poorly determined on \result{nRungs} rungs and we draw no ordering conclusion
+from it.
+
 \section{Differential Scaling}
 \label{sec:scaling}
 
 \begin{table}[t]
 \centering\small
-\caption{Absolute failure rate per scored position at the smallest and largest
-rung, mean over seeds, and the size exponent with its rung-resampled 95\%
-interval. Classes are ordered by how local the rule deciding them is. The last row
-is a cross-cutting flag computed with a probe (Section~\ref{sec:mech}), not a sixth
-disjoint class, and must not be summed with the others.}
+\caption{Absolute failure rate per scored position at the smallest and
+largest rung, mean over seeds, and the size exponent with its rung-resampled
+95\% interval. All \result{rgRuns} runs, from the corrected pass of
+Section~\ref{sec:regen}. Classes are grouped by what decides them: the first four are
+decided by the move's own two squares, a blocked path needs one further square, and a
+check violation needs many. The last two rows are not disjoint classes and must not be
+summed with the others, the first being their total and the second a cross-cutting
+flag computed with a probe (Section~\ref{sec:mech}).}
 \label{tab:exponents}
 \begin{tabular}{lcccc}
 \toprule
 class & \result{paramsSmall} & \result{paramsLarge} & fold drop & exponent [95\% CI] \\
 \midrule
-empty source     & \result{absFromEmptyFirst} & \result{absFromEmptyLast} & \result{ratioFromEmpty} & \result{expFromEmpty} [\result{expFromEmptyLo}, \result{expFromEmptyHi}] \\
-own destination  & \result{absToOwnFirst} & \result{absToOwnLast} & \result{ratioToOwn} & \result{expToOwn} [\result{expToOwnLo}, \result{expToOwnHi}] \\
-opponent source  & \result{absFromOppFirst} & \result{absFromOppLast} & \result{ratioFromOpp} & \result{expFromOpp} [\result{expFromOppLo}, \result{expFromOppHi}] \\
-geometry         & \result{absGeometryFirst} & \result{absGeometryLast} & \result{ratioGeometry} & \result{expGeometry} [\result{expGeometryLo}, \result{expGeometryHi}] \\
-leaves check     & \result{absLeavesCheckFirst} & \result{absLeavesCheckLast} & \result{ratioLeavesCheck} & \result{expLeavesCheck} [\result{expLeavesCheckLo}, \result{expLeavesCheckHi}] \\
+empty source & \result{rgFirstEmpty} & \result{rgLastEmpty} & \result{rgFoldEmpty} & \result{rgExpEmpty} [\result{rgExpLoEmpty}, \result{rgExpHiEmpty}] \\
+opponent source & \result{rgFirstOpp} & \result{rgLastOpp} & \result{rgFoldOpp} & \result{rgExpOpp} [\result{rgExpLoOpp}, \result{rgExpHiOpp}] \\
+own destination & \result{rgFirstOwn} & \result{rgLastOwn} & \result{rgFoldOwn} & \result{rgExpOwn} [\result{rgExpLoOwn}, \result{rgExpHiOwn}] \\
+castling & \result{rgFirstCastle} & \result{rgLastCastle} & \result{rgFoldCastle} & \result{rgExpCastle} [\result{rgExpLoCastle}, \result{rgExpHiCastle}] \\
+geometry, impossible & \result{rgFirstGeomImp} & \result{rgLastGeomImp} & \result{rgFoldGeomImp} & \result{rgExpGeomImp} [\result{rgExpLoGeomImp}, \result{rgExpHiGeomImp}] \\
 \midrule
-all illegal moves & \result{absIllegalFirst} & \result{absIllegalLast} & \result{ratioIllegal} & \result{expIllegal} [\result{expIllegalLo}, \result{expIllegalHi}] \\
+geometry, blocked path & \result{rgFirstGeomBlk} & \result{rgLastGeomBlk} & \result{rgFoldGeomBlk} & \result{rgExpGeomBlk} [\result{rgExpLoGeomBlk}, \result{rgExpHiGeomBlk}] \\
 \midrule
-\textit{despite correct local belief} & \result{absCorrLocalFirst} & \result{absCorrLocalLast} & \result{ratioCorrLocal} & \result{expCorrLocal} [\result{expCorrLocalLo}, \result{expCorrLocalHi}] \\
+leaves check & \result{rgFirstCheck} & \result{rgLastCheck} & \result{rgFoldCheck} & \result{rgExpCheck} [\result{rgExpLoCheck}, \result{rgExpHiCheck}] \\
+\midrule
+all illegal moves & \result{rgFirstAllIll} & \result{rgLastAllIll} & \result{rgFoldAllIll} & \result{rgExpAllIll} [\result{rgExpLoAllIll}, \result{rgExpHiAllIll}] \\
+\midrule
+\textit{despite correct local belief} & \result{rgFirstCorrLoc} & \result{rgLastCorrLoc} & \result{rgFoldCorrLoc} & \result{rgExpCorrLoc} [\result{rgExpLoCorrLoc}, \result{rgExpHiCorrLoc}] \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -445,7 +560,8 @@ data while being the only one of the two that can be extended.
 
 Under the closed model the check category's share rises from \result{cmpCheckLarge}
 at our largest rung to \result{cmpCheckBn} at one billion and \result{cmpCheckTn}
-at one trillion, rising without bound toward one as the shallowest exponent comes to
+at one trillion, increasing monotonically toward its upper bound of one as the
+shallowest exponent comes to
 dominate, while the
 locally decidable categories fall to \result{cmpEmptyTn}. The paper's qualitative
 claim is unchanged. What changes is that the projection is now bounded by
@@ -472,10 +588,23 @@ range, $b$ tracks the rate-weighted mean of the $a_i$, and a maximum is at least
 weighted mean, with equality only if every exponent is identical. Our own values
 make the point: $a^\star$ is \result{cmpAstar}, the weighted mean is
 \result{cmpWeighted}, and the separately fitted $b$ is \result{cmpBtotal}, giving
-divergence \result{cmpDiverge}. So any per-category scaling fit whose exponents
-differ at all, which is the entire reason for reporting them separately, must
-describe an impossibility beyond some finite scale. That scale is computable from
-the reported exponents alone: ours passes a ten percent overspend at
+divergence \result{cmpDiverge}.
+
+The claim this supports needs stating carefully, because a stronger version does not
+follow. Divergence requires $a^\star > b$, and nothing forces that for an arbitrary
+$b$; a total assigned a sufficiently shallow exponent by hand would not diverge. What
+makes the inconsistency generic is how $b$ is obtained in practice. An aggregate
+fitted over the same range as the parts tracks their rate-weighted mean, which lies at
+or below the maximum and equals it only when every exponent is identical, so
+$a^\star > b$ holds whenever the exponents genuinely differ. The underlying
+mathematical point is simpler and does not depend on the fitting procedure at all: a
+sum of positive power laws with differing exponents does not itself have a constant
+power-law exponent, so an exact total and a single fitted exponent for it are
+different objects. Reporting both is what creates the contradiction, and the
+resolution is to derive the total rather than fit it. For our own numbers the scale at
+which the two descriptions part company is computable from
+the reported exponents and coefficients together, since where the curves cross depends
+on their intercepts as well as their slopes: ours passes a ten percent overspend at
 \result{cmpBreakdown} parameters, well below the billion the earlier projection
 used.
 
@@ -565,9 +694,11 @@ line of opponent discs, so it is never decidable from the target square. There i
 no published Othello ladder, so no exponent can be fitted, and we test only what
 the claim implies for a single well-trained model: that its residual failures
 should be the non-local kind. In Li's synthetic OthelloGPT \citep{li2023emergent},
-across \result{othPos} positions and \result{othFail} failures, \result{othOccupied}
-are moves onto an occupied square and \result{othNoFlank} are moves that flank
-nothing. The comparison is weaker than it looks, because discs never leave a
+across \result{othPos} positions and \result{othFail} failures, \result{othOccupied} are moves onto an
+occupied square and \result{othNoFlank} are moves that flank nothing. The remaining
+\result{othPass} is a pass token emitted where passing was not available, which is neither
+kind; we count it rather than round it away, which is why the non-local share is
+\result{othNoFlank} of \result{othFail} and not all of them. The comparison is weaker than it looks, because discs never leave a
 square: whether a square is occupied reduces to whether it appears in the move
 history, which requires no state tracking at all. Failures also concentrate late,
 \result{othDepthA}, \result{othDepthB}, and \result{othDepthC} across the three move
@@ -669,7 +800,11 @@ restores the decoded value at \result{fidTargetTwo} of its targets, while an
 all-square edit restores \result{fidTargetAll}, and full strength per square does
 no better at \result{fidTargetPerSq}. Whole-board repair lowers occupied-square
 decoding accuracy from \result{fidOccBefore} to \result{fidOccAfter}. The instrument
-has a capability limit of roughly two squares, whatever the edit magnitude.
+succeeds more reliably on small corrections and does not install a reliable
+whole-board correction at any magnitude we tested. We tested two sizes, two squares
+and all divergent squares, so this bounds the procedure at those two points and is
+not a capacity curve; establishing one would need intermediate edit sizes at matched
+target difficulty and a stated rule for choosing edit strength.
 
 \begin{table}[t]
 \centering\small
@@ -787,7 +922,11 @@ turns to \result{sweepTwo} and \result{sweepFour} at double and quadruple, a
 rise-then-collapse that is harder to explain as generic damage than a monotone
 decline would be.
 Studies that score state interventions by illegal-move rate, or by any error rate
-a flatter distribution can lower, may be measuring hedging.
+a flatter distribution can lower, need not be measuring what it is taken to measure.
+We do not claim the mechanism is distributional flattening: temperature alone cannot
+reorder logits and so cannot change which move is top-1, and the random edits do
+change it, so something other than flattening is at work and we have not identified
+it.
 
 % ====================================================================
 \section{Discussion}
@@ -863,16 +1002,21 @@ with an exponent near zero will still be there after the next model upgrade. Our
 estimate is that errors surviving a correct local belief have a flat joint rate,
 exponent \result{expCorrLocal}, which decomposes into a rising chance of decoding the
 position correctly and a conditional failure rate falling with exponent \result{jcCond}.
-The planning-level improvement is real but is cancelled in the headline number, so an
+The improvement in the conditional rate is real but is cancelled in the headline
+number, so an
 organisation reading only the joint rate will conclude wrongly that scale does nothing
-for this class.
+for this class. We do not read the conditional decline as a measurement of planning
+ability: correct decoding at two squares is not a correct global state, and the group
+being conditioned on changes composition across models, so this is a conditional
+association rather than an isolated capability.
 An organisation deciding between waiting for the next generation and funding a
 mitigation can, in a domain with a checker, measure which class its own failures
 fall into rather than arguing about it. The second lesson is about measurement:
 illegal-move rate, the metric most readily available, ranks a norm-matched random
-edit above a correct repair in \result{invCount} of \result{invN} models, because
-hedging lowers it. An intervention scored that way can look effective while making
-the system worse.
+edit above a correct repair in \result{invCount} of \result{invN} models, while the repair
+produces the larger shift in a fixed forced choice. Two reasonable measures of the
+same intervention disagree, so a single headline number cannot settle whether an
+intervention helped.
 
 \paragraph{Strategic implications.}
 Treat the composition of failure, rather than its rate, as the quantity worth
@@ -944,10 +1088,12 @@ propagated there and the fit uncertainty is what is missing instead.
 The sign tests over the \result{nRuns} runs treat runs as exchangeable. Seeds within a rung
 satisfy that by construction, differing only in initialisation and batch order.
 Rungs do not: they differ systematically in size, which is the very thing under
-study. A sign test pooled across rungs therefore tests whether an effect holds at
-every size, which is what we claim, and not whether it holds for a random model
-drawn from some population of architectures, which we do not claim and could not
-support from \result{nRungs} sizes.
+study. A sign test pooled across rungs does not establish that an effect holds at every size
+merely because the runs span sizes, and we separate the two statements. The observed
+count is a description of these runs: the effect has the same sign in all of them.
+The inferential claim a pooled sign test supports is the weaker one that the median
+effect over this set of runs is nonzero. Neither licenses a statement about a model
+drawn from some population of architectures, which \result{nRungs} sizes could not support.
 
 \paragraph{Unequal scored sets in the external table.}
 The external checkpoints were not all scored on the same number of positions. The
@@ -1024,7 +1170,24 @@ encoding.
 \section{Integrity record}
 \label{app:integrity}
 
-The analysis was pre-registered (SHA-256 prefix \texttt{\result{preregHash}}).
+The analysis plan was frozen and hashed (SHA-256 prefix \texttt{\result{preregHash}}).
+We state plainly what that does and does not establish, because an earlier version of
+this statement claimed more than the record supports. A hash fixes a document's
+content; it carries no time, so on its own it cannot show that the plan preceded the
+analyses it governs. The ordering evidence is the commit history of the public
+repository, which is self-maintained and not a third-party trusted timestamp, and we
+do not ask the reader to treat it as one.
+
+What that history shows is a staged design rather than a single registration before
+all analysis. The plan was frozen on \result{pregFreezeDate}. The failure-classification
+results on which the central claim rests first enter the repository on
+\result{pregStructDate}, after the freeze. One set of results does not: the week-zero
+go/no-go measurements that decided which of the candidate studies was viable were
+committed on \result{pregNatdivDate}, shortly before it. Those were scoping measurements
+and the plan was written in light of them, so the freeze pre-registers the main
+programme and not the scoping phase. We would rather say this than describe the whole
+project as pre-registered and leave a reader to discover the four minutes for
+themselves.
 Three amendments changed reported claims and are stated here in full. First, the
 frozen entropy-matching procedure was vacuous, since weighting strata by their own
 counts reproduces the overall mean; it was replaced by matching on positions after

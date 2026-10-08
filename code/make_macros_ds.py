@@ -147,6 +147,8 @@ put("othFail", oth["n_failures"], OT, "{:d}")
 put("othRate", oth["illegal_rate"], OT, "{:.5f}")
 put("othOccupied", oth["counts"]["occupied"], OT, "{:d}")
 put("othNoFlank", oth["counts"]["no_flank"], OT, "{:d}")
+put("othPass", oth["counts"].get("pass_token", 0), OT, "{:d}")
+put("othOther", oth["counts"].get("other", 0), OT, "{:d}")
 put("othShareNoFlank", oth["shares"]["no_flank"], OT, "{:.3f}")
 for band, tag in (("5-20", "A"), ("20-40", "B"), ("40-59", "C")):
     put(f"othDepth{tag}", oth["strata"].get(band, {}).get("n"), OT, "{:d}")
@@ -454,6 +456,60 @@ if _ext:
     _np = sorted(r["n_positions"] for r in _ext)
     put("kPosSmall", _np[0], "results/chessgpt_structure_*.json", "{:,d}")
     put("kPosLarge", _np[-1], "results/chessgpt_structure_*.json", "{:,d}")
+
+# The regenerated, corrected pass. Table 1 is driven from these.
+rg = S.load("regen_exponents.json")
+RG = "results/regen_exponents.json"
+_RGTAG = {"from_empty": "Empty", "from_opponent": "Opp", "to_own": "Own",
+          "castling": "Castle", "geometry_impossible": "GeomImp",
+          "geometry_blocked": "GeomBlk", "leaves_check": "Check",
+          "all_illegal": "AllIll", "corr_local": "CorrLoc"}
+if rg:
+    put("rgRuns", rg["n_runs"], RG, "{:d}")
+    for _c, _t in _RGTAG.items():
+        _e = rg["classes"].get(_c)
+        if not _e:
+            continue
+        put("rgExp" + _t, _e["point"], RG, "{:+.3f}")
+        put("rgExpLo" + _t, _e["lo"], RG, "{:+.3f}")
+        put("rgExpHi" + _t, _e["hi"], RG, "{:+.3f}")
+        put("rgFirst" + _t, _e["first"], RG, "{:.4f}")
+        put("rgLast" + _t, _e["last"], RG, "{:.4f}")
+        if _e.get("fold"):
+            put("rgFold" + _t, _e["fold"], RG, "{:.1f}")
+    for _k, _t in (("check - empty", "CheckEmpty"),
+                   ("check - opponent", "CheckOpp"),
+                   ("check - geom impossible", "CheckGeomImp")):
+        _d = rg.get("differentials", {}).get(_k)
+        if not _d:
+            continue
+        put("rgDiff" + _t, _d["point"], RG, "{:+.3f}")
+        put("rgDiffLo" + _t, _d["lo"], RG, "{:+.3f}")
+        put("rgDiffHi" + _t, _d["hi"], RG, "{:+.3f}")
+
+rc = S.load("regen_compare.json")
+RC = "results/regen_compare.json"
+if rc:
+    put("rcFailures", rc["n_failures"], RC, "{:,d}")
+    put("rcRuns", rc["n_runs"], RC, "{:d}")
+    put("rcLegal", rc["n_truly_legal"], RC, "{:d}")
+    put("rcRelabelled", rc["n_relabelled"], RC, "{:,d}")
+    put("rcCastling", rc["flow"].get("to_own->castling", 0), RC, "{:,d}")
+    put("rcGeomImp", rc["flow"].get("geometry->geometry_impossible", 0), RC, "{:,d}")
+    put("rcGeomBlk", rc["flow"].get("geometry->geometry_blocked", 0), RC, "{:,d}")
+    put("rcDriftMean", rc["drift_mean_abs"], RC, "{:.4f}")
+    put("rcDriftMax", rc["drift_max_abs"], RC, "{:.4f}")
+    put("rcMoveEmpty", rc["headline_class_moves"]["from_empty"], RC, "{:d}")
+    put("rcMoveCheck", rc["headline_class_moves"]["leaves_check"], RC, "{:d}")
+
+pt = S.load("prereg_timing.json")
+PT = "results/prereg_timing.json"
+if pt:
+    for _k, _t in (("prereg_freeze", "pregFreezeDate"),
+                   ("first_structure", "pregStructDate"),
+                   ("first_natdiv", "pregNatdivDate")):
+        if pt.get(_k):
+            put(_t, pt[_k]["date"].split(" ")[0], PT)
 
 env = S.load("environment.json")
 EV = "results/environment.json"

@@ -1,0 +1,18 @@
+{
+ "prereg_freeze": {
+  "commit": "343ea48b3",
+  "date": "2026-09-05 20:11:10 +0530"
+ },
+ "first_structure": {
+  "commit": "4794c8229",
+  "date": "2026-09-06 10:38:48 +0530"
+ },
+ "first_natdiv": {
+  "commit": "b3c65dd38",
+  "date": "2026-09-05 20:07:06 +0530"
+ },
+ "timestamp_authority": "git history in a self-hosted repository",
+ "third_party_timestamp": false,
+ "structure_after_freeze": true,
+ "natdiv_after_freeze": false
+}

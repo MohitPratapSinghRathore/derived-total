@@ -483,6 +483,14 @@
   "value": "160",
   "source": "results/othello_structure_synthetic_model.json"
  },
+ "othPass": {
+  "value": "1",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
+ "othOther": {
+  "value": "0",
+  "source": "results/othello_structure_synthetic_model.json"
+ },
  "othShareNoFlank": {
   "value": "0.994",
   "source": "results/othello_structure_synthetic_model.json"
@@ -1650,6 +1658,318 @@
  "kPosLarge": {
   "value": "84,557",
   "source": "results/chessgpt_structure_*.json"
+ },
+ "rgRuns": {
+  "value": "18",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpEmpty": {
+  "value": "-0.570",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoEmpty": {
+  "value": "-0.756",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiEmpty": {
+  "value": "-0.319",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstEmpty": {
+  "value": "0.0583",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastEmpty": {
+  "value": "0.0146",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldEmpty": {
+  "value": "4.0",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpOpp": {
+  "value": "-0.412",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoOpp": {
+  "value": "-0.595",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiOpp": {
+  "value": "-0.187",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstOpp": {
+  "value": "0.0092",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastOpp": {
+  "value": "0.0031",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldOpp": {
+  "value": "3.0",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpOwn": {
+  "value": "-0.452",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoOwn": {
+  "value": "-0.462",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiOwn": {
+  "value": "-0.442",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstOwn": {
+  "value": "0.0320",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastOwn": {
+  "value": "0.0106",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldOwn": {
+  "value": "3.0",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpCastle": {
+  "value": "-0.778",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoCastle": {
+  "value": "-1.068",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiCastle": {
+  "value": "-0.436",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstCastle": {
+  "value": "0.0037",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastCastle": {
+  "value": "0.0005",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldCastle": {
+  "value": "7.0",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpGeomImp": {
+  "value": "-0.254",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoGeomImp": {
+  "value": "-0.313",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiGeomImp": {
+  "value": "-0.220",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstGeomImp": {
+  "value": "0.0590",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastGeomImp": {
+  "value": "0.0323",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldGeomImp": {
+  "value": "1.8",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpGeomBlk": {
+  "value": "-0.053",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoGeomBlk": {
+  "value": "-0.228",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiGeomBlk": {
+  "value": "+0.126",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstGeomBlk": {
+  "value": "0.0127",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastGeomBlk": {
+  "value": "0.0118",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldGeomBlk": {
+  "value": "1.1",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpCheck": {
+  "value": "-0.114",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoCheck": {
+  "value": "-0.153",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiCheck": {
+  "value": "-0.066",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstCheck": {
+  "value": "0.0779",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastCheck": {
+  "value": "0.0593",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldCheck": {
+  "value": "1.3",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpAllIll": {
+  "value": "-0.267",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoAllIll": {
+  "value": "-0.307",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiAllIll": {
+  "value": "-0.216",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstAllIll": {
+  "value": "0.2528",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastAllIll": {
+  "value": "0.1323",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldAllIll": {
+  "value": "1.9",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpCorrLoc": {
+  "value": "+0.027",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpLoCorrLoc": {
+  "value": "-0.008",
+  "source": "results/regen_exponents.json"
+ },
+ "rgExpHiCorrLoc": {
+  "value": "+0.097",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFirstCorrLoc": {
+  "value": "0.0388",
+  "source": "results/regen_exponents.json"
+ },
+ "rgLastCorrLoc": {
+  "value": "0.0404",
+  "source": "results/regen_exponents.json"
+ },
+ "rgFoldCorrLoc": {
+  "value": "1.0",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffCheckEmpty": {
+  "value": "+0.456",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffLoCheckEmpty": {
+  "value": "+0.250",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffHiCheckEmpty": {
+  "value": "+0.604",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffCheckOpp": {
+  "value": "+0.298",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffLoCheckOpp": {
+  "value": "+0.065",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffHiCheckOpp": {
+  "value": "+0.484",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffCheckGeomImp": {
+  "value": "+0.139",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffLoCheckGeomImp": {
+  "value": "+0.069",
+  "source": "results/regen_exponents.json"
+ },
+ "rgDiffHiCheckGeomImp": {
+  "value": "+0.234",
+  "source": "results/regen_exponents.json"
+ },
+ "rcFailures": {
+  "value": "16,200",
+  "source": "results/regen_compare.json"
+ },
+ "rcRuns": {
+  "value": "18",
+  "source": "results/regen_compare.json"
+ },
+ "rcLegal": {
+  "value": "0",
+  "source": "results/regen_compare.json"
+ },
+ "rcRelabelled": {
+  "value": "5,567",
+  "source": "results/regen_compare.json"
+ },
+ "rcCastling": {
+  "value": "109",
+  "source": "results/regen_compare.json"
+ },
+ "rcGeomImp": {
+  "value": "4,106",
+  "source": "results/regen_compare.json"
+ },
+ "rcGeomBlk": {
+  "value": "1,352",
+  "source": "results/regen_compare.json"
+ },
+ "rcDriftMean": {
+  "value": "0.0011",
+  "source": "results/regen_compare.json"
+ },
+ "rcDriftMax": {
+  "value": "0.0121",
+  "source": "results/regen_compare.json"
+ },
+ "rcMoveEmpty": {
+  "value": "0",
+  "source": "results/regen_compare.json"
+ },
+ "rcMoveCheck": {
+  "value": "0",
+  "source": "results/regen_compare.json"
+ },
+ "pregFreezeDate": {
+  "value": "2026-09-05",
+  "source": "results/prereg_timing.json"
+ },
+ "pregStructDate": {
+  "value": "2026-09-06",
+  "source": "results/prereg_timing.json"
+ },
+ "pregNatdivDate": {
+  "value": "2026-09-05",
+  "source": "results/prereg_timing.json"
  },
  "envGpu": {
   "value": "NVIDIA GeForce RTX 3050 Laptop GPU",

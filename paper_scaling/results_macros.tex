@@ -346,6 +346,8 @@
 \defresult{othFail}{161}   % results/othello_structure_synthetic_model.json
 \defresult{othNoFlank}{160}   % results/othello_structure_synthetic_model.json
 \defresult{othOccupied}{0}   % results/othello_structure_synthetic_model.json
+\defresult{othOther}{0}   % results/othello_structure_synthetic_model.json
+\defresult{othPass}{1}   % results/othello_structure_synthetic_model.json
 \defresult{othPos}{211,815}   % results/othello_structure_synthetic_model.json
 \defresult{othRate}{0.00076}   % results/othello_structure_synthetic_model.json
 \defresult{othShareNoFlank}{0.994}   % results/othello_structure_synthetic_model.json
@@ -362,6 +364,9 @@
 \defresult{paramsSmall}{3.4M}   % results/attn_*_{structure,natdiv}.json via ds_stats
 \defresult{powMdePct}{19}   % results/s5_power.json
 \defresult{powSeedRel}{0.028}   % results/s5_power.json
+\defresult{pregFreezeDate}{2026-09-05}   % results/prereg_timing.json
+\defresult{pregNatdivDate}{2026-09-05}   % results/prereg_timing.json
+\defresult{pregStructDate}{2026-09-06}   % results/prereg_timing.json
 \defresult{preregHash}{28b68e5200dc0dba}   % PREREGISTRATION.sha256
 \defresult{projCorr}{0.0435}   % results/attn_*_{structure,natdiv}.json via ds_stats
 \defresult{projFactor}{25}   % results/attn_*_{structure,natdiv}.json via ds_stats
@@ -375,12 +380,87 @@
 \defresult{ratioLeavesCheck}{1.31}   % results/attn_*_{structure,natdiv}.json via ds_stats
 \defresult{ratioToOwn}{3.19}   % results/attn_*_{structure,natdiv}.json via ds_stats
 \defresult{rawCW}{+0.087}   % results/attn_8L256_s0_repair.json
+\defresult{rcCastling}{109}   % results/regen_compare.json
+\defresult{rcDriftMax}{0.0121}   % results/regen_compare.json
+\defresult{rcDriftMean}{0.0011}   % results/regen_compare.json
+\defresult{rcFailures}{16,200}   % results/regen_compare.json
+\defresult{rcGeomBlk}{1,352}   % results/regen_compare.json
+\defresult{rcGeomImp}{4,106}   % results/regen_compare.json
+\defresult{rcLegal}{0}   % results/regen_compare.json
+\defresult{rcMoveCheck}{0}   % results/regen_compare.json
+\defresult{rcMoveEmpty}{0}   % results/regen_compare.json
+\defresult{rcRelabelled}{5,567}   % results/regen_compare.json
+\defresult{rcRuns}{18}   % results/regen_compare.json
 \defresult{refreshNoop}{0.296}   % results/attn_8L256_s0_refresh.json
 \defresult{refreshRandom}{0.296}   % results/attn_8L256_s0_refresh.json
 \defresult{refreshRepair}{0.295}   % results/attn_8L256_s0_refresh.json
 \defresult{refreshStale}{0.297}   % results/attn_8L256_s0_refresh.json
 \defresult{repGames}{61}   % results/attn_8L256_s0_repair.json
 \defresult{repN}{600}   % results/attn_8L256_s0_repair.json
+\defresult{rgDiffCheckEmpty}{+0.456}   % results/regen_exponents.json
+\defresult{rgDiffCheckGeomImp}{+0.139}   % results/regen_exponents.json
+\defresult{rgDiffCheckOpp}{+0.298}   % results/regen_exponents.json
+\defresult{rgDiffHiCheckEmpty}{+0.604}   % results/regen_exponents.json
+\defresult{rgDiffHiCheckGeomImp}{+0.234}   % results/regen_exponents.json
+\defresult{rgDiffHiCheckOpp}{+0.484}   % results/regen_exponents.json
+\defresult{rgDiffLoCheckEmpty}{+0.250}   % results/regen_exponents.json
+\defresult{rgDiffLoCheckGeomImp}{+0.069}   % results/regen_exponents.json
+\defresult{rgDiffLoCheckOpp}{+0.065}   % results/regen_exponents.json
+\defresult{rgExpAllIll}{-0.267}   % results/regen_exponents.json
+\defresult{rgExpCastle}{-0.778}   % results/regen_exponents.json
+\defresult{rgExpCheck}{-0.114}   % results/regen_exponents.json
+\defresult{rgExpCorrLoc}{+0.027}   % results/regen_exponents.json
+\defresult{rgExpEmpty}{-0.570}   % results/regen_exponents.json
+\defresult{rgExpGeomBlk}{-0.053}   % results/regen_exponents.json
+\defresult{rgExpGeomImp}{-0.254}   % results/regen_exponents.json
+\defresult{rgExpHiAllIll}{-0.216}   % results/regen_exponents.json
+\defresult{rgExpHiCastle}{-0.436}   % results/regen_exponents.json
+\defresult{rgExpHiCheck}{-0.066}   % results/regen_exponents.json
+\defresult{rgExpHiCorrLoc}{+0.097}   % results/regen_exponents.json
+\defresult{rgExpHiEmpty}{-0.319}   % results/regen_exponents.json
+\defresult{rgExpHiGeomBlk}{+0.126}   % results/regen_exponents.json
+\defresult{rgExpHiGeomImp}{-0.220}   % results/regen_exponents.json
+\defresult{rgExpHiOpp}{-0.187}   % results/regen_exponents.json
+\defresult{rgExpHiOwn}{-0.442}   % results/regen_exponents.json
+\defresult{rgExpLoAllIll}{-0.307}   % results/regen_exponents.json
+\defresult{rgExpLoCastle}{-1.068}   % results/regen_exponents.json
+\defresult{rgExpLoCheck}{-0.153}   % results/regen_exponents.json
+\defresult{rgExpLoCorrLoc}{-0.008}   % results/regen_exponents.json
+\defresult{rgExpLoEmpty}{-0.756}   % results/regen_exponents.json
+\defresult{rgExpLoGeomBlk}{-0.228}   % results/regen_exponents.json
+\defresult{rgExpLoGeomImp}{-0.313}   % results/regen_exponents.json
+\defresult{rgExpLoOpp}{-0.595}   % results/regen_exponents.json
+\defresult{rgExpLoOwn}{-0.462}   % results/regen_exponents.json
+\defresult{rgExpOpp}{-0.412}   % results/regen_exponents.json
+\defresult{rgExpOwn}{-0.452}   % results/regen_exponents.json
+\defresult{rgFirstAllIll}{0.2528}   % results/regen_exponents.json
+\defresult{rgFirstCastle}{0.0037}   % results/regen_exponents.json
+\defresult{rgFirstCheck}{0.0779}   % results/regen_exponents.json
+\defresult{rgFirstCorrLoc}{0.0388}   % results/regen_exponents.json
+\defresult{rgFirstEmpty}{0.0583}   % results/regen_exponents.json
+\defresult{rgFirstGeomBlk}{0.0127}   % results/regen_exponents.json
+\defresult{rgFirstGeomImp}{0.0590}   % results/regen_exponents.json
+\defresult{rgFirstOpp}{0.0092}   % results/regen_exponents.json
+\defresult{rgFirstOwn}{0.0320}   % results/regen_exponents.json
+\defresult{rgFoldAllIll}{1.9}   % results/regen_exponents.json
+\defresult{rgFoldCastle}{7.0}   % results/regen_exponents.json
+\defresult{rgFoldCheck}{1.3}   % results/regen_exponents.json
+\defresult{rgFoldCorrLoc}{1.0}   % results/regen_exponents.json
+\defresult{rgFoldEmpty}{4.0}   % results/regen_exponents.json
+\defresult{rgFoldGeomBlk}{1.1}   % results/regen_exponents.json
+\defresult{rgFoldGeomImp}{1.8}   % results/regen_exponents.json
+\defresult{rgFoldOpp}{3.0}   % results/regen_exponents.json
+\defresult{rgFoldOwn}{3.0}   % results/regen_exponents.json
+\defresult{rgLastAllIll}{0.1323}   % results/regen_exponents.json
+\defresult{rgLastCastle}{0.0005}   % results/regen_exponents.json
+\defresult{rgLastCheck}{0.0593}   % results/regen_exponents.json
+\defresult{rgLastCorrLoc}{0.0404}   % results/regen_exponents.json
+\defresult{rgLastEmpty}{0.0146}   % results/regen_exponents.json
+\defresult{rgLastGeomBlk}{0.0118}   % results/regen_exponents.json
+\defresult{rgLastGeomImp}{0.0323}   % results/regen_exponents.json
+\defresult{rgLastOpp}{0.0031}   % results/regen_exponents.json
+\defresult{rgLastOwn}{0.0106}   % results/regen_exponents.json
+\defresult{rgRuns}{18}   % results/regen_exponents.json
 \defresult{shareFromEmptyFirst}{0.230}   % results/attn_*_{structure,natdiv}.json via ds_stats
 \defresult{shareFromEmptyLast}{0.110}   % results/attn_*_{structure,natdiv}.json via ds_stats
 \defresult{shareGeometryFirst}{0.285}   % results/attn_*_{structure,natdiv}.json via ds_stats

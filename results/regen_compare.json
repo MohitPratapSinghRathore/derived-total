@@ -1,0 +1,439 @@
+{
+ "n_failures": 16200,
+ "n_runs": 18,
+ "n_truly_legal": 0,
+ "flow": {
+  "geometry->geometry_impossible": 4106,
+  "from_empty->from_empty": 2327,
+  "to_own->to_own": 1701,
+  "leaves_check->leaves_check": 6143,
+  "from_opponent->from_opponent": 462,
+  "geometry->geometry_blocked": 1352,
+  "to_own->castling": 109
+ },
+ "n_relabelled": 5567,
+ "drift_mean_abs": 0.001148928641167946,
+ "drift_max_abs": 0.01206628500971189,
+ "rows": [
+  {
+   "name": "attn_6L192_s0",
+   "old": {
+    "from_empty": 0.22777777777777777,
+    "from_opponent": 0.03222222222222222,
+    "to_own": 0.13777777777777778,
+    "geometry": 0.28444444444444444,
+    "leaves_check": 0.31777777777777777,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.22777777777777777,
+    "from_opponent": 0.03222222222222222,
+    "to_own": 0.12666666666666668,
+    "castling": 0.011111111111111112,
+    "geometry_impossible": 0.23333333333333334,
+    "geometry_blocked": 0.051111111111111114,
+    "leaves_check": 0.31777777777777777,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.15333333333333332
+  },
+  {
+   "name": "attn_6L192_s1",
+   "old": {
+    "from_empty": 0.23777777777777778,
+    "from_opponent": 0.035555555555555556,
+    "to_own": 0.13666666666666666,
+    "geometry": 0.2777777777777778,
+    "leaves_check": 0.31222222222222223,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.23777777777777778,
+    "from_opponent": 0.035555555555555556,
+    "to_own": 0.11888888888888889,
+    "castling": 0.017777777777777778,
+    "geometry_impossible": 0.22666666666666666,
+    "geometry_blocked": 0.051111111111111114,
+    "leaves_check": 0.31222222222222223,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.15888888888888889
+  },
+  {
+   "name": "attn_6L192_s2",
+   "old": {
+    "from_empty": 0.22555555555555556,
+    "from_opponent": 0.04111111111111111,
+    "to_own": 0.15,
+    "geometry": 0.28888888888888886,
+    "leaves_check": 0.29444444444444445,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.22555555555555556,
+    "from_opponent": 0.04111111111111111,
+    "to_own": 0.13444444444444445,
+    "castling": 0.015555555555555555,
+    "geometry_impossible": 0.24,
+    "geometry_blocked": 0.04888888888888889,
+    "leaves_check": 0.29444444444444445,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.14777777777777779
+  },
+  {
+   "name": "attn_8L256_s0",
+   "old": {
+    "from_empty": 0.16111111111111112,
+    "from_opponent": 0.023333333333333334,
+    "to_own": 0.12333333333333334,
+    "geometry": 0.33555555555555555,
+    "leaves_check": 0.3566666666666667,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.16111111111111112,
+    "from_opponent": 0.023333333333333334,
+    "to_own": 0.11444444444444445,
+    "castling": 0.008888888888888889,
+    "geometry_impossible": 0.2588888888888889,
+    "geometry_blocked": 0.07666666666666666,
+    "leaves_check": 0.3566666666666667,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.17666666666666667
+  },
+  {
+   "name": "attn_8L256_s1",
+   "old": {
+    "from_empty": 0.15555555555555556,
+    "from_opponent": 0.023333333333333334,
+    "to_own": 0.13111111111111112,
+    "geometry": 0.3611111111111111,
+    "leaves_check": 0.3288888888888889,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.15555555555555556,
+    "from_opponent": 0.023333333333333334,
+    "to_own": 0.12555555555555556,
+    "castling": 0.005555555555555556,
+    "geometry_impossible": 0.26555555555555554,
+    "geometry_blocked": 0.09555555555555556,
+    "leaves_check": 0.3288888888888889,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.18888888888888888
+  },
+  {
+   "name": "attn_8L256_s2",
+   "old": {
+    "from_empty": 0.1622222222222222,
+    "from_opponent": 0.034444444444444444,
+    "to_own": 0.11333333333333333,
+    "geometry": 0.33,
+    "leaves_check": 0.36,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.1622222222222222,
+    "from_opponent": 0.034444444444444444,
+    "to_own": 0.11,
+    "castling": 0.0033333333333333335,
+    "geometry_impossible": 0.2477777777777778,
+    "geometry_blocked": 0.08222222222222222,
+    "leaves_check": 0.36,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.16666666666666666
+  },
+  {
+   "name": "attn_12L256_s0",
+   "old": {
+    "from_empty": 0.12777777777777777,
+    "from_opponent": 0.024444444444444446,
+    "to_own": 0.11666666666666667,
+    "geometry": 0.37555555555555553,
+    "leaves_check": 0.35555555555555557,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.12777777777777777,
+    "from_opponent": 0.024444444444444446,
+    "to_own": 0.1111111111111111,
+    "castling": 0.005555555555555556,
+    "geometry_impossible": 0.27666666666666667,
+    "geometry_blocked": 0.09888888888888889,
+    "leaves_check": 0.35555555555555557,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.20333333333333334
+  },
+  {
+   "name": "attn_12L256_s1",
+   "old": {
+    "from_empty": 0.13777777777777778,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.12333333333333334,
+    "geometry": 0.3522222222222222,
+    "leaves_check": 0.3611111111111111,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.13777777777777778,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.11555555555555555,
+    "castling": 0.0077777777777777776,
+    "geometry_impossible": 0.27111111111111114,
+    "geometry_blocked": 0.0811111111111111,
+    "leaves_check": 0.3611111111111111,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.21777777777777776
+  },
+  {
+   "name": "attn_12L256_s2",
+   "old": {
+    "from_empty": 0.10777777777777778,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.10666666666666667,
+    "geometry": 0.37,
+    "leaves_check": 0.39,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.10777777777777778,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.10333333333333333,
+    "castling": 0.0033333333333333335,
+    "geometry_impossible": 0.2777777777777778,
+    "geometry_blocked": 0.09222222222222222,
+    "leaves_check": 0.39,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.2311111111111111
+  },
+  {
+   "name": "attn_8L384_s0",
+   "old": {
+    "from_empty": 0.12333333333333334,
+    "from_opponent": 0.028888888888888888,
+    "to_own": 0.1,
+    "geometry": 0.3566666666666667,
+    "leaves_check": 0.39111111111111113,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.12333333333333334,
+    "from_opponent": 0.028888888888888888,
+    "to_own": 0.09333333333333334,
+    "castling": 0.006666666666666667,
+    "geometry_impossible": 0.25333333333333335,
+    "geometry_blocked": 0.10333333333333333,
+    "leaves_check": 0.39111111111111113,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.24222222222222223
+  },
+  {
+   "name": "attn_8L384_s1",
+   "old": {
+    "from_empty": 0.12444444444444444,
+    "from_opponent": 0.04555555555555556,
+    "to_own": 0.11666666666666667,
+    "geometry": 0.3244444444444444,
+    "leaves_check": 0.3888888888888889,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.12444444444444444,
+    "from_opponent": 0.04555555555555556,
+    "to_own": 0.11333333333333333,
+    "castling": 0.0033333333333333335,
+    "geometry_impossible": 0.2511111111111111,
+    "geometry_blocked": 0.07333333333333333,
+    "leaves_check": 0.3888888888888889,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.23
+  },
+  {
+   "name": "attn_8L384_s2",
+   "old": {
+    "from_empty": 0.1288888888888889,
+    "from_opponent": 0.03111111111111111,
+    "to_own": 0.10888888888888888,
+    "geometry": 0.3488888888888889,
+    "leaves_check": 0.38222222222222224,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.1288888888888889,
+    "from_opponent": 0.03111111111111111,
+    "to_own": 0.10111111111111111,
+    "castling": 0.0077777777777777776,
+    "geometry_impossible": 0.25666666666666665,
+    "geometry_blocked": 0.09222222222222222,
+    "leaves_check": 0.38222222222222224,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.2577777777777778
+  },
+  {
+   "name": "attn_12L384_s0",
+   "old": {
+    "from_empty": 0.11444444444444445,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.10777777777777778,
+    "geometry": 0.3511111111111111,
+    "leaves_check": 0.4011111111111111,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.11444444444444445,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.10111111111111111,
+    "castling": 0.006666666666666667,
+    "geometry_impossible": 0.2588888888888889,
+    "geometry_blocked": 0.09222222222222222,
+    "leaves_check": 0.4011111111111111,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.2733333333333333
+  },
+  {
+   "name": "attn_12L384_s1",
+   "old": {
+    "from_empty": 0.10333333333333333,
+    "from_opponent": 0.02,
+    "to_own": 0.09,
+    "geometry": 0.36,
+    "leaves_check": 0.4266666666666667,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.10333333333333333,
+    "from_opponent": 0.02,
+    "to_own": 0.08777777777777777,
+    "castling": 0.0022222222222222222,
+    "geometry_impossible": 0.2611111111111111,
+    "geometry_blocked": 0.09888888888888889,
+    "leaves_check": 0.4266666666666667,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.2722222222222222
+  },
+  {
+   "name": "attn_12L384_s2",
+   "old": {
+    "from_empty": 0.11666666666666667,
+    "from_opponent": 0.02666666666666667,
+    "to_own": 0.09555555555555556,
+    "geometry": 0.3477777777777778,
+    "leaves_check": 0.41333333333333333,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.11666666666666667,
+    "from_opponent": 0.02666666666666667,
+    "to_own": 0.09222222222222222,
+    "castling": 0.0033333333333333335,
+    "geometry_impossible": 0.2511111111111111,
+    "geometry_blocked": 0.09666666666666666,
+    "leaves_check": 0.41333333333333333,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.25222222222222224
+  },
+  {
+   "name": "attn_12L512_s0",
+   "old": {
+    "from_empty": 0.11666666666666667,
+    "from_opponent": 0.023333333333333334,
+    "to_own": 0.09111111111111111,
+    "geometry": 0.31,
+    "leaves_check": 0.4588888888888889,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.11666666666666667,
+    "from_opponent": 0.023333333333333334,
+    "to_own": 0.08888888888888889,
+    "castling": 0.0022222222222222222,
+    "geometry_impossible": 0.2311111111111111,
+    "geometry_blocked": 0.07888888888888888,
+    "leaves_check": 0.4588888888888889,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.3055555555555556
+  },
+  {
+   "name": "attn_12L512_s1",
+   "old": {
+    "from_empty": 0.09555555555555556,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.07888888888888888,
+    "geometry": 0.3511111111111111,
+    "leaves_check": 0.4488888888888889,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.09555555555555556,
+    "from_opponent": 0.025555555555555557,
+    "to_own": 0.07333333333333333,
+    "castling": 0.005555555555555556,
+    "geometry_impossible": 0.24666666666666667,
+    "geometry_blocked": 0.10444444444444445,
+    "leaves_check": 0.4488888888888889,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.3211111111111111
+  },
+  {
+   "name": "attn_12L512_s2",
+   "old": {
+    "from_empty": 0.11888888888888889,
+    "from_opponent": 0.021111111111111112,
+    "to_own": 0.08333333333333333,
+    "geometry": 0.3388888888888889,
+    "leaves_check": 0.43777777777777777,
+    "other": 0.0
+   },
+   "new": {
+    "from_empty": 0.11888888888888889,
+    "from_opponent": 0.021111111111111112,
+    "to_own": 0.07888888888888888,
+    "castling": 0.0044444444444444444,
+    "geometry_impossible": 0.2544444444444444,
+    "geometry_blocked": 0.08444444444444445,
+    "leaves_check": 0.43777777777777777,
+    "other": 0.0
+   },
+   "n": 900,
+   "policy_share": 0.28888888888888886
+  }
+ ],
+ "headline_class_moves": {
+  "from_empty": 0,
+  "from_opponent": 0,
+  "leaves_check": 0,
+  "to_own": 109
+ }
+}
