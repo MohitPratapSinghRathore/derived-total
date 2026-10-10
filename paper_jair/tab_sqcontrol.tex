@@ -1,0 +1,30 @@
+\begin{table}[t]
+\centering\small
+\caption{Which squares carry the signal. Each row scores probe error
+over a different set of squares as a predictor of an illegal top-1 move,
+on identical samples. Intervals are bootstrapped over games rather than
+positions, since positions within a game are not independent. Two random
+occupied squares are a partial match to a move's endpoints, the origin being
+occupied by the mover while the destination is usually empty or held by the
+opponent, so this control equalises count and occupancy only in part. The
+pooled column mixes depths and is inflated by the confound the rest of the
+paper removes, so the within-depth range is given beside it. Read within
+depth, both random-pair controls collapse towards chance while the squares
+the move touches hold up, which is the comparison the row set was built to
+make. The whole board also holds up at the shallowest depths, where little
+of it is yet wrong, and separates from the move-touched rows as depth
+grows.}
+\label{tab:sqcontrol}
+\begin{tabular}{lcc}
+\toprule
+Squares scored & pooled AUC [95\% CI] & within depth, range \\
+\midrule
+whole board, 64 squares & 0.629 [0.623, 0.633] & 0.532 to 0.687 \\
+two random squares & 0.539 [0.534, 0.542] & 0.506 to 0.537 \\
+two random occupied squares & 0.631 [0.627, 0.636] & 0.520 to 0.541 \\
+origin square only & 0.664 [0.660, 0.668] & 0.558 to 0.631 \\
+destination square only & 0.637 [0.633, 0.642] & 0.611 to 0.646 \\
+move-touched, origin and destination & \textbf{0.696} [0.693, 0.700] & 0.594 to 0.684 \\
+\bottomrule
+\end{tabular}
+\end{table}

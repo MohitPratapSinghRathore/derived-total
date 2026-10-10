@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering\small
+\caption{State decodability against every trivial explanation, for the
+baseline model. Occupied-square accuracy at the most decodable layer,
+beside a per-square per-depth majority predictor, a label-permutation
+control, and a randomised-weight model of identical architecture. The gap
+is what training put there.}
+\label{tab:controls}
+\begin{tabular}{lccccc}
+\toprule
+Ply & model & majority & label perm. & random weights & illegal rate \\
+\midrule
+0--10 & 0.975 & 0.867 & 0.879 & 0.898 & 0.0004 \\
+10--20 & 0.876 & 0.599 & 0.673 & 0.641 & 0.0115 \\
+20--30 & 0.761 & 0.444 & 0.487 & 0.439 & 0.0439 \\
+30--40 & 0.655 & 0.359 & 0.315 & 0.297 & 0.0982 \\
+40--50 & 0.557 & 0.261 & 0.166 & 0.195 & 0.1766 \\
+50--60 & 0.475 & 0.073 & 0.072 & 0.141 & 0.2347 \\
+60--80 & 0.353 & 0.000 & 0.019 & 0.071 & 0.2920 \\
+80--120 & 0.173 & 0.000 & 0.001 & 0.038 & 0.3231 \\
+120--161 & 0.066 & 0.000 & 0.000 & 0.030 & 0.3192 \\
+\bottomrule
+\end{tabular}
+\end{table}

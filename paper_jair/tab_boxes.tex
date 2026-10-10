@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering\small
+\caption{Domain 2, permutation tracking. Answer accuracy at the shallowest
+and deepest depths against a chance rate of one in four, the probe's
+recovery of the queried object at depth, and belief consistency beside its
+mismatched control. The attention-only model solves the task well above
+chance while its state stays at chance under the probe, so it is not
+maintaining a linearly decodable assignment. The supervised channel is, and
+its errors are coherent with it.}
+\label{tab:boxes}
+\begin{tabular}{lccccc}
+\toprule
+Model & seeds & acc.\ shallow & acc.\ deep & probe deep & belief / control \\
+\midrule
+Attention-only & 3 & 1.000\,$\pm$\,0.000 & 0.589\,$\pm$\,0.010 & 0.263\,$\pm$\,0.010 & 0.256\,$\pm$\,0.005 / 0.249\,$\pm$\,0.003 \\
+Recurrent channel ($\lambda{=}1$) & 3 & 1.000\,$\pm$\,0.000 & 0.989\,$\pm$\,0.001 & 0.983\,$\pm$\,0.001 & 0.701\,$\pm$\,0.017 / 0.254\,$\pm$\,0.009 \\
+\bottomrule
+\end{tabular}
+\end{table}

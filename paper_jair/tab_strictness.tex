@@ -1,0 +1,24 @@
+\begin{table}[t]
+\centering\small
+\caption{Planning error against how strictly we condition on state. Each
+cell gives the median engine centipawn loss, the blunder rate, and the
+sample size, over legal moves whose touched squares the probe recovers and
+with at most the stated number of other squares wrong. Tightening the
+conditioning lowers the loss, so part of what looks like degraded judgement
+is state loss elsewhere on the board. Loss still grows with depth at fixed
+conditioning, so part of it is not. Cells with fewer than thirty scored
+positions are reported as n/a, and that scarcity is itself the finding:
+at depth a nearly intact board is rare. The columns are different
+subpopulations rather than nested samples, which is why the ply 40 to 50
+row is not monotone across them.}
+\label{tab:strict}
+\begin{tabular}{lcccccc}
+\toprule
+Ply & $\leq 0$ & $\leq 2$ & $\leq 4$ & $\leq 8$ & $\leq 16$ & any \\
+\midrule
+20--30 & n/a & 24 / 0.18 (115) & 24 / 0.21 (300) & 31 / 0.22 (300) & 44 / 0.31 (300) & 58 / 0.34 (300) \\
+30--40 & n/a & n/a & 38 / 0.25 (85) & 62 / 0.36 (300) & 75 / 0.41 (300) & 91 / 0.47 (300) \\
+40--50 & n/a & n/a & n/a & 67 / 0.41 (300) & 120 / 0.53 (300) & 111 / 0.52 (300) \\
+\bottomrule
+\end{tabular}
+\end{table}

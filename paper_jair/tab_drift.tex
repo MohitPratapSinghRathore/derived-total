@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering\small
+\caption{Is the state lost, or is the representation rotating? Each row
+is a linear probe fitted inside one depth bucket and evaluated on every
+bucket; the pooled row is a probe fitted across all depths, as used
+elsewhere in the paper. Depth-local probes do not hold up at depth either,
+so the decline is not explained by a fixed decoder failing to transfer.
+Local probes see roughly a sixth of the pooled training data, which makes
+this a conservative test of the drift account.}
+\label{tab:drift}
+\begin{tabular}{lcccccc}
+\toprule
+Probe fitted at & ply 10 & ply 20 & ply 30 & ply 40 & ply 50 & ply 60 \\
+\midrule
+ply 10 & \textbf{0.910} & 0.776 & 0.521 & 0.307 & 0.203 & 0.151 \\
+ply 20 & 0.835 & \textbf{0.789} & 0.695 & 0.540 & 0.348 & 0.201 \\
+ply 30 & 0.640 & 0.736 & \textbf{0.671} & 0.610 & 0.546 & 0.412 \\
+ply 40 & 0.253 & 0.591 & 0.636 & \textbf{0.553} & 0.486 & 0.416 \\
+ply 50 & 0.106 & 0.341 & 0.527 & 0.514 & \textbf{0.430} & 0.346 \\
+ply 60 & 0.097 & 0.241 & 0.415 & 0.497 & 0.447 & \textbf{0.340} \\
+\midrule
+pooled across depths & 0.907 & 0.804 & 0.694 & 0.591 & 0.506 & 0.409 \\
+\bottomrule
+\end{tabular}
+\end{table}
